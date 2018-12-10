@@ -1,29 +1,23 @@
-package com.ruegnerlukas.simpleparser.grammar.ruleops;
+package com.ruegnerlukas.simpleparser.grammar.expressions;
 
 import java.util.List;
 
-import com.ruegnerlukas.simpleparser.grammar.Atom;
+import com.ruegnerlukas.simpleparser.grammar.Token;
 import com.ruegnerlukas.simpleparser.tree.AtomNode;
 import com.ruegnerlukas.simpleparser.tree.EmptyNode;
 import com.ruegnerlukas.simpleparser.tree.Node;
 
-public class AtomOp extends Op {
+public class TokenExpression extends Expression {
 
-	public Atom atom;
+	public Token atom;
 	
-	public AtomOp(Atom atom) {
+	public TokenExpression(Token atom) {
 		this.atom = atom;
 	}
-	
-	
-	@Override
-	public void collectAtoms(List<Atom> atoms) {
-		atoms.add(atom);
-	}
 
 
 	@Override
-	public Node apply(List<Atom> tokens, int level) {
+	public Node apply(List<Token> tokens, int level) {
 		if(!tokens.isEmpty() && tokens.get(0) == atom) {
 			AtomNode node = new AtomNode(atom);
 			node.op = this;

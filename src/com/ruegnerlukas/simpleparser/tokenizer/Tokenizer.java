@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import com.ruegnerlukas.simpleparser.grammar.Atom;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
+import com.ruegnerlukas.simpleparser.grammar.Token;
 import com.ruegnerlukas.simpleparser.grammar.UndefinedAtom;
 
 public class Tokenizer {
@@ -18,7 +18,10 @@ public class Tokenizer {
 	
 	
 	
-	
+	/**
+	 * @param string the string to split into tokens
+	 * @param grammar the grammar to apply to the given string
+	 * */
 	public Tokenizer(String string, Grammar grammar) {
 		this.string = string;
 		this.grammar = grammar;
@@ -27,12 +30,14 @@ public class Tokenizer {
 	
 	
 	
-	public List<Atom> tokenize() {
+	
+	
+	public List<Token> tokenize() {
 		
-		// get all atoms, sort by size (desc.)
-		List<Atom> atoms = grammar.getAtoms();
-		atoms.sort(new Comparator<Atom>() {
-			@Override public int compare(Atom a1, Atom a2) {
+		// get all symbols/tokens, sort by size (desc.)
+		List<Token> atoms = grammar.getTokens();
+		atoms.sort(new Comparator<Token>() {
+			@Override public int compare(Token a1, Token a2) {
 				int n1 = a1.symbol.length();
 				int n2 = a2.symbol.length();
 				if(n1 < n2) {
@@ -44,7 +49,7 @@ public class Tokenizer {
 				return 0;
 			}});
 		
-		List<Atom> tokens = new ArrayList<Atom>();
+		List<Token> tokens = new ArrayList<Token>();
 		
 		int indexError = 0;
 		boolean isError = false;
@@ -54,8 +59,8 @@ public class Tokenizer {
 
 			String str = string.substring(i, string.length());
 			
-			Atom currAtom = null;
-			for(Atom atom : atoms) {
+			Token currAtom = null;
+			for(Token atom : atoms) {
 				if(str.startsWith(atom.symbol)) {
 					currAtom = atom;
 					break;

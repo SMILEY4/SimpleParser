@@ -2,11 +2,11 @@ package com.ruegnerlukas.simpleparser.grammar;
 
 
 
-public class Atom {
+public class Token {
 
 	public final String symbol;
 	
-	public Atom(String symbol) {
+	public Token(String symbol) {
 		this.symbol = symbol;
 	}
 	

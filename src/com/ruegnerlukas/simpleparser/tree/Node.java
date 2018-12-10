@@ -3,14 +3,14 @@ package com.ruegnerlukas.simpleparser.tree;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ruegnerlukas.simpleparser.grammar.ruleops.AtomOp;
-import com.ruegnerlukas.simpleparser.grammar.ruleops.Op;
+import com.ruegnerlukas.simpleparser.grammar.expressions.TokenExpression;
+import com.ruegnerlukas.simpleparser.grammar.expressions.Expression;
 
 public abstract class Node {
 	
 	
 	public List<Node> children = new ArrayList<Node>();
-	public Op op;
+	public Expression op;
 
 	
 	
@@ -67,8 +67,8 @@ public abstract class Node {
 		if(op == null) {
 			sb.append("null");
 		} else {
-			if(op instanceof AtomOp) {
-				sb.append(op.getClass().getSimpleName() + ": '" + ((AtomOp)op).atom.symbol + "'");
+			if(op instanceof TokenExpression) {
+				sb.append(op.getClass().getSimpleName() + ": '" + ((TokenExpression)op).atom.symbol + "'");
 			} else {
 				sb.append(op.getClass().getSimpleName());
 			}

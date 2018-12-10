@@ -1,12 +1,12 @@
 package com.ruegnerlukas.simpleparser.grammar;
 
-import com.ruegnerlukas.simpleparser.grammar.ruleops.Op;
+import com.ruegnerlukas.simpleparser.grammar.expressions.Expression;
 
 public class Rule {
 
 	
 	public final String name;
-	public Op op = null;
+	public Expression op = null;
 	
 
 	
@@ -20,7 +20,7 @@ public class Rule {
 	
 	
 	
-	public void define(Op op) {
+	public void define(Expression op) {
 		this.op = op;
 	}
 	

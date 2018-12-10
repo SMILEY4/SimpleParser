@@ -2,7 +2,7 @@ package com.ruegnerlukas.simpleparser.grammar;
 
 
 
-public class UndefinedAtom extends Atom {
+public class UndefinedAtom extends Token {
 
 	public UndefinedAtom(String str) {
 		super(str);

@@ -1,12 +1,12 @@
 package com.ruegnerlukas.simpleparser.tree;
 
-import com.ruegnerlukas.simpleparser.grammar.Atom;
+import com.ruegnerlukas.simpleparser.grammar.Token;
 
 public class AtomNode extends Node {
 
-	public Atom atom;
+	public Token atom;
 	
-	public AtomNode(Atom atom) {
+	public AtomNode(Token atom) {
 		this.atom = atom;
 	}
 	

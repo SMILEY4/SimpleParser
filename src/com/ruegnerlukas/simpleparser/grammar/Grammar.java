@@ -8,42 +8,47 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.ruegnerlukas.simpleparser.grammar.ruleops.Op;
+import com.ruegnerlukas.simpleparser.grammar.expressions.Expression;
 
 public class Grammar {
 
 	
 	private Map<String,Rule> rules = new HashMap<String,Rule>();
-	private Map<String,Atom> atoms = new HashMap<String,Atom>();
+	private Map<String,Token> tokens = new HashMap<String,Token>();
 	private String startingRule;
 	
 	
 	
 	
-	public boolean predefineRules(String... names) {
-		rules.clear();
+	protected Grammar() {
+	}
+	
+	
+	
+	
+	protected void addRules(String... names) {
 		for(String name : names) {
 			Rule rule = new Rule(name.toUpperCase());
 			rules.put(rule.name, rule);
 		}
-		return true;
 	}
 	
 	
 	
-	public boolean predefineAtoms(String... symbols) {
-		atoms.clear();
+	
+	protected boolean addTokens(String... symbols) {
 		for(String symbol : symbols) {
-			Atom atom = new Atom(symbol);
-			atoms.put(atom.symbol, atom);
+			Token atom = new Token(symbol);
+			tokens.put(atom.symbol, atom);
 		}
 		return true;
 	}
 	
 	
 	
-	public boolean defineRule(String name, Op op) {
-		Rule rule = rules.get(name);
+	
+	protected boolean defineRule(String name, Expression op) {
+		Rule rule = rules.get(name.toUpperCase());
 		if(rule == null) {
 			return false;
 		} else {
@@ -54,10 +59,13 @@ public class Grammar {
 	
 	
 	
-	public boolean setStartingRule(String name) {
+	
+	protected boolean setStartingRule(String name) {
 		this.startingRule = name;
-		return rules.containsKey(name);
+		return rules.containsKey(name.toUpperCase());
 	}
+	
+	
 	
 	
 	public Rule getRule(String name) {
@@ -81,20 +89,22 @@ public class Grammar {
 	
 	
 	
-	public Atom getAtom(String symbol) {
-		return atoms.get(symbol);
+	public Token getToken(String symbol) {
+		return tokens.get(symbol);
 	}
 	
 	
 	
 	
-	public List<Atom> getAtoms() {
-		List<Atom> list = new ArrayList<Atom>();
-		for(Entry<String,Atom> entry : atoms.entrySet()) {
+	public List<Token> getTokens() {
+		List<Token> list = new ArrayList<Token>();
+		for(Entry<String,Token> entry : tokens.entrySet()) {
 			list.add(entry.getValue());
 		}
 		return list;
 	}
+	
+	
 	
 	
 }

@@ -6,13 +6,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import com.ruegnerlukas.simpleparser.grammar.Atom;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
-import com.ruegnerlukas.simpleparser.grammar.ruleops.AltOp;
-import com.ruegnerlukas.simpleparser.grammar.ruleops.AtomOp;
-import com.ruegnerlukas.simpleparser.grammar.ruleops.ConcatOp;
-import com.ruegnerlukas.simpleparser.grammar.ruleops.RepOp;
-import com.ruegnerlukas.simpleparser.grammar.ruleops.RuleOp;
+import com.ruegnerlukas.simpleparser.grammar.GrammarBuilder;
+import com.ruegnerlukas.simpleparser.grammar.Token;
 import com.ruegnerlukas.simpleparser.tokenizer.Tokenizer;
 import com.ruegnerlukas.simpleparser.tree.Node;
 import com.ruegnerlukas.simpleparser.tree.TreeBuilder;
@@ -53,106 +49,186 @@ public class TestSimpleParser {
 		NUMBER		-> "0" | (NZ_DIGIT {"0" | NZ_DIGIT} )
 		NZ_DIGIT	-> "1" | "2" | ... | "9"
 
-	
 		*/
 		
-		
-		Grammar grammar = new Grammar();
-		grammar.predefineRules("EXPRESSION", "TERM", "FACTOR", "ADD_OP", "MULT_OP", "NUMBER", "NZ_DIGIT");
-		grammar.setStartingRule("EXPRESSION");
-		grammar.predefineAtoms("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "-", "*", "/", "(", ")");
+		GrammarBuilder gb = new GrammarBuilder();
 		
 //		EXPRESSION 	-> TERM {ADD_OP TERM}
-		grammar.defineRule("EXPRESSION",
-				new ConcatOp(
-						new RuleOp(grammar.getRule("TERM")),
-						new RepOp(
-								new ConcatOp(
-										new RuleOp(grammar.getRule("ADD_OP")),
-										new RuleOp(grammar.getRule("TERM"))
+		gb.defineRootNonTerminal("EXPRESSION",
+				gb.sequence(
+						gb.nonTerminal("TERM"),
+						gb.zeroOrMore(
+								gb.sequence(
+										gb.nonTerminal("ADD_OP"),
+										gb.nonTerminal("TERM")
 										)
 								)
 						)
 				);
-		
 		
 //		TERM		-> FACTOR {MULT_OP FACTOR}
-		grammar.defineRule("TERM",
-				new ConcatOp(
-						new RuleOp(grammar.getRule("FACTOR")),
-						new RepOp(
-								new ConcatOp(
-										new RuleOp(grammar.getRule("MULT_OP")),
-										new RuleOp(grammar.getRule("FACTOR"))
+		gb.defineNonTerminal("TERM",
+				gb.sequence(
+						gb.nonTerminal("FACTOR"),
+						gb.zeroOrMore(
+								gb.sequence(
+										gb.nonTerminal("MULT_OP"),
+										gb.nonTerminal("FACTOR")
 										)
 								)
 						)
 				);
 		
-		
 //		FACTOR 		-> ( "(" EXPRESSION ")" ) | NUMBER
-		grammar.defineRule("FACTOR",
-					new AltOp(
-							new ConcatOp(
-									new AtomOp(grammar.getAtom("(")),
-									new RuleOp(grammar.getRule("EXPRESSION")),
-									new AtomOp(grammar.getAtom(")"))
-									),
-							new RuleOp(grammar.getRule("NUMBER"))
-							)
+		gb.defineNonTerminal("FACTOR",
+				gb.alternative(
+						gb.sequence(
+								gb.terminal("("),
+								gb.nonTerminal("EXPRESSION"),
+								gb.terminal(")")
+								),
+						gb.nonTerminal("NUMBER")
+						)
 				);
 		
 //		ADD_OP		-> "+" | "-"
-		grammar.defineRule("ADD_OP",
-				new AltOp(
-						new AtomOp(grammar.getAtom("+")),
-						new AtomOp(grammar.getAtom("-"))
+		gb.defineNonTerminal("ADD_OP",
+				gb.alternative(
+						gb.terminal("+"),
+						gb.terminal("-")
 						)
-			);
+				);
 		
 //		MULT_OP		-> "*" | "/"
-		grammar.defineRule("MULT_OP",
-				new AltOp(
-						new AtomOp(grammar.getAtom("*")),
-						new AtomOp(grammar.getAtom("/"))
+		gb.defineNonTerminal("MULT_OP",
+				gb.alternative(
+						gb.terminal("*"),
+						gb.terminal("/")
 						)
-			);
-		
+				);
 		
 //		NUMBER		-> "0" | (NZ_DIGIT {"0" | NZ_DIGIT} )
-		grammar.defineRule("NUMBER",
-				new AltOp(
-						new AtomOp(grammar.getAtom("0")),
-						new ConcatOp(
-								new RuleOp(grammar.getRule("NZ_DIGIT")),
-								new RepOp(
-										new AltOp(
-												new AtomOp(grammar.getAtom("0")),
-												new RuleOp(grammar.getRule("NZ_DIGIT"))
+		gb.defineNonTerminal("NUMBER",
+				gb.alternative(
+						gb.terminal("0"),
+						gb.sequence(
+								gb.nonTerminal("NZ_DIGIT"),
+								gb.zeroOrMore(
+										gb.alternative(
+												gb.terminal("0"),
+												gb.nonTerminal("NZ_DIGIT")
 												)
 										)
 								)
 						)
-			);
-		
+				);
 		
 //		NZ_DIGIT	-> "1" | "2" | ... | "9"
-		grammar.defineRule("NZ_DIGIT",
-				new AltOp(
-						new AtomOp(grammar.getAtom("1")),
-						new AtomOp(grammar.getAtom("2")),
-						new AtomOp(grammar.getAtom("3")),
-						new AtomOp(grammar.getAtom("4")),
-						new AtomOp(grammar.getAtom("5")),
-						new AtomOp(grammar.getAtom("6")),
-						new AtomOp(grammar.getAtom("7")),
-						new AtomOp(grammar.getAtom("8")),
-						new AtomOp(grammar.getAtom("9"))
-						)
-			);
+		gb.defineNonTerminal("NZ_DIGIT",
+				gb.alternative("1", "2", "3", "4", "5", "6", "7", "8", "9")
+				);
 		
 		
+		Grammar grammar = gb.get();
 		test(grammar, testStrings[1]);
+		
+		
+//		Grammar grammar = new Grammar();
+//		grammar.predefineRules("EXPRESSION", "TERM", "FACTOR", "ADD_OP", "MULT_OP", "NUMBER", "NZ_DIGIT");
+//		grammar.setStartingRule("EXPRESSION");
+//		grammar.predefineAtoms("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "-", "*", "/", "(", ")");
+//		
+////		EXPRESSION 	-> TERM {ADD_OP TERM}
+//		grammar.defineRule("EXPRESSION",
+//				new SequenceExpression(
+//						new RuleExpression(grammar.getRule("TERM")),
+//						new RepetitionExpression(
+//								new SequenceExpression(
+//										new RuleExpression(grammar.getRule("ADD_OP")),
+//										new RuleExpression(grammar.getRule("TERM"))
+//										)
+//								)
+//						)
+//				);
+//		
+//		
+////		TERM		-> FACTOR {MULT_OP FACTOR}
+//		grammar.defineRule("TERM",
+//				new SequenceExpression(
+//						new RuleExpression(grammar.getRule("FACTOR")),
+//						new RepetitionExpression(
+//								new SequenceExpression(
+//										new RuleExpression(grammar.getRule("MULT_OP")),
+//										new RuleExpression(grammar.getRule("FACTOR"))
+//										)
+//								)
+//						)
+//				);
+//		
+//		
+////		FACTOR 		-> ( "(" EXPRESSION ")" ) | NUMBER
+//		grammar.defineRule("FACTOR",
+//					new AlternativeExpression(
+//							new SequenceExpression(
+//									new TokenExpression(grammar.getToken("(")),
+//									new RuleExpression(grammar.getRule("EXPRESSION")),
+//									new TokenExpression(grammar.getToken(")"))
+//									),
+//							new RuleExpression(grammar.getRule("NUMBER"))
+//							)
+//				);
+//		
+////		ADD_OP		-> "+" | "-"
+//		grammar.defineRule("ADD_OP",
+//				new AlternativeExpression(
+//						new TokenExpression(grammar.getToken("+")),
+//						new TokenExpression(grammar.getToken("-"))
+//						)
+//			);
+//		
+////		MULT_OP		-> "*" | "/"
+//		grammar.defineRule("MULT_OP",
+//				new AlternativeExpression(
+//						new TokenExpression(grammar.getToken("*")),
+//						new TokenExpression(grammar.getToken("/"))
+//						)
+//			);
+//		
+//		
+////		NUMBER		-> "0" | (NZ_DIGIT {"0" | NZ_DIGIT} )
+//		grammar.defineRule("NUMBER",
+//				new AlternativeExpression(
+//						new TokenExpression(grammar.getToken("0")),
+//						new SequenceExpression(
+//								new RuleExpression(grammar.getRule("NZ_DIGIT")),
+//								new RepetitionExpression(
+//										new AlternativeExpression(
+//												new TokenExpression(grammar.getToken("0")),
+//												new RuleExpression(grammar.getRule("NZ_DIGIT"))
+//												)
+//										)
+//								)
+//						)
+//			);
+//		
+//		
+////		NZ_DIGIT	-> "1" | "2" | ... | "9"
+//		grammar.defineRule("NZ_DIGIT",
+//				new AlternativeExpression(
+//						new TokenExpression(grammar.getToken("1")),
+//						new TokenExpression(grammar.getToken("2")),
+//						new TokenExpression(grammar.getToken("3")),
+//						new TokenExpression(grammar.getToken("4")),
+//						new TokenExpression(grammar.getToken("5")),
+//						new TokenExpression(grammar.getToken("6")),
+//						new TokenExpression(grammar.getToken("7")),
+//						new TokenExpression(grammar.getToken("8")),
+//						new TokenExpression(grammar.getToken("9"))
+//						)
+//			);
+//		
+//		
+//		test(grammar, testStrings[1]);
 		
 //		/*
 //		
@@ -177,33 +253,33 @@ public class TestSimpleParser {
 //				new RuleOp(grammar.getRule("WHITESPACE")),
 //				new RuleOp(grammar.getRule("OPERATOR")),
 //				new OptOp(new AltOp(
-//						new AtomOp(grammar.getAtom("?")),
-//						new AtomOp(grammar.getAtom("!"))
+//						new AtomOp(grammar.getToken("?")),
+//						new AtomOp(grammar.getToken("!"))
 //						)),
 //				new RuleOp(grammar.getRule("WHITESPACE")),
 //				new RuleOp(grammar.getRule("STRING"))
 //				));
 //		
 //		grammar.defineRule("WHITESPACE", new ConcatOp(
-//				new AtomOp(grammar.getAtom(" ")),
+//				new AtomOp(grammar.getToken(" ")),
 //				new OptOp(new RuleOp(grammar.getRule("WHITESPACE")))
 //			));
 //		
 //		grammar.defineRule("STRING", new ConcatOp(
-//				new AtomOp(grammar.getAtom("\"")),
+//				new AtomOp(grammar.getToken("\"")),
 //				new RuleOp(grammar.getRule("WORD")),
-//				new AtomOp(grammar.getAtom("\""))
+//				new AtomOp(grammar.getToken("\""))
 //				));
 //		
 //		grammar.defineRule("WORD", new AltOp(
-//				new AtomOp(grammar.getAtom("Hello")),
-//				new AtomOp(grammar.getAtom("and Bye"))
+//				new AtomOp(grammar.getToken("Hello")),
+//				new AtomOp(grammar.getToken("and Bye"))
 //				));
 //		
 //		grammar.defineRule("OPERATOR", new AltOp(
-//				new AtomOp(grammar.getAtom("and")),
-//				new AtomOp(grammar.getAtom("or")),
-//				new AtomOp(grammar.getAtom("xor"))
+//				new AtomOp(grammar.getToken("and")),
+//				new AtomOp(grammar.getToken("or")),
+//				new AtomOp(grammar.getToken("xor"))
 //				));
 //		
 //		for(String str : testStrings) {
@@ -220,7 +296,7 @@ public class TestSimpleParser {
 		System.out.println("==== TEST: " + testString);
 		
 		Tokenizer tokenizer = new Tokenizer(testString, grammar);
-		List<Atom> tokens = tokenizer.tokenize();
+		List<Token> tokens = tokenizer.tokenize();
 		System.out.println("TOKENS: " + tokens);
 		
 		TreeBuilder treeBuilder = new TreeBuilder();

@@ -1,8 +1,8 @@
-package com.ruegnerlukas.simpleparser.grammar.ruleops;
+package com.ruegnerlukas.simpleparser.grammar.expressions;
 
 import java.util.List;
 
-import com.ruegnerlukas.simpleparser.grammar.Atom;
+import com.ruegnerlukas.simpleparser.grammar.Token;
 import com.ruegnerlukas.simpleparser.tree.EmptyNode;
 import com.ruegnerlukas.simpleparser.tree.MidNode;
 import com.ruegnerlukas.simpleparser.tree.Node;
@@ -11,25 +11,19 @@ import com.ruegnerlukas.simpleparser.tree.Node;
  * X -> E E*
  *  => one or more
  * */
-public class RepOp extends Op {
+public class RepetitionExpression extends Expression {
 
-	public Op op = null;
+	public Expression op = null;
 	
-	public RepOp(Op op) {
+	public RepetitionExpression(Expression op) {
 		this.op = op;
 	}
-	
-	
-	@Override
-	public void collectAtoms(List<Atom> atoms) {
-		op.collectAtoms(atoms);
-	}
 
 	
 	
 
 	@Override
-	public Node apply(List<Atom> tokens, int level) {
+	public Node apply(List<Token> tokens, int level) {
 		
 		if(tokens.isEmpty()) {
 			return new EmptyNode();
