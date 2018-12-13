@@ -128,13 +128,33 @@ public class GrammarBuilder {
 	
 	
 	
-	
 	/**
-	 * validates and returns the grammar
 	 * @return the grammar
 	 * */
 	public Grammar get() {
 		return this.grammar;
+	}
+	
+	
+	/**
+	 * @return true, if the grammar is valid
+	 * */
+	public boolean checkValid() {
+		boolean validRules = validateRules();
+		return validRules;
+	}
+	
+	
+	
+	
+	private boolean validateRules() {
+		for(String name : grammar.getRules()) {
+			Rule rule = grammar.getRule(name);
+			if(rule.expression == null) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	

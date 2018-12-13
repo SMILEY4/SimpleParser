@@ -6,7 +6,7 @@ public class Rule {
 
 	
 	public final String name;
-	public Expression op = null;
+	public Expression expression = null;
 	
 
 	
@@ -21,14 +21,14 @@ public class Rule {
 	
 	
 	public void define(Expression op) {
-		this.op = op;
+		this.expression = op;
 	}
 	
 	
 	
 	
 	public boolean isDefined() {
-		return op != null;
+		return expression != null;
 	}
 	
 	

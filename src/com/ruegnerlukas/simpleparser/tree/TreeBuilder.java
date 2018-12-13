@@ -8,14 +8,13 @@ import com.ruegnerlukas.simpleparser.grammar.Token;
 
 public class TreeBuilder {
 
-	
 	/**
-	 * builds a tree from the given token list and grammar
+	 * builds a tree from the given tokenlist and grammar
 	 * */
 	public Node build(Grammar grammar, List<Token> tokens) {
 		Rule start = grammar.getRule(grammar.getStartingRule());
 		RuleNode root = new RuleNode(start);
-		root.children.add(start.op.apply(tokens, 0));
+		root.children.add(start.expression.apply(tokens));
 		root.eliminateMidNodes();
 		return root;
 	}

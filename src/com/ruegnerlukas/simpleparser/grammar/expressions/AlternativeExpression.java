@@ -13,12 +13,14 @@ import com.ruegnerlukas.simpleparser.tree.Node;
 public class AlternativeExpression extends Expression {
 
 	
-	public List<Expression> ops = new ArrayList<Expression>();
+	public List<Expression> expressions = new ArrayList<Expression>();
 
 	
-	public AlternativeExpression(Expression... ops) {
-		for(Expression op : ops) {
-			this.ops.add(op);
+	
+	
+	public AlternativeExpression(Expression... expressions) {
+		for(Expression expr : expressions) {
+			this.expressions.add(expr);
 		}
 	}
 
@@ -26,14 +28,15 @@ public class AlternativeExpression extends Expression {
 	
 
 	@Override
-	public Node apply(List<Token> tokens, int level) {
-		for(Expression op : ops) {
-			Node n = op.apply(tokens, level+1);
+	public Node apply(List<Token> tokens) {
+		for(Expression expr : expressions) {
+			Node n = expr.apply(tokens);
 			if( !(n instanceof EmptyNode) ) {
 				return n;
 			}
 		}
 		return new EmptyNode();
 	}
-	
+
+
 }

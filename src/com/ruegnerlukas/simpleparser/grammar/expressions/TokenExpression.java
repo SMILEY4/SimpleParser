@@ -9,18 +9,18 @@ import com.ruegnerlukas.simpleparser.tree.Node;
 
 public class TokenExpression extends Expression {
 
-	public Token atom;
+	public Token token;
 	
-	public TokenExpression(Token atom) {
-		this.atom = atom;
+	public TokenExpression(Token token) {
+		this.token = token;
 	}
 
 
 	@Override
-	public Node apply(List<Token> tokens, int level) {
-		if(!tokens.isEmpty() && tokens.get(0) == atom) {
-			AtomNode node = new AtomNode(atom);
-			node.op = this;
+	public Node apply(List<Token> tokens) {
+		if(!tokens.isEmpty() && tokens.get(0) == token) {
+			AtomNode node = new AtomNode(token);
+			node.token = this.token;
 			tokens.remove(0);
 			return node;
 			
@@ -28,5 +28,6 @@ public class TokenExpression extends Expression {
 			return new EmptyNode();
 		}
 	}
+
 	
 }

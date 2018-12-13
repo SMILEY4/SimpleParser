@@ -12,6 +12,7 @@ public class RuleExpression extends Expression {
 
 	public Rule rule;
 	
+	
 	public RuleExpression(Rule rule) {
 		this.rule = rule;
 	}
@@ -20,9 +21,9 @@ public class RuleExpression extends Expression {
 	
 
 	@Override
-	public Node apply(List<Token> tokens, int level) {
+	public Node apply(List<Token> tokens) {
 		Node node = new RuleNode(rule);
-		Node n = rule.op.apply(tokens, level+1);
+		Node n = rule.expression.apply(tokens);
 		if(n instanceof EmptyNode) {
 			return new EmptyNode();
 		} else {
@@ -30,5 +31,6 @@ public class RuleExpression extends Expression {
 			return node;
 		}
 	}
-	
+
+
 }

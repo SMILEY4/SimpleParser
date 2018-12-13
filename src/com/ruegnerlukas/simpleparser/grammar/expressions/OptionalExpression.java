@@ -12,19 +12,25 @@ import com.ruegnerlukas.simpleparser.tree.Node;
  * */
 public class OptionalExpression extends Expression {
 
-	public Expression op = null;
 	
-	public OptionalExpression(Expression op) {
-		this.op = op;
+	public Expression expression = null;
+	
+	
+	
+	
+	public OptionalExpression(Expression expression) {
+		this.expression = expression;
 	}
 
+	
+	
 
 	@Override
-	public Node apply(List<Token> tokens, int level) {
+	public Node apply(List<Token> tokens) {
 		if(tokens.isEmpty()) {
 			return new EmptyNode();
 		} else {
-			Node n = op.apply(tokens, level+1);
+			Node n = expression.apply(tokens);
 			if(n instanceof EmptyNode) {
 				return new EmptyNode();
 			} else {
@@ -32,5 +38,6 @@ public class OptionalExpression extends Expression {
 			}
 		}
 	}
-	
+
+
 }

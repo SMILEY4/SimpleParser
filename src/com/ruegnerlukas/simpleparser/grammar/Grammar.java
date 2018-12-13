@@ -52,7 +52,7 @@ public class Grammar {
 		if(rule == null) {
 			return false;
 		} else {
-			rule.op = op;
+			rule.expression = op;
 			return true;
 		}
 	}

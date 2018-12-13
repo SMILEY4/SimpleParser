@@ -13,17 +13,21 @@ import com.ruegnerlukas.simpleparser.tree.Node;
  * */
 public class RepetitionExpression extends Expression {
 
-	public Expression op = null;
 	
-	public RepetitionExpression(Expression op) {
-		this.op = op;
+	public Expression expression = null;
+	
+	
+	
+	
+	public RepetitionExpression(Expression expression) {
+		this.expression = expression;
 	}
 
 	
 	
 
 	@Override
-	public Node apply(List<Token> tokens, int level) {
+	public Node apply(List<Token> tokens) {
 		
 		if(tokens.isEmpty()) {
 			return new EmptyNode();
@@ -31,7 +35,7 @@ public class RepetitionExpression extends Expression {
 		} else {
 			Node node = new MidNode(Integer.toHexString(this.hashCode()));
 			while(true) {
-				Node n = op.apply(tokens, level+1);
+				Node n = expression.apply(tokens);
 				if(n instanceof EmptyNode) {
 					break;
 				} else {

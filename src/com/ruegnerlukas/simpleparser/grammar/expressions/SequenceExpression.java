@@ -13,11 +13,11 @@ import com.ruegnerlukas.simpleparser.tree.Node;
  * */
 public class SequenceExpression extends Expression {
 
-	public List<Expression> ops = new ArrayList<Expression>();
+	public List<Expression> expressions = new ArrayList<Expression>();
 
-	public SequenceExpression(Expression... ops) {
-		for(Expression op : ops) {
-			this.ops.add(op);
+	public SequenceExpression(Expression... expressions) {
+		for(Expression expr : expressions) {
+			this.expressions.add(expr);
 		}
 	}
 
@@ -25,10 +25,10 @@ public class SequenceExpression extends Expression {
 
 
 	@Override
-	public Node apply(List<Token> tokens, int level) {
+	public Node apply(List<Token> tokens) {
 		Node node = new MidNode(Integer.toHexString(this.hashCode()));
-		for(Expression op : ops) {
-			Node n = op.apply(tokens, level+1);
+		for(Expression expr : expressions) {
+			Node n = expr.apply(tokens);
 			if(n instanceof EmptyNode) {
 				break;
 			} else {
@@ -41,8 +41,7 @@ public class SequenceExpression extends Expression {
 			return node;
 		}
 	}
-
-
+	
 	
 }
 

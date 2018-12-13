@@ -9,3 +9,5 @@
 /libs
 /docs
 todo.txt
+.idea/
+*.iml

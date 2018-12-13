@@ -4,15 +4,15 @@ import com.ruegnerlukas.simpleparser.grammar.Token;
 
 public class AtomNode extends Node {
 
-	public Token atom;
+	public Token token;
 	
-	public AtomNode(Token atom) {
-		this.atom = atom;
+	public AtomNode(Token token) {
+		this.token = token;
 	}
 	
 	@Override
 	public String toString() {
-		return Integer.toHexString(this.hashCode()) + ": " + (atom == null ? "null" : atom.symbol.replaceAll("\"", "\\\\\""));
+		return Integer.toHexString(this.hashCode()) + ": " + (token == null ? "null" : token.symbol.replaceAll("\"", "\\\\\""));
 	}
 	
 }

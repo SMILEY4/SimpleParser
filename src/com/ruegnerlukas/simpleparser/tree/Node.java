@@ -3,19 +3,19 @@ package com.ruegnerlukas.simpleparser.tree;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ruegnerlukas.simpleparser.grammar.expressions.TokenExpression;
 import com.ruegnerlukas.simpleparser.grammar.expressions.Expression;
+import com.ruegnerlukas.simpleparser.grammar.expressions.TokenExpression;
 
 public abstract class Node {
 	
 	
 	public List<Node> children = new ArrayList<Node>();
-	public Expression op;
+	public Expression expression;
 
 	
 	
 	
-	public void eliminateMidNodes() {
+	protected void eliminateMidNodes() {
 		
 		for(Node child : children) {
 			child.eliminateMidNodes();
@@ -64,13 +64,13 @@ public abstract class Node {
 			sb.append("  ");
 		}
 		
-		if(op == null) {
+		if(expression == null) {
 			sb.append("null");
 		} else {
-			if(op instanceof TokenExpression) {
-				sb.append(op.getClass().getSimpleName() + ": '" + ((TokenExpression)op).atom.symbol + "'");
+			if(expression instanceof TokenExpression) {
+				sb.append(expression.getClass().getSimpleName() + ": '" + ((TokenExpression)expression).token.symbol + "'");
 			} else {
-				sb.append(op.getClass().getSimpleName());
+				sb.append(expression.getClass().getSimpleName());
 			}
 		}
 		System.out.println(sb.toString());

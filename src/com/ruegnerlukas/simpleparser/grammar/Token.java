@@ -12,7 +12,7 @@ public class Token {
 	
 	@Override
 	public String toString() {
-		return "ATOM:'"+symbol+"'";
+		return "TOKEN:'"+symbol+"'";
 	}
 	
 }
