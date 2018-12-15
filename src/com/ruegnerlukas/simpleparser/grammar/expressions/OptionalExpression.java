@@ -2,7 +2,6 @@ package com.ruegnerlukas.simpleparser.grammar.expressions;
 
 import com.ruegnerlukas.simpleparser.grammar.Token;
 import com.ruegnerlukas.simpleparser.tree.EmptyNode;
-import com.ruegnerlukas.simpleparser.tree.Node;
 
 import java.util.List;
 import java.util.Set;
@@ -27,17 +26,42 @@ public class OptionalExpression extends Expression {
 	
 
 	@Override
-	public Node apply(List<Token> tokens) {
+	public Result apply(List<Token> tokens) {
+
 		if(tokens.isEmpty()) {
-			return new EmptyNode();
+			return new Result(Result.State.END_OF_STREAM, null);
+
 		} else {
-			Node n = expression.apply(tokens);
-			if(n instanceof EmptyNode) {
-				return new EmptyNode();
-			} else {
-				return n;
+
+			Result resultExpr = expression.apply(tokens);
+
+			if(resultExpr.state == Result.State.SUCCESS) {
+				return new Result(Result.State.SUCCESS, resultExpr.node);
 			}
+			if(resultExpr.state == Result.State.END_OF_STREAM) {
+				return new Result(Result.State.END_OF_STREAM, resultExpr.node);
+			}
+			if(resultExpr.state == Result.State.UNEXPECTED_SYMBOL) {
+				return new Result(Result.State.SUCCESS, new EmptyNode());
+			}
+			if(resultExpr.state == Result.State.ERROR) {
+				return new Result(Result.State.ERROR, null, resultExpr.message);
+			}
+
+			return new Result(Result.State.ERROR, null, this + ": Undefined result state.");
 		}
+
+
+//		if(tokens.isEmpty()) {
+//			return new EmptyNode();
+//		} else {
+//			Node n = expression.apply(tokens);
+//			if(n instanceof EmptyNode) {
+//				return new EmptyNode();
+//			} else {
+//				return n;
+//			}
+//		}
 	}
 
 

@@ -1,8 +1,6 @@
 package com.ruegnerlukas.simpleparser.grammar.expressions;
 
 import com.ruegnerlukas.simpleparser.grammar.Token;
-import com.ruegnerlukas.simpleparser.tree.EmptyNode;
-import com.ruegnerlukas.simpleparser.tree.Node;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +27,44 @@ public class AlternativeExpression extends Expression {
 	
 
 	@Override
-	public Node apply(List<Token> tokens) {
-		for(Expression expr : expressions) {
-			Node n = expr.apply(tokens);
-			if( !(n instanceof EmptyNode) ) {
-				return n;
+	public Result apply(List<Token> tokens) {
+
+		if(tokens.isEmpty()) {
+			return new Result(Result.State.END_OF_STREAM, null);
+
+		} else {
+
+			for(Expression expr : expressions) {
+				Result resultExpr = expr.apply(tokens);
+
+				if(resultExpr.state == Result.State.SUCCESS) {
+					return new Result(Result.State.SUCCESS, resultExpr.node);
+				}
+
+				if(resultExpr.state == Result.State.END_OF_STREAM) {
+					return new Result(Result.State.END_OF_STREAM, null);
+				}
+
+				if(resultExpr.state == Result.State.UNEXPECTED_SYMBOL) {
+					continue;
+				}
+
+				if(resultExpr.state == Result.State.ERROR) {
+					continue;
+				}
+
 			}
+
+			return new Result(Result.State.ERROR, null, this + ": Failed Alternative: '" + tokens.get(0).symbol + "'");
 		}
-		return new EmptyNode();
+
+//		for(Expression expr : expressions) {
+//			Node n = expr.apply(tokens);
+//			if( !(n instanceof EmptyNode) ) {
+//				return n;
+//			}
+//		}
+//		return new EmptyNode();
 	}
 
 

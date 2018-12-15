@@ -302,7 +302,7 @@ public class TestSimpleParser {
 
 		System.out.println("TREE: " + tokens);
 		TreeBuilder treeBuilder = new TreeBuilder();
-		Node root = treeBuilder.build(grammar, tokens);
+		Node root = treeBuilder.build(grammar, tokens).node;
 		root.printGraphViz(true);
 
 		System.out.println();

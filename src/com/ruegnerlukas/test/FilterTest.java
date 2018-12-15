@@ -81,9 +81,8 @@ public class FilterTest {
 
 		Grammar grammar = gb.get();
 
-		grammar.printExpressionGraph();
+		test(grammar, testStrings[5]);
 
-//		test(grammar, testStrings[9]);
 //		for(String testString : testStrings) {
 //			test(grammar, testString);
 //		}
@@ -100,13 +99,13 @@ public class FilterTest {
 
 		System.out.println("TREE: ");
 		TreeBuilder treeBuilder = new TreeBuilder();
-		Node root = treeBuilder.build(grammar, tokens);
+		Node root = treeBuilder.build(grammar, tokens).node;
 		root.printGraphViz(true);
 
-		System.out.println("TREE COLLAPSED: ");
-		root = treeBuilder.removeTerminals(root, "and", "or", "(", ")");
-		root = treeBuilder.collapseTree(root, "OR_EXPRESSION", "AND_EXPRESSION", "COMPONENT");
-		root.printGraphViz(true);
+//		System.out.println("TREE COLLAPSED: ");
+//		root = treeBuilder.removeTerminals(root, "and", "or", "(", ")");
+//		root = treeBuilder.collapseTree(root, "OR_EXPRESSION", "AND_EXPRESSION", "COMPONENT");
+//		root.printGraphViz(true);
 
 		System.out.println();
 		System.out.println();

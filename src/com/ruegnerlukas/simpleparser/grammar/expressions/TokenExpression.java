@@ -1,8 +1,6 @@
 package com.ruegnerlukas.simpleparser.grammar.expressions;
 
 import com.ruegnerlukas.simpleparser.grammar.Token;
-import com.ruegnerlukas.simpleparser.tree.EmptyNode;
-import com.ruegnerlukas.simpleparser.tree.Node;
 import com.ruegnerlukas.simpleparser.tree.TerminalNode;
 
 import java.util.List;
@@ -18,16 +16,33 @@ public class TokenExpression extends Expression {
 
 
 	@Override
-	public Node apply(List<Token> tokens) {
-		if(!tokens.isEmpty() && tokens.get(0) == token) {
-			TerminalNode node = new TerminalNode(token);
-			node.token = this.token;
-			tokens.remove(0);
-			return node;
-			
+	public Result apply(List<Token> tokens) {
+
+		if(tokens.isEmpty()) {
+			return new Result(Result.State.END_OF_STREAM, null);
+
 		} else {
-			return new EmptyNode();
+
+			if(tokens.get(0) == token) {
+				tokens.remove(0);
+				return new Result(Result.State.SUCCESS, new TerminalNode(token));
+
+			} else {
+				return new Result(Result.State.UNEXPECTED_SYMBOL, null,
+						this + ": Unexpected symbol: '" + tokens.get(0).symbol + "'. Expected '" + token.symbol + "'.");
+			}
+
 		}
+
+//		if(!tokens.isEmpty() && tokens.get(0) == token) {
+//			TerminalNode node = new TerminalNode(token);
+//			node.token = this.token;
+//			tokens.remove(0);
+//			return node;
+//
+//		} else {
+//			return new EmptyNode();
+//		}
 	}
 
 

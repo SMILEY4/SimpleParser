@@ -1,10 +1,14 @@
-
-
-expr and expr and expr
+expr or expr
 expr and expr or expr
 expr and (expr and expr)
 expr or (expr and expr)
-
 expr or (expr and ((expr or expr) and (expr or expr)))
 
-expr or (expr and ((expr or expr) and (expr))
+
+
+/*
+OR_EXPRESSION 	-> AND_EXPRESSION {"or" AND_EXPRESSION}
+AND_EXPRESSION 	-> COMPONENT {"and" COMPONENT}
+COMPONENT 		-> STATEMENT | ( "(" OR_EXPRESSION ")"
+STATEMENT		-> "expr"
+*/

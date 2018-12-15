@@ -28,32 +28,67 @@ public class SequenceExpression extends Expression {
 
 
 	@Override
-	public Node apply(List<Token> tokens) {
-		Node node = new MidNode(Integer.toHexString(this.hashCode()));
-		for(Expression expr : expressions) {
-			if(tokens.isEmpty()) {
-				RecommendationNode recommendation = new RecommendationNode();
-				if(expr instanceof TokenExpression) {
-					recommendation.children.add(new TerminalNode( ((TokenExpression)expr).token ));
-				}
-				if(expr instanceof RuleExpression) {
-					recommendation.children.add(new RuleNode( ((RuleExpression)expr).rule ));
-				}
-				node.children.add(recommendation);
-			} else {
-				Node n = expr.apply(tokens);
-				if(n instanceof EmptyNode) {
-					break;
-				} else {
-					node.children.add(n);
-				}
-			}
-		}
-		if(node.children.isEmpty()) {
-			return new EmptyNode();
+	public Result apply(List<Token> tokens) {
+
+		if(tokens.isEmpty()) {
+			return new Result(Result.State.END_OF_STREAM, null);
+
 		} else {
-			return node;
+
+			Node node = new MidNode(Integer.toHexString(this.hashCode()));
+
+			for(Expression expr : expressions) {
+
+				Result resultExpr = expr.apply(tokens);
+
+				if(resultExpr.state == Result.State.SUCCESS) {
+					node.children.add(resultExpr.node);
+				}
+				if(resultExpr.state == Result.State.END_OF_STREAM) {
+					if(expressions.indexOf(expr) == expressions.size()-1) {
+						return new Result(Result.State.SUCCESS, node);
+					} else {
+						return new Result(Result.State.END_OF_STREAM, node);
+					}
+				}
+				if(resultExpr.state == Result.State.UNEXPECTED_SYMBOL) {
+					return new Result(Result.State.UNEXPECTED_SYMBOL, null, resultExpr.message);
+				}
+				if(resultExpr.state == Result.State.ERROR) {
+					return new Result(Result.State.ERROR, null, resultExpr.message);
+				}
+
+			}
+
+			return new Result(Result.State.SUCCESS, node);
 		}
+
+
+//		Node node = new MidNode(Integer.toHexString(this.hashCode()));
+//		for(Expression expr : expressions) {
+//			if(tokens.isEmpty()) {
+//				RecommendationNode recommendation = new RecommendationNode();
+//				if(expr instanceof TokenExpression) {
+//					recommendation.children.add(new TerminalNode( ((TokenExpression)expr).token ));
+//				}
+//				if(expr instanceof RuleExpression) {
+//					recommendation.children.add(new RuleNode( ((RuleExpression)expr).rule ));
+//				}
+//				node.children.add(recommendation);
+//			} else {
+//				Node n = expr.apply(tokens);
+//				if(n instanceof EmptyNode) {
+//					break;
+//				} else {
+//					node.children.add(n);
+//				}
+//			}
+//		}
+//		if(node.children.isEmpty()) {
+//			return new EmptyNode();
+//		} else {
+//			return node;
+//		}
 	}
 
 

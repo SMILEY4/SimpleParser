@@ -1,7 +1,6 @@
 package com.ruegnerlukas.simpleparser.grammar.expressions;
 
 import com.ruegnerlukas.simpleparser.grammar.Token;
-import com.ruegnerlukas.simpleparser.tree.EmptyNode;
 import com.ruegnerlukas.simpleparser.tree.MidNode;
 import com.ruegnerlukas.simpleparser.tree.Node;
 
@@ -28,27 +27,55 @@ public class RepetitionExpression extends Expression {
 	
 
 	@Override
-	public Node apply(List<Token> tokens) {
-		
+	public Result apply(List<Token> tokens) {
+
 		if(tokens.isEmpty()) {
-			return new EmptyNode();
-			
+			return new Result(Result.State.END_OF_STREAM, null);
+
 		} else {
+
 			Node node = new MidNode(Integer.toHexString(this.hashCode()));
+
 			while(!tokens.isEmpty()) {
-				Node n = expression.apply(tokens);
-				if(n instanceof EmptyNode) {
-					break;
-				} else {
-					node.children.add(n);
+				Result resultExpr = expression.apply(tokens);
+
+				if(resultExpr.state == Result.State.SUCCESS) {
+					node.children.add(resultExpr.node);
+				}
+				if(resultExpr.state == Result.State.END_OF_STREAM) {
+					return new Result(Result.State.SUCCESS, node);
+				}
+				if(resultExpr.state == Result.State.UNEXPECTED_SYMBOL) {
+					return new Result(Result.State.SUCCESS, node);
+				}
+				if(resultExpr.state == Result.State.ERROR) {
+					return new Result(Result.State.ERROR, null, resultExpr.message);
 				}
 			}
-			if(node.children.isEmpty()) {
-				return new EmptyNode();
-			} else {
-				return node;
-			}
+
+			return new Result(Result.State.SUCCESS, node);
+
 		}
+
+//		if(tokens.isEmpty()) {
+//			return new EmptyNode();
+//
+//		} else {
+//			Node node = new MidNode(Integer.toHexString(this.hashCode()));
+//			while(!tokens.isEmpty()) {
+//				Node n = expression.apply(tokens);
+//				if(n instanceof EmptyNode) {
+//					break;
+//				} else {
+//					node.children.add(n);
+//				}
+//			}
+//			if(node.children.isEmpty()) {
+//				return new EmptyNode();
+//			} else {
+//				return node;
+//			}
+//		}
 		
 	}
 

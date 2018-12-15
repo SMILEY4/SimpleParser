@@ -3,6 +3,7 @@ package com.ruegnerlukas.simpleparser.tree;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.simpleparser.grammar.Rule;
 import com.ruegnerlukas.simpleparser.grammar.Token;
+import com.ruegnerlukas.simpleparser.grammar.expressions.Result;
 
 import java.util.List;
 
@@ -11,12 +12,21 @@ public class TreeBuilder {
 	/**
 	 * builds a tree from the given tokenlist and grammar
 	 * */
-	public Node build(Grammar grammar, List<Token> tokens) {
+	public Result build(Grammar grammar, List<Token> tokens) {
 		Rule start = grammar.getRule(grammar.getStartingRule());
-		RuleNode root = new RuleNode(start);
-		root.children.add(start.expression.apply(tokens));
+
+//		root.children.add(start.expression.apply(tokens));
+//		root.eliminateMidNodes();
+
+		Result resultStart = start.expression.apply(tokens);
+		Node root = new RuleNode(start);
+		if(resultStart.node != null) {
+			root.children.add(resultStart.node);
+		}
+
 		root.eliminateMidNodes();
-		return root;
+
+		return new Result(resultStart.state, root, resultStart.message);
 	}
 
 
