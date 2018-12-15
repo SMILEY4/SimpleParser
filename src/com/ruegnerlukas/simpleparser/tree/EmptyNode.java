@@ -7,7 +7,7 @@ public class EmptyNode extends Node {
 	
 	@Override
 	public String toString() {
-		return Integer.toHexString(this.hashCode()) + ": EMPTY";
+		return "\"" + "Empty:"+Integer.toHexString(this.hashCode()) + ": EMPTY" + "\"";
 	}
 	
 }

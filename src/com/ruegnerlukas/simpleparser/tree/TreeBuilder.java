@@ -1,10 +1,10 @@
 package com.ruegnerlukas.simpleparser.tree;
 
-import java.util.List;
-
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.simpleparser.grammar.Rule;
 import com.ruegnerlukas.simpleparser.grammar.Token;
+
+import java.util.List;
 
 public class TreeBuilder {
 
@@ -18,5 +18,24 @@ public class TreeBuilder {
 		root.eliminateMidNodes();
 		return root;
 	}
-	
+
+
+	/**
+	 * removes chains of non-terminals that only have one child. Only removes the non-terminals given in the "rules"-array
+	 * */
+	public Node collapseTree(Node root, String... rules) {
+		return root.collapseTree(rules);
+	}
+
+
+
+
+	/**
+	 * removes all terminal-nodes contained in the given array
+	 * */
+	public Node removeTerminals(Node root, String... terminals) {
+		return root.removeTerminals(terminals);
+	}
+
+
 }

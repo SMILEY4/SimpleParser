@@ -1,12 +1,12 @@
 package com.ruegnerlukas.simpleparser.tokenizer;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.simpleparser.grammar.Token;
 import com.ruegnerlukas.simpleparser.grammar.UndefinedAtom;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class Tokenizer {
 
@@ -26,13 +26,14 @@ public class Tokenizer {
 		this.string = string;
 		this.grammar = grammar;
 	}
-	
-	
-	
-	
-	
-	
+
+
 	public List<Token> tokenize() {
+		return tokenize(false);
+	}
+
+
+	public List<Token> tokenize(boolean ignoreWhitespace) {
 		
 		// get all symbols/tokens, sort by size (desc.)
 		List<Token> atoms = grammar.getTokens();
@@ -57,8 +58,13 @@ public class Tokenizer {
 		int i = 0;
 		while(i < string.length()) {
 
-			String str = string.substring(i, string.length());
-			
+			String str = string.substring(i);
+
+			if(ignoreWhitespace && str.startsWith(" ")) {
+				i++;
+				continue;
+			}
+
 			Token currAtom = null;
 			for(Token atom : atoms) {
 				if(str.startsWith(atom.symbol)) {
@@ -95,9 +101,7 @@ public class Tokenizer {
 	public boolean hasError() {
 		return this.hasError;
 	}
-	
-	
-	
+
 }
 
 

@@ -1,17 +1,17 @@
 package com.ruegnerlukas.test;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
-
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.simpleparser.grammar.GrammarBuilder;
 import com.ruegnerlukas.simpleparser.grammar.Token;
 import com.ruegnerlukas.simpleparser.tokenizer.Tokenizer;
 import com.ruegnerlukas.simpleparser.tree.Node;
 import com.ruegnerlukas.simpleparser.tree.TreeBuilder;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 
 public class TestSimpleParser {
@@ -28,7 +28,8 @@ public class TestSimpleParser {
 
 		String[] testStrings = source.split(System.lineSeparator());
 
-		
+
+
 		/*
 
 		EXPRESSION 	-> (EXPRESSION ADD_OP TERM) | TERM
@@ -130,7 +131,7 @@ public class TestSimpleParser {
 		
 		
 		Grammar grammar = gb.get();
-		test(grammar, testStrings[1]);
+		test(grammar, testStrings[2]);
 		
 		
 //		Grammar grammar = new Grammar();
@@ -296,13 +297,14 @@ public class TestSimpleParser {
 		System.out.println("==== TEST: " + testString);
 		
 		Tokenizer tokenizer = new Tokenizer(testString, grammar);
-		List<Token> tokens = tokenizer.tokenize();
+		List<Token> tokens = tokenizer.tokenize(true);
 		System.out.println("TOKENS: " + tokens);
-		
+
+		System.out.println("TREE: " + tokens);
 		TreeBuilder treeBuilder = new TreeBuilder();
 		Node root = treeBuilder.build(grammar, tokens);
 		root.printGraphViz(true);
-		
+
 		System.out.println();
 	}
 	

@@ -1,11 +1,12 @@
 package com.ruegnerlukas.simpleparser.grammar.expressions;
 
-import java.util.List;
-
 import com.ruegnerlukas.simpleparser.grammar.Token;
-import com.ruegnerlukas.simpleparser.tree.AtomNode;
 import com.ruegnerlukas.simpleparser.tree.EmptyNode;
 import com.ruegnerlukas.simpleparser.tree.Node;
+import com.ruegnerlukas.simpleparser.tree.TerminalNode;
+
+import java.util.List;
+import java.util.Set;
 
 public class TokenExpression extends Expression {
 
@@ -19,7 +20,7 @@ public class TokenExpression extends Expression {
 	@Override
 	public Node apply(List<Token> tokens) {
 		if(!tokens.isEmpty() && tokens.get(0) == token) {
-			AtomNode node = new AtomNode(token);
+			TerminalNode node = new TerminalNode(token);
 			node.token = this.token;
 			tokens.remove(0);
 			return node;
@@ -29,5 +30,23 @@ public class TokenExpression extends Expression {
 		}
 	}
 
+
+
+
+	@Override
+	public String toString() {
+		return "\"" + "TOKEN:"+Integer.toHexString(this.hashCode())+ ": " + token.symbol + "\"";
+	}
+
+
+
+
+	@Override
+	public void printAsDotGraph(Set<Expression> visited) {
+		if(visited.contains(this)) {
+			return;
+		}
+		visited.add(this);
+	}
 	
 }

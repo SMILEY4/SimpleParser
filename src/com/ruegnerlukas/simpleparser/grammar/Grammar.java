@@ -1,14 +1,9 @@
 package com.ruegnerlukas.simpleparser.grammar;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import com.ruegnerlukas.simpleparser.grammar.expressions.Expression;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 public class Grammar {
 
@@ -103,7 +98,24 @@ public class Grammar {
 		}
 		return list;
 	}
-	
+
+
+
+
+	public void printExpressionGraph() {
+		Expression start = getRule(getStartingRule()).expression;
+		Set<Expression> visited = new HashSet<>();
+
+		System.out.println("digraph G {");
+		System.out.println("    node [style=filled];");
+
+		System.out.println("    X -> " + start);
+		System.out.println("    X [color=\"1.0 1.0 1.0\"];");
+		start.printAsDotGraph(visited);
+
+		System.out.println("}");
+
+	}
 	
 	
 	

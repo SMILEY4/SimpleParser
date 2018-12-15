@@ -10,7 +10,7 @@ public class MidNode extends Node {
 	
 	@Override
 	public String toString() {
-		return Integer.toHexString(this.hashCode()) + ": " + (name);
+		return "\"" + "Mid:"+Integer.toHexString(this.hashCode()) + ": " + name + "\"";
 	}
 	
 }

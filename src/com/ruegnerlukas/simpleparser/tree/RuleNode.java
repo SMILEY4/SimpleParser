@@ -12,7 +12,7 @@ public class RuleNode extends Node {
 	
 	@Override
 	public String toString() {
-		return Integer.toHexString(this.hashCode()) + ": " + (rule == null ? "null" : rule.name);
+		return "\"" + "Rule:"+Integer.toHexString(this.hashCode()) + ": " + (rule == null ? "null" : rule.name) + "\"";
 	}
 	
 }

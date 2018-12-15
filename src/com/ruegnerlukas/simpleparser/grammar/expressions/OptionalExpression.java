@@ -1,10 +1,11 @@
 package com.ruegnerlukas.simpleparser.grammar.expressions;
 
-import java.util.List;
-
 import com.ruegnerlukas.simpleparser.grammar.Token;
 import com.ruegnerlukas.simpleparser.tree.EmptyNode;
 import com.ruegnerlukas.simpleparser.tree.Node;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * X -> [E]
@@ -37,6 +38,30 @@ public class OptionalExpression extends Expression {
 				return n;
 			}
 		}
+	}
+
+
+
+
+	@Override
+	public String toString() {
+		return "\"" + "OPTIONAL:"+Integer.toHexString(this.hashCode()) + "\"";
+	}
+
+
+
+
+	@Override
+	public void printAsDotGraph(Set<Expression> visited) {
+		if(visited.contains(this)) {
+			return;
+		}
+		visited.add(this);
+
+
+		System.out.println("    " + this + " -> " + expression + ";");
+		expression.printAsDotGraph(visited);
+
 	}
 
 

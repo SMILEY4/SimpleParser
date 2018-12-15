@@ -1,0 +1,10 @@
+
+
+expr and expr and expr
+expr and expr or expr
+expr and (expr and expr)
+expr or (expr and expr)
+
+expr or (expr and ((expr or expr) and (expr or expr)))
+
+expr or (expr and ((expr or expr) and (expr))
