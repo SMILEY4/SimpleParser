@@ -5,6 +5,7 @@ import com.ruegnerlukas.simpleparser.grammar.Rule;
 import com.ruegnerlukas.simpleparser.grammar.Token;
 import com.ruegnerlukas.simpleparser.grammar.expressions.Result;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TreeBuilder {
@@ -13,12 +14,13 @@ public class TreeBuilder {
 	 * builds a tree from the given tokenlist and grammar
 	 * */
 	public Result build(Grammar grammar, List<Token> tokens) {
+
+		List<Token> tokenCopy = new ArrayList<>(tokens.size());
+		tokenCopy.addAll(tokens);
+
 		Rule start = grammar.getRule(grammar.getStartingRule());
+		Result resultStart = start.expression.apply(tokenCopy);
 
-//		root.children.add(start.expression.apply(tokens));
-//		root.eliminateMidNodes();
-
-		Result resultStart = start.expression.apply(tokens);
 		Node root = new RuleNode(start);
 		if(resultStart.node != null) {
 			root.children.add(resultStart.node);
@@ -26,8 +28,21 @@ public class TreeBuilder {
 
 		root.eliminateMidNodes();
 
-		return new Result(resultStart.state, root, resultStart.message);
+		Result.State state = Result.State.SUCCESS;
+		String message = resultStart.message;
+
+		if(resultStart.state == Result.State.ERROR) {
+			state = Result.State.ERROR;
+		}
+		if(resultStart.state == Result.State.END_OF_STREAM && !tokenCopy.isEmpty()) {
+			state = Result.State.ERROR;
+			message = "End of stream but tokens remaining.";
+		}
+
+		return new Result(state, root, message);
 	}
+
+
 
 
 	/**

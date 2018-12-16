@@ -1,0 +1,183 @@
+
+TODO
+
+X simplify tree (remove given terminals, rules)
+
+? validate grammar
+   1. check if all rules defined
+   2. check if all atoms defined
+   3. check if grammar is not right-recursive
+      a) generate graph of rules
+      b) taking right path must lead back to prev node
+
+- validate term
+  1. check for undefined tokens
+  2. build tree -> check for errors
+
+- error feedback system
+
+X enable ignore whitespaces
+- enable ignore linebreak
+
+- allow incomplete tree -> autocompletion
+
+
+
+
+
+STATES
+
+- SUCCESS
+    - expression succeeded
+
+- END_OF_STREAM
+    - no tokens left, but expression succeeded
+
+- UNEXPECTED_SYMBOL
+    - found unexpected token, not necessarily an error
+
+- ERROR
+    - expression failed
+
+
+
+
+ALTERNATIVE
+
+ - SUCCESS:
+    - a child returns SUCCESS
+
+ - END_OF_STREAM:
+    - when no tokens left
+    - a child returns END_OF_STREAM
+
+ - UNEXPECTED_SYMBOL:
+    - never
+
+ - ERROR
+    - no child returned SUCCESS or END_OF_STREAM
+
+
+
+
+OPTIONAL
+
+ - SUCCESS:
+    - child returns SUCCESS
+    - child returns UNEXPECTED_SYMBOL
+
+ - END_OF_STREAM:
+    - when no tokens left
+    - child returns END_OF_STREAM
+
+ - UNEXPECTED_SYMBOL:
+    - never
+
+ - ERROR
+    - child returns error
+    - child returns undefined state
+
+
+
+
+REPETITION
+
+ - SUCCESS:
+    - child returns END_OF_STREAM
+    - child returns UNEXPECTED_SYMBOL
+    - reached end-of-stream after consuming tokens
+
+ - END_OF_STREAM:
+     - when no tokens left
+
+ - UNEXPECTED_SYMBOL:
+    - never
+
+ - ERROR
+    - child returns ERROR
+
+
+
+RULE
+
+ - SUCCESS:
+    - child returns SUCCESS
+
+ - END_OF_STREAM:
+    - when no tokens left
+    - child returns END_OF_STREAM
+
+ - UNEXPECTED_SYMBOL:
+    - child returns UNEXPECTED_SYMBOL
+
+ - ERROR
+    - child returns ERROR
+    - child returns undefined state
+
+
+
+
+SEQUENCE
+
+ - SUCCESS:
+    - last child returns END_OF_STREAM
+
+ - END_OF_STREAM:
+    - when no tokens left
+    - child (not last) returns END_OF_STREAM
+
+ - UNEXPECTED_SYMBOL:
+    - child returns UNEXPECTED_SYMBOL
+
+ - ERROR
+    - child returns ERROR
+
+
+
+
+TOKEN
+
+ - SUCCESS:
+    - when symbols match
+
+ - END_OF_STREAM:
+    - when no token left
+
+ - UNEXPECTED_SYMBOL:
+    - when symbols dont match
+
+ - ERROR
+    - never
+
+
+
+SPAWNED BY
+
+- SUCCESS
+    - token
+
+- END_OF_STREAM
+    - alternative
+    - optional
+    - repetition
+    - rule
+    - sequence
+    - token
+
+- UNEXPECTED_SYMBOL
+    token
+
+- ERROR
+    - alternative
+
+
+
+
+
+
+
+
+
+
+
+

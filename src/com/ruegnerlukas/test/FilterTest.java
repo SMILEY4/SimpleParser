@@ -3,6 +3,7 @@ package com.ruegnerlukas.test;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.simpleparser.grammar.GrammarBuilder;
 import com.ruegnerlukas.simpleparser.grammar.Token;
+import com.ruegnerlukas.simpleparser.grammar.expressions.Result;
 import com.ruegnerlukas.simpleparser.tokenizer.Tokenizer;
 import com.ruegnerlukas.simpleparser.tree.Node;
 import com.ruegnerlukas.simpleparser.tree.TreeBuilder;
@@ -81,7 +82,7 @@ public class FilterTest {
 
 		Grammar grammar = gb.get();
 
-		test(grammar, testStrings[5]);
+		test(grammar, testStrings[4]);
 
 //		for(String testString : testStrings) {
 //			test(grammar, testString);
@@ -99,13 +100,15 @@ public class FilterTest {
 
 		System.out.println("TREE: ");
 		TreeBuilder treeBuilder = new TreeBuilder();
-		Node root = treeBuilder.build(grammar, tokens).node;
+		Result result = treeBuilder.build(grammar, tokens);
+		System.out.println("RESULT: " + result.state + (result.message.length() == 0 ? "" : result.message) );
+		Node root = result.node;
 		root.printGraphViz(true);
 
-//		System.out.println("TREE COLLAPSED: ");
-//		root = treeBuilder.removeTerminals(root, "and", "or", "(", ")");
-//		root = treeBuilder.collapseTree(root, "OR_EXPRESSION", "AND_EXPRESSION", "COMPONENT");
-//		root.printGraphViz(true);
+		System.out.println("TREE COLLAPSED: ");
+		root = treeBuilder.removeTerminals(root, "and", "or", "(", ")");
+		root = treeBuilder.collapseTree(root, "OR_EXPRESSION", "AND_EXPRESSION", "COMPONENT");
+		root.printGraphViz(true);
 
 		System.out.println();
 		System.out.println();

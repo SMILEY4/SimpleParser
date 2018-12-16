@@ -29,9 +29,6 @@ public class Result {
 		this.state = state;
 		this.node = node;
 		this.message = message;
-		if(message.length() > 0) {
-			System.out.println("MESSAGE: " + message);
-		}
 	}
 
 
