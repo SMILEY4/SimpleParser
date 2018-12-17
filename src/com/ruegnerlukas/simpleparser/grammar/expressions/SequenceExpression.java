@@ -29,15 +29,14 @@ public class SequenceExpression extends Expression {
 
 
 	@Override
-	public Result apply(List<Token> consumed, List<Token> tokens) {
-
-		System.out.println("APPLY " + this);
+	public Result apply(List<Token> consumed, List<Token> tokens, List<Expression> trace) {
+		trace.add(this);
 
 		Node node = new MidNode(Integer.toHexString(this.hashCode()));
 
 		for (Expression expr : expressions) {
 
-			Result resultExpr = expr.apply(consumed, tokens);
+			Result resultExpr = expr.apply(consumed, tokens, trace);
 
 			if (resultExpr.state == Result.State.SUCCESS) {
 				node.children.add(resultExpr.node);

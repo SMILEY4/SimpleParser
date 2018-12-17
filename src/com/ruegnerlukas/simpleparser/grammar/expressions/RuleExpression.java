@@ -22,11 +22,10 @@ public class RuleExpression extends Expression {
 	
 
 	@Override
-	public Result apply(List<Token> consumed, List<Token> tokens) {
+	public Result apply(List<Token> consumed, List<Token> tokens, List<Expression> trace) {
+		trace.add(this);
 
-		System.out.println("APPLY " + this);
-
-		Result resultRule = rule.expression.apply(consumed, tokens);
+		Result resultRule = rule.expression.apply(consumed, tokens, trace);
 
 		if (resultRule.state == Result.State.SUCCESS) {
 			Node node = new RuleNode(rule);

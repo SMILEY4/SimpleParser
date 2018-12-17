@@ -3,6 +3,7 @@ package com.ruegnerlukas.simpleparser.tree;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.simpleparser.grammar.Rule;
 import com.ruegnerlukas.simpleparser.grammar.Token;
+import com.ruegnerlukas.simpleparser.grammar.expressions.Expression;
 import com.ruegnerlukas.simpleparser.grammar.expressions.Result;
 
 import java.util.ArrayList;
@@ -10,16 +11,30 @@ import java.util.List;
 
 public class TreeBuilder {
 
+	private boolean traceEnabled = false;
+	private List<Expression> trace = new ArrayList<>();
+
+
+
+
+	public void enableTrace(boolean enable) {
+		this.traceEnabled = enable;
+	}
+
+
+
+
 	/**
 	 * builds a tree from the given tokenlist and grammar
 	 * */
 	public Result build(Grammar grammar, List<Token> tokens) {
+		trace.clear();
 
 		List<Token> tokenCopy = new ArrayList<>(tokens.size());
 		tokenCopy.addAll(tokens);
 
 		Rule start = grammar.getRule(grammar.getStartingRule());
-		Result resultStart = start.expression.apply(new ArrayList<Token>(tokenCopy.size()), tokenCopy);
+		Result resultStart = start.expression.apply(new ArrayList<Token>(tokenCopy.size()), tokenCopy, (traceEnabled ? trace : null) );
 
 		Node root = new RuleNode(start);
 		if(resultStart.node != null) {

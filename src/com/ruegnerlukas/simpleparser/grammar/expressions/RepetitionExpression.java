@@ -27,14 +27,13 @@ public class RepetitionExpression extends Expression {
 	
 
 	@Override
-	public Result apply(List<Token> consumed, List<Token> tokens) {
-
-		System.out.println("APPLY " + this);
+	public Result apply(List<Token> consumed, List<Token> tokens, List<Expression> trace) {
+		trace.add(this);
 
 		Node node = new MidNode(Integer.toHexString(this.hashCode()));
 
 		while (!tokens.isEmpty()) {
-			Result resultExpr = expression.apply(consumed, tokens);
+			Result resultExpr = expression.apply(consumed, tokens, trace);
 
 			if (resultExpr.state == Result.State.SUCCESS) {
 				node.children.add(resultExpr.node);

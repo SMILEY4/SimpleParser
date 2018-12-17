@@ -17,9 +17,8 @@ public class TokenExpression extends Expression {
 
 
 	@Override
-	public Result apply(List<Token> consumed, List<Token> tokens) {
-
-		System.out.println("APPLY " + this);
+	public Result apply(List<Token> consumed, List<Token> tokens, List<Expression> trace) {
+		trace.add(this);
 
 		if(tokens.isEmpty()) {
 			return new Result(Result.State.END_OF_STREAM, null);

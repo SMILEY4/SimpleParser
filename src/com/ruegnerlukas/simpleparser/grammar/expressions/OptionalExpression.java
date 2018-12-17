@@ -27,16 +27,15 @@ public class OptionalExpression extends Expression {
 	
 
 	@Override
-	public Result apply(List<Token> consumed, List<Token> tokens) {
-
-		System.out.println("APPLY " + this);
+	public Result apply(List<Token> consumed, List<Token> tokens, List<Expression> trace) {
+		trace.add(this);
 
 		if(tokens.isEmpty()) {
 			return new Result(Result.State.SUCCESS, new EmptyNode());
 
 		} else {
 
-			Result resultExpr = expression.apply(consumed, tokens);
+			Result resultExpr = expression.apply(consumed, tokens, trace);
 
 			if(resultExpr.state == Result.State.SUCCESS) {
 				return new Result(Result.State.SUCCESS, resultExpr.node);
