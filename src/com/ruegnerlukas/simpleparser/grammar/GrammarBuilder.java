@@ -1,6 +1,5 @@
 package com.ruegnerlukas.simpleparser.grammar;
 
-import com.ruegnerlukas.simpleparser.error.Errors;
 import com.ruegnerlukas.simpleparser.grammar.expressions.*;
 
 import java.security.InvalidParameterException;
@@ -22,9 +21,6 @@ public class GrammarBuilder {
 		if(grammar.getRule(rule) == null) {
 			grammar.addRules(rule);
 		}
-		if(grammar.getRule(rule).isDefined()) {
-			Errors.spawnError(this, Errors.ErrorLevel.WARNING, "Rule '" + rule + "' was already defined.");
-		}
 		grammar.defineRule(rule, expression);
 		grammar.setStartingRule(rule);
 	}
@@ -40,9 +36,6 @@ public class GrammarBuilder {
 	public void defineNonTerminal(String rule, Expression expression) {
 		if(grammar.getRule(rule) == null) {
 			grammar.addRules(rule);
-		}
-		if(grammar.getRule(rule).isDefined()) {
-			Errors.spawnError(this, Errors.ErrorLevel.WARNING, "Rule '" + rule + "' was already defined.");
 		}
 		grammar.defineRule(rule, expression);
 	}
@@ -144,9 +137,6 @@ public class GrammarBuilder {
 	public Expression terminal(String terminal) {
 		if(grammar.getToken(terminal) == null) {
 			grammar.addTokens(terminal);
-		}
-		if(grammar.getToken(terminal) != null) {
-			Errors.spawnError(this, Errors.ErrorLevel.WARNING, "Terminal '" + terminal + "' was already defined.");
 		}
 		return new TokenExpression(grammar.getToken(terminal));
 	}

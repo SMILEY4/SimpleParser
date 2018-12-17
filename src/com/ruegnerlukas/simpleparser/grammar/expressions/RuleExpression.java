@@ -1,5 +1,6 @@
 package com.ruegnerlukas.simpleparser.grammar.expressions;
 
+import com.ruegnerlukas.simpleparser.error.ErrorMessages;
 import com.ruegnerlukas.simpleparser.grammar.Rule;
 import com.ruegnerlukas.simpleparser.grammar.Token;
 import com.ruegnerlukas.simpleparser.tree.Node;
@@ -21,41 +22,29 @@ public class RuleExpression extends Expression {
 	
 
 	@Override
-	public Result apply(List<Token> tokens) {
+	public Result apply(List<Token> consumed, List<Token> tokens) {
 
-		if(tokens.isEmpty()) {
-			return new Result(Result.State.END_OF_STREAM, null);
+		System.out.println("APPLY " + this);
 
-		} else {
-			Result resultRule = rule.expression.apply(tokens);
-			if(resultRule.state == Result.State.SUCCESS) {
-				Node node = new RuleNode(rule);
-				node.children.add(resultRule.node);
-				return new Result(Result.State.SUCCESS, node);
-			}
-			if(resultRule.state == Result.State.END_OF_STREAM) {
-				Node node = new RuleNode(rule);
-				node.children.add(resultRule.node);
-				return new Result(Result.State.END_OF_STREAM, node);
-			}
-			if(resultRule.state == Result.State.UNEXPECTED_SYMBOL) {
-				return new Result(Result.State.UNEXPECTED_SYMBOL, null, resultRule.message);
-			}
-			if(resultRule.state == Result.State.ERROR) {
-				return new Result(Result.State.ERROR, null, resultRule.message);
-			}
+		Result resultRule = rule.expression.apply(consumed, tokens);
 
-			return new Result(Result.State.ERROR, null, this + ": Undefined result state.");
+		if (resultRule.state == Result.State.SUCCESS) {
+			Node node = new RuleNode(rule);
+			node.children.add(resultRule.node);
+			return new Result(Result.State.SUCCESS, node);
+		}
+		if (resultRule.state == Result.State.END_OF_STREAM) {
+			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_endOfStream());
+		}
+		if (resultRule.state == Result.State.UNEXPECTED_SYMBOL) {
+			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_unexpectedSymbol(consumed, tokens));
+		}
+		if (resultRule.state == Result.State.ERROR) {
+			return new Result(Result.State.ERROR, null, resultRule.message);
 		}
 
-//		Node node = new RuleNode(rule);
-//		Node n = rule.expression.apply(tokens);
-//		if(n instanceof EmptyNode) {
-//			return new EmptyNode();
-//		} else {
-//			node.children.add(n);
-//			return node;
-//		}
+		return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_undefinedState());
+
 	}
 
 

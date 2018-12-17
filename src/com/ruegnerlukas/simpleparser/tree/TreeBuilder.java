@@ -19,7 +19,7 @@ public class TreeBuilder {
 		tokenCopy.addAll(tokens);
 
 		Rule start = grammar.getRule(grammar.getStartingRule());
-		Result resultStart = start.expression.apply(tokenCopy);
+		Result resultStart = start.expression.apply(new ArrayList<Token>(tokenCopy.size()), tokenCopy);
 
 		Node root = new RuleNode(start);
 		if(resultStart.node != null) {

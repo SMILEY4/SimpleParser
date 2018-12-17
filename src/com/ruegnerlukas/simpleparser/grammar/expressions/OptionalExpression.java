@@ -1,5 +1,6 @@
 package com.ruegnerlukas.simpleparser.grammar.expressions;
 
+import com.ruegnerlukas.simpleparser.error.ErrorMessages;
 import com.ruegnerlukas.simpleparser.grammar.Token;
 import com.ruegnerlukas.simpleparser.tree.EmptyNode;
 
@@ -26,42 +27,33 @@ public class OptionalExpression extends Expression {
 	
 
 	@Override
-	public Result apply(List<Token> tokens) {
+	public Result apply(List<Token> consumed, List<Token> tokens) {
+
+		System.out.println("APPLY " + this);
 
 		if(tokens.isEmpty()) {
-			return new Result(Result.State.END_OF_STREAM, null);
+			return new Result(Result.State.SUCCESS, new EmptyNode());
 
 		} else {
 
-			Result resultExpr = expression.apply(tokens);
+			Result resultExpr = expression.apply(consumed, tokens);
 
 			if(resultExpr.state == Result.State.SUCCESS) {
 				return new Result(Result.State.SUCCESS, resultExpr.node);
 			}
 			if(resultExpr.state == Result.State.END_OF_STREAM) {
-				return new Result(Result.State.END_OF_STREAM, resultExpr.node);
+				return new Result(Result.State.SUCCESS, resultExpr.node == null ? new EmptyNode() : resultExpr.node);
 			}
 			if(resultExpr.state == Result.State.UNEXPECTED_SYMBOL) {
 				return new Result(Result.State.SUCCESS, new EmptyNode());
 			}
 			if(resultExpr.state == Result.State.ERROR) {
-				return new Result(Result.State.ERROR, null, resultExpr.message);
+				return new Result(Result.State.SUCCESS, new EmptyNode());
+//				return new Result(Result.State.ERROR, null, resultExpr.message);
 			}
 
-			return new Result(Result.State.ERROR, null, this + ": Undefined result state.");
+			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_endOfStream());
 		}
-
-
-//		if(tokens.isEmpty()) {
-//			return new EmptyNode();
-//		} else {
-//			Node n = expression.apply(tokens);
-//			if(n instanceof EmptyNode) {
-//				return new EmptyNode();
-//			} else {
-//				return n;
-//			}
-//		}
 	}
 
 

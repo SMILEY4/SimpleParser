@@ -48,14 +48,14 @@ ALTERNATIVE
     - a child returns SUCCESS
 
  - END_OF_STREAM:
-    - when no tokens left
-    - a child returns END_OF_STREAM
+    - never
 
  - UNEXPECTED_SYMBOL:
     - never
 
  - ERROR
-    - no child returned SUCCESS or END_OF_STREAM
+    - child returns END_OF_STREAM
+    - no child returned SUCCESS
 
 
 
@@ -63,12 +63,13 @@ ALTERNATIVE
 OPTIONAL
 
  - SUCCESS:
+    - when no tokens left
     - child returns SUCCESS
     - child returns UNEXPECTED_SYMBOL
+    - child returns END_OF_STREAM
 
  - END_OF_STREAM:
-    - when no tokens left
-    - child returns END_OF_STREAM
+    - never
 
  - UNEXPECTED_SYMBOL:
     - never
@@ -85,10 +86,10 @@ REPETITION
  - SUCCESS:
     - child returns END_OF_STREAM
     - child returns UNEXPECTED_SYMBOL
-    - reached end-of-stream after consuming tokens
+    - reached end-of-stream
 
  - END_OF_STREAM:
-     - when no tokens left
+    - never
 
  - UNEXPECTED_SYMBOL:
     - never
@@ -104,13 +105,14 @@ RULE
     - child returns SUCCESS
 
  - END_OF_STREAM:
-    - when no tokens left
-    - child returns END_OF_STREAM
+    - never
 
  - UNEXPECTED_SYMBOL:
-    - child returns UNEXPECTED_SYMBOL
+    - never
 
  - ERROR
+    - child returns UNEXPECTED_SYMBOL
+    - child returns END_OF_STREAM
     - child returns ERROR
     - child returns undefined state
 
@@ -120,16 +122,17 @@ RULE
 SEQUENCE
 
  - SUCCESS:
-    - last child returns END_OF_STREAM
+    - all expressions applied without problems
 
  - END_OF_STREAM:
-    - when no tokens left
-    - child (not last) returns END_OF_STREAM
+    - never
 
  - UNEXPECTED_SYMBOL:
-    - child returns UNEXPECTED_SYMBOL
+    - never
 
  - ERROR
+    - child (not last) returns END_OF_STREAM
+    - child returns UNEXPECTED_SYMBOL
     - child returns ERROR
 
 

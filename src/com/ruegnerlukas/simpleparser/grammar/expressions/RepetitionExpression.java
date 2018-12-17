@@ -27,56 +27,31 @@ public class RepetitionExpression extends Expression {
 	
 
 	@Override
-	public Result apply(List<Token> tokens) {
+	public Result apply(List<Token> consumed, List<Token> tokens) {
 
-		if(tokens.isEmpty()) {
-			return new Result(Result.State.END_OF_STREAM, null);
+		System.out.println("APPLY " + this);
 
-		} else {
+		Node node = new MidNode(Integer.toHexString(this.hashCode()));
 
-			Node node = new MidNode(Integer.toHexString(this.hashCode()));
+		while (!tokens.isEmpty()) {
+			Result resultExpr = expression.apply(consumed, tokens);
 
-			while(!tokens.isEmpty()) {
-				Result resultExpr = expression.apply(tokens);
-
-				if(resultExpr.state == Result.State.SUCCESS) {
-					node.children.add(resultExpr.node);
-				}
-				if(resultExpr.state == Result.State.END_OF_STREAM) {
-					return new Result(Result.State.SUCCESS, node);
-				}
-				if(resultExpr.state == Result.State.UNEXPECTED_SYMBOL) {
-					return new Result(Result.State.SUCCESS, node);
-				}
-				if(resultExpr.state == Result.State.ERROR) {
-					return new Result(Result.State.ERROR, null, resultExpr.message);
-				}
+			if (resultExpr.state == Result.State.SUCCESS) {
+				node.children.add(resultExpr.node);
 			}
-
-			return new Result(Result.State.SUCCESS, node);
-
+			if (resultExpr.state == Result.State.END_OF_STREAM) {
+				return new Result(Result.State.SUCCESS, node);
+			}
+			if (resultExpr.state == Result.State.UNEXPECTED_SYMBOL) {
+				return new Result(Result.State.SUCCESS, node);
+			}
+			if (resultExpr.state == Result.State.ERROR) {
+				break;
+//				return new Result(Result.State.ERROR, null, resultExpr.message);
+			}
 		}
 
-//		if(tokens.isEmpty()) {
-//			return new EmptyNode();
-//
-//		} else {
-//			Node node = new MidNode(Integer.toHexString(this.hashCode()));
-//			while(!tokens.isEmpty()) {
-//				Node n = expression.apply(tokens);
-//				if(n instanceof EmptyNode) {
-//					break;
-//				} else {
-//					node.children.add(n);
-//				}
-//			}
-//			if(node.children.isEmpty()) {
-//				return new EmptyNode();
-//			} else {
-//				return node;
-//			}
-//		}
-		
+		return new Result(Result.State.SUCCESS, node);
 	}
 
 
@@ -96,10 +71,8 @@ public class RepetitionExpression extends Expression {
 			return;
 		}
 		visited.add(this);
-
 		System.out.println("    " + this + " -> " + expression + ";");
 		expression.printAsDotGraph(visited);
-
 	}
 
 	

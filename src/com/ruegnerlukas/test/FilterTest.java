@@ -82,6 +82,10 @@ public class FilterTest {
 
 		Grammar grammar = gb.get();
 
+		System.out.println("EXPRESSION-GRAPH:");
+		grammar.printExpressionGraph();
+		System.out.println();
+
 		test(grammar, testStrings[4]);
 
 //		for(String testString : testStrings) {

@@ -1,5 +1,6 @@
 package com.ruegnerlukas.simpleparser.grammar.expressions;
 
+import com.ruegnerlukas.simpleparser.error.ErrorMessages;
 import com.ruegnerlukas.simpleparser.grammar.Token;
 
 import java.util.ArrayList;
@@ -27,44 +28,32 @@ public class AlternativeExpression extends Expression {
 	
 
 	@Override
-	public Result apply(List<Token> tokens) {
+	public Result apply(List<Token> consumed, List<Token> tokens) {
 
-		if(tokens.isEmpty()) {
-			return new Result(Result.State.END_OF_STREAM, null);
+		System.out.println("APPLY " + this);
 
-		} else {
+		for(Expression expr : expressions) {
+			Result resultExpr = expr.apply(consumed, tokens);
 
-			for(Expression expr : expressions) {
-				Result resultExpr = expr.apply(tokens);
-
-				if(resultExpr.state == Result.State.SUCCESS) {
-					return new Result(Result.State.SUCCESS, resultExpr.node);
-				}
-
-				if(resultExpr.state == Result.State.END_OF_STREAM) {
-					return new Result(Result.State.END_OF_STREAM, null);
-				}
-
-				if(resultExpr.state == Result.State.UNEXPECTED_SYMBOL) {
-					continue;
-				}
-
-				if(resultExpr.state == Result.State.ERROR) {
-					continue;
-				}
-
+			if(resultExpr.state == Result.State.SUCCESS) {
+				return new Result(Result.State.SUCCESS, resultExpr.node);
 			}
 
-			return new Result(Result.State.ERROR, null, this + ": Failed Alternative: '" + tokens.get(0).symbol + "'");
+			if(resultExpr.state == Result.State.END_OF_STREAM) {
+				return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_endOfStream());
+			}
+
+			if(resultExpr.state == Result.State.UNEXPECTED_SYMBOL) {
+				continue;
+			}
+
+			if(resultExpr.state == Result.State.ERROR) {
+				continue;
+			}
+
 		}
 
-//		for(Expression expr : expressions) {
-//			Node n = expr.apply(tokens);
-//			if( !(n instanceof EmptyNode) ) {
-//				return n;
-//			}
-//		}
-//		return new EmptyNode();
+		return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_unexpectedSymbol(consumed, tokens));
 	}
 
 
