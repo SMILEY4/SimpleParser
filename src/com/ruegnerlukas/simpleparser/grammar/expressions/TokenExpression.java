@@ -1,7 +1,8 @@
 package com.ruegnerlukas.simpleparser.grammar.expressions;
 
-import com.ruegnerlukas.simpleparser.error.ErrorMessages;
+import com.ruegnerlukas.simpleparser.ErrorMessages;
 import com.ruegnerlukas.simpleparser.grammar.Token;
+import com.ruegnerlukas.simpleparser.grammar.UndefinedToken;
 import com.ruegnerlukas.simpleparser.tree.TerminalNode;
 
 import java.util.List;
@@ -18,14 +19,19 @@ public class TokenExpression extends Expression {
 
 	@Override
 	public Result apply(List<Token> consumed, List<Token> tokens, List<Expression> trace) {
-		trace.add(this);
+		if(trace != null) {
+			trace.add(this);
+		}
 
 		if(tokens.isEmpty()) {
 			return new Result(Result.State.END_OF_STREAM, null);
 
 		} else {
 
-			if(tokens.get(0) == token) {
+			if(tokens.get(0) instanceof UndefinedToken) {
+				return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_undefinedSymbol(token.symbol, consumed, tokens));
+
+			} else if(tokens.get(0) == token) {
 				consumed.add(tokens.remove(0));
 				return new Result(Result.State.SUCCESS, new TerminalNode(token));
 
@@ -48,7 +54,7 @@ public class TokenExpression extends Expression {
 
 
 	@Override
-	public void printAsDotGraph(Set<Expression> visited) {
+	public void createDotGraph(Set<Expression> visited, StringBuilder builder) {
 		if(visited.contains(this)) {
 			return;
 		}

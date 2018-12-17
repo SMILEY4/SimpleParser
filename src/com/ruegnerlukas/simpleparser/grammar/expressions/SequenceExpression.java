@@ -1,6 +1,6 @@
 package com.ruegnerlukas.simpleparser.grammar.expressions;
 
-import com.ruegnerlukas.simpleparser.error.ErrorMessages;
+import com.ruegnerlukas.simpleparser.ErrorMessages;
 import com.ruegnerlukas.simpleparser.grammar.Token;
 import com.ruegnerlukas.simpleparser.tree.*;
 
@@ -30,9 +30,11 @@ public class SequenceExpression extends Expression {
 
 	@Override
 	public Result apply(List<Token> consumed, List<Token> tokens, List<Expression> trace) {
-		trace.add(this);
+		if(trace != null) {
+			trace.add(this);
+		}
 
-		Node node = new MidNode(Integer.toHexString(this.hashCode()));
+		Node node = new PlaceholderNode(Integer.toHexString(this.hashCode()));
 
 		for (Expression expr : expressions) {
 
@@ -70,17 +72,17 @@ public class SequenceExpression extends Expression {
 
 
 	@Override
-	public void printAsDotGraph(Set<Expression> visited) {
+	public void createDotGraph(Set<Expression> visited, StringBuilder builder) {
 		if(visited.contains(this)) {
 			return;
 		}
 		visited.add(this);
 
 		for(Expression e : expressions) {
-			System.out.println("    " + this + " -> " + e + ";");
+			builder.append("    ").append(this).append(" -> ").append(e).append(';').append(System.lineSeparator());
 		}
 		for(Expression e : expressions) {
-			e.printAsDotGraph(visited);
+			e.createDotGraph(visited, builder);
 		}
 
 	}

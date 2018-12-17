@@ -24,6 +24,20 @@ public class TreeBuilder {
 
 
 
+	public boolean isTraceEnabled() {
+		return traceEnabled;
+	}
+
+
+
+
+	public List<Expression> getLastTrace() {
+		return this.trace;
+	}
+
+
+
+
 	/**
 	 * builds a tree from the given tokenlist and grammar
 	 * */
@@ -41,7 +55,7 @@ public class TreeBuilder {
 			root.children.add(resultStart.node);
 		}
 
-		root.eliminateMidNodes();
+		root.eliminatePlaceholders();
 
 		Result.State state = Result.State.SUCCESS;
 		String message = resultStart.message;

@@ -7,5 +7,5 @@ import java.util.Set;
 
 public abstract class Expression {
 	public abstract Result apply(List<Token> consumed, List<Token> tokens, List<Expression> trace);
-	public abstract void printAsDotGraph(Set<Expression> visited);
+	public abstract void createDotGraph(Set<Expression> visited, StringBuilder builder);
 }

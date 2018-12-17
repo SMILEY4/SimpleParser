@@ -1,7 +1,7 @@
 package com.ruegnerlukas.simpleparser.grammar.expressions;
 
 import com.ruegnerlukas.simpleparser.grammar.Token;
-import com.ruegnerlukas.simpleparser.tree.MidNode;
+import com.ruegnerlukas.simpleparser.tree.PlaceholderNode;
 import com.ruegnerlukas.simpleparser.tree.Node;
 
 import java.util.List;
@@ -28,9 +28,11 @@ public class RepetitionExpression extends Expression {
 
 	@Override
 	public Result apply(List<Token> consumed, List<Token> tokens, List<Expression> trace) {
-		trace.add(this);
+		if(trace != null) {
+			trace.add(this);
+		}
 
-		Node node = new MidNode(Integer.toHexString(this.hashCode()));
+		Node node = new PlaceholderNode(Integer.toHexString(this.hashCode()));
 
 		while (!tokens.isEmpty()) {
 			Result resultExpr = expression.apply(consumed, tokens, trace);
@@ -65,13 +67,13 @@ public class RepetitionExpression extends Expression {
 
 
 	@Override
-	public void printAsDotGraph(Set<Expression> visited) {
+	public void createDotGraph(Set<Expression> visited, StringBuilder builder) {
 		if(visited.contains(this)) {
 			return;
 		}
 		visited.add(this);
-		System.out.println("    " + this + " -> " + expression + ";");
-		expression.printAsDotGraph(visited);
+		builder.append("    ").append(this).append(" -> ").append(expression).append(';').append(System.lineSeparator());
+		expression.createDotGraph(visited, builder);
 	}
 
 	

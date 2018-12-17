@@ -83,7 +83,7 @@ public class FilterTest {
 		Grammar grammar = gb.get();
 
 		System.out.println("EXPRESSION-GRAPH:");
-		grammar.printExpressionGraph();
+		System.out.println(grammar.createDotGraph());
 		System.out.println();
 
 		test(grammar, testStrings[4]);
@@ -107,12 +107,12 @@ public class FilterTest {
 		Result result = treeBuilder.build(grammar, tokens);
 		System.out.println("RESULT: " + result.state + (result.message.length() == 0 ? "" : result.message) );
 		Node root = result.node;
-		root.printGraphViz(true);
+		System.out.println(root.createDotTree());
 
 		System.out.println("TREE COLLAPSED: ");
 		root = treeBuilder.removeTerminals(root, "and", "or", "(", ")");
 		root = treeBuilder.collapseTree(root, "OR_EXPRESSION", "AND_EXPRESSION", "COMPONENT");
-		root.printGraphViz(true);
+		System.out.println(root.createDotTree());
 
 		System.out.println();
 		System.out.println();

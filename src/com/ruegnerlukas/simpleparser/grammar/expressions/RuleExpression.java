@@ -1,6 +1,6 @@
 package com.ruegnerlukas.simpleparser.grammar.expressions;
 
-import com.ruegnerlukas.simpleparser.error.ErrorMessages;
+import com.ruegnerlukas.simpleparser.ErrorMessages;
 import com.ruegnerlukas.simpleparser.grammar.Rule;
 import com.ruegnerlukas.simpleparser.grammar.Token;
 import com.ruegnerlukas.simpleparser.tree.Node;
@@ -23,7 +23,9 @@ public class RuleExpression extends Expression {
 
 	@Override
 	public Result apply(List<Token> consumed, List<Token> tokens, List<Expression> trace) {
-		trace.add(this);
+		if(trace != null) {
+			trace.add(this);
+		}
 
 		Result resultRule = rule.expression.apply(consumed, tokens, trace);
 
@@ -58,15 +60,15 @@ public class RuleExpression extends Expression {
 
 
 	@Override
-	public void printAsDotGraph(Set<Expression> visited) {
+	public void createDotGraph(Set<Expression> visited, StringBuilder builder) {
 		if(visited.contains(this)) {
 			return;
 		}
 		visited.add(this);
 
-		System.out.println("    " + this + " -> " + rule.expression + ";");
-		rule.expression.printAsDotGraph(visited);
-		System.out.println("    " + this + " [color=\"1.0 1.0 1.0\"];");
+		builder.append("    ").append(this).append(" -> ").append(rule.expression).append(';').append(System.lineSeparator());
+		rule.expression.createDotGraph(visited, builder);
+		builder.append("    ").append(this).append(" [color=\"1.0 1.0 1.0\"];").append(System.lineSeparator());
 	}
 
 

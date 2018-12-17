@@ -13,16 +13,16 @@ public abstract class Node {
 
 
 
-	protected void eliminateMidNodes() {
+	protected void eliminatePlaceholders() {
 		
 		for(Node child : children) {
-			child.eliminateMidNodes();
+			child.eliminatePlaceholders();
 		}
 		
 		List<Node> newChildren = new ArrayList<Node>();
 		
 		for(Node child : children) {
-			if(child instanceof MidNode) {
+			if(child instanceof PlaceholderNode) {
 				newChildren.addAll(child.children);
 			} else {
 				newChildren.add(child);
@@ -103,27 +103,33 @@ public abstract class Node {
 
 
 
+	public String createDotTree() {
+		StringBuilder builder = new StringBuilder();
+		this.createDotTree(true, builder);
+		return builder.toString();
+	}
 
-	public void printGraphViz(boolean root) {
+
+	protected void createDotTree(boolean isRoot, StringBuilder builder) {
 		
-		if(root) {
-			System.out.println("digraph G {");
-			System.out.println("    node [style=filled];");
+		if(isRoot) {
+			builder.append("digraph G {").append(System.lineSeparator());
+			builder.append("    node [style=filled];").append(System.lineSeparator());
 		}
 		
 		for(Node child : children) {
-			System.out.println("    " + this + " -> " + child + ";");
+			builder.append("    ").append(this).append(" -> ").append(child).append(';').append(System.lineSeparator());
 		}
 		for(Node child : children) {
-			child.printGraphViz(false);
+			child.createDotTree(false, builder);
 		}
 
 		if(this instanceof RecommendationNode) {
-			System.out.println("    " + this + " [color=\"1.0 1.0 1.0\"];");
+			builder.append("    ").append(this).append(" [color=\"1.0 1.0 1.0\"];").append(System.lineSeparator());
 		}
 
-		if(root) {
-			System.out.println("}");
+		if(isRoot) {
+			builder.append('}').append(System.lineSeparator());
 		}
 		
 	}

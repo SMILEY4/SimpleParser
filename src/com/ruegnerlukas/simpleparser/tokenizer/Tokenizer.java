@@ -2,7 +2,7 @@ package com.ruegnerlukas.simpleparser.tokenizer;
 
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.simpleparser.grammar.Token;
-import com.ruegnerlukas.simpleparser.grammar.UndefinedAtom;
+import com.ruegnerlukas.simpleparser.grammar.UndefinedToken;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -28,13 +28,16 @@ public class Tokenizer {
 	}
 
 
+
+
 	public List<Token> tokenize() {
 		return tokenize(false);
 	}
 
 
 	public List<Token> tokenize(boolean ignoreWhitespace) {
-		
+		hasError = false;
+
 		// get all symbols/tokens, sort by size (desc.)
 		List<Token> atoms = grammar.getTokens();
 		atoms.sort(new Comparator<Token>() {
@@ -84,7 +87,7 @@ public class Tokenizer {
 			} else {
 				if(isError) {
 					isError = false;
-					tokens.add(new UndefinedAtom(string.substring(indexError, i)));
+					tokens.add(new UndefinedToken(string.substring(indexError, i)));
 				}
 				tokens.add(currAtom);
 				i += currAtom.symbol.length();

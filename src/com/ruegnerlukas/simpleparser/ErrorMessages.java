@@ -1,4 +1,4 @@
-package com.ruegnerlukas.simpleparser.error;
+package com.ruegnerlukas.simpleparser;
 
 import com.ruegnerlukas.simpleparser.grammar.Token;
 
@@ -38,6 +38,16 @@ public class ErrorMessages {
 	}
 
 
+
+	public static String genMessage_undefinedSymbol(String expected, List<Token> consumed, List<Token> tokens) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Syntax Error: Found undefined symbol @").append(consumed.size()).append(": ");
+		for(int i=0; i<Math.min(3, tokens.size()); i++) {
+			builder.append('"').append(tokens.get(i).symbol).append('"').append(" ");
+		}
+		builder.append("...  Expected: ").append('"').append(expected).append('"');
+		return builder.toString();
+	}
 
 
 

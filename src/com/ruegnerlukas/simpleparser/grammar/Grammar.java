@@ -102,19 +102,19 @@ public class Grammar {
 
 
 
-	public void printExpressionGraph() {
+	public String createDotGraph() {
 		Expression start = getRule(getStartingRule()).expression;
 		Set<Expression> visited = new HashSet<>();
 
-		System.out.println("digraph G {");
-		System.out.println("    node [style=filled];");
+		StringBuilder builder = new StringBuilder();
+		builder.append("digraph G {").append(System.lineSeparator());
+		builder.append("    node [style=filled];").append(System.lineSeparator());
+		builder.append("    X -> ").append(start).append(System.lineSeparator());
+		builder.append("    X [color=\"1.0 1.0 1.0\"];").append(System.lineSeparator());
+		start.createDotGraph(visited, builder);
+		builder.append('}').append(System.lineSeparator());
 
-		System.out.println("    X -> " + start);
-		System.out.println("    X [color=\"1.0 1.0 1.0\"];");
-		start.printAsDotGraph(visited);
-
-		System.out.println("}");
-
+		return builder.toString();
 	}
 	
 	

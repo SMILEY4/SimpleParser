@@ -1,8 +1,8 @@
 package com.ruegnerlukas.simpleparser.grammar.expressions;
 
-import com.ruegnerlukas.simpleparser.error.ErrorMessages;
+import com.ruegnerlukas.simpleparser.ErrorMessages;
 import com.ruegnerlukas.simpleparser.grammar.Token;
-import com.ruegnerlukas.simpleparser.tree.EmptyNode;
+import com.ruegnerlukas.simpleparser.tree.PlaceholderNode;
 
 import java.util.List;
 import java.util.Set;
@@ -28,10 +28,12 @@ public class OptionalExpression extends Expression {
 
 	@Override
 	public Result apply(List<Token> consumed, List<Token> tokens, List<Expression> trace) {
-		trace.add(this);
+		if(trace != null) {
+			trace.add(this);
+		}
 
 		if(tokens.isEmpty()) {
-			return new Result(Result.State.SUCCESS, new EmptyNode());
+			return new Result(Result.State.SUCCESS, new PlaceholderNode());
 
 		} else {
 
@@ -41,13 +43,13 @@ public class OptionalExpression extends Expression {
 				return new Result(Result.State.SUCCESS, resultExpr.node);
 			}
 			if(resultExpr.state == Result.State.END_OF_STREAM) {
-				return new Result(Result.State.SUCCESS, resultExpr.node == null ? new EmptyNode() : resultExpr.node);
+				return new Result(Result.State.SUCCESS, resultExpr.node == null ? new PlaceholderNode() : resultExpr.node);
 			}
 			if(resultExpr.state == Result.State.UNEXPECTED_SYMBOL) {
-				return new Result(Result.State.SUCCESS, new EmptyNode());
+				return new Result(Result.State.SUCCESS, new PlaceholderNode());
 			}
 			if(resultExpr.state == Result.State.ERROR) {
-				return new Result(Result.State.SUCCESS, new EmptyNode());
+				return new Result(Result.State.SUCCESS, new PlaceholderNode());
 //				return new Result(Result.State.ERROR, null, resultExpr.message);
 			}
 
@@ -67,16 +69,13 @@ public class OptionalExpression extends Expression {
 
 
 	@Override
-	public void printAsDotGraph(Set<Expression> visited) {
+	public void createDotGraph(Set<Expression> visited, StringBuilder builder) {
 		if(visited.contains(this)) {
 			return;
 		}
 		visited.add(this);
-
-
-		System.out.println("    " + this + " -> " + expression + ";");
-		expression.printAsDotGraph(visited);
-
+		builder.append("    ").append(this).append(" -> ").append(expression).append(';').append(System.lineSeparator());
+		expression.createDotGraph(visited, builder);
 	}
 
 
