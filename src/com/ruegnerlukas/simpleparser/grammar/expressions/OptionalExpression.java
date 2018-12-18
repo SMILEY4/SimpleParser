@@ -33,27 +33,23 @@ public class OptionalExpression extends Expression {
 		}
 
 		if(tokens.isEmpty()) {
-			return new Result(Result.State.SUCCESS, new PlaceholderNode());
+			return new Result(Result.State.MATCH, new PlaceholderNode());
 
 		} else {
 
 			Result resultExpr = expression.apply(consumed, tokens, trace);
 
-			if(resultExpr.state == Result.State.SUCCESS) {
-				return new Result(Result.State.SUCCESS, resultExpr.node);
+			if(resultExpr.state == Result.State.MATCH) {
+				return new Result(Result.State.MATCH, resultExpr.node);
 			}
-			if(resultExpr.state == Result.State.END_OF_STREAM) {
-				return new Result(Result.State.SUCCESS, resultExpr.node == null ? new PlaceholderNode() : resultExpr.node);
-			}
-			if(resultExpr.state == Result.State.UNEXPECTED_SYMBOL) {
-				return new Result(Result.State.SUCCESS, new PlaceholderNode());
+			if(resultExpr.state == Result.State.NO_MATCH) {
+				return new Result(Result.State.MATCH, resultExpr.node == null ? new PlaceholderNode() : resultExpr.node);
 			}
 			if(resultExpr.state == Result.State.ERROR) {
-				return new Result(Result.State.SUCCESS, new PlaceholderNode());
-//				return new Result(Result.State.ERROR, null, resultExpr.message);
+				return resultExpr;
 			}
 
-			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_endOfStream());
+			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_undefinedState(this));
 		}
 	}
 

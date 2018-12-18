@@ -36,25 +36,24 @@ public class AlternativeExpression extends Expression {
 		for(Expression expr : expressions) {
 			Result resultExpr = expr.apply(consumed, tokens, trace);
 
-			if(resultExpr.state == Result.State.SUCCESS) {
-				return new Result(Result.State.SUCCESS, resultExpr.node);
+			if(resultExpr.state == Result.State.MATCH) {
+				return new Result(Result.State.MATCH, resultExpr.node);
 			}
-
-			if(resultExpr.state == Result.State.END_OF_STREAM) {
-				return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_endOfStream());
-			}
-
-			if(resultExpr.state == Result.State.UNEXPECTED_SYMBOL) {
+			if(resultExpr.state == Result.State.NO_MATCH) {
 				continue;
 			}
-
 			if(resultExpr.state == Result.State.ERROR) {
-				continue;
+				return resultExpr;
 			}
 
 		}
 
-		return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_unexpectedSymbol(consumed, tokens));
+		if(tokens.isEmpty()) {
+			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_endOfStream(this));
+		} else {
+			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_unexpectedSymbol(this, consumed, tokens));
+		}
+
 	}
 
 

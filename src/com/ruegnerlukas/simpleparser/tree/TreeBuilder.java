@@ -55,17 +55,17 @@ public class TreeBuilder {
 			root.children.add(resultStart.node);
 		}
 
-		root.eliminatePlaceholders();
+//		root.eliminatePlaceholders();
 
-		Result.State state = Result.State.SUCCESS;
+		Result.State state = Result.State.MATCH;
 		String message = resultStart.message;
 
 		if(resultStart.state == Result.State.ERROR) {
 			state = Result.State.ERROR;
 		}
-		if(resultStart.state == Result.State.END_OF_STREAM && !tokenCopy.isEmpty()) {
+		if(resultStart.state == Result.State.MATCH && !tokenCopy.isEmpty()) {
 			state = Result.State.ERROR;
-			message = "End of stream but tokens remaining.";
+			message = "End of stream, but still tokens remaining.";
 		}
 
 		return new Result(state, root, message);

@@ -24,19 +24,19 @@ public class TokenExpression extends Expression {
 		}
 
 		if(tokens.isEmpty()) {
-			return new Result(Result.State.END_OF_STREAM, null);
+			return new Result(Result.State.NO_MATCH, null, ErrorMessages.genMessage_endOfStream(this));
 
 		} else {
 
 			if(tokens.get(0) instanceof UndefinedToken) {
-				return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_undefinedSymbol(token.symbol, consumed, tokens));
+				return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_undefinedSymbol(this, token.symbol, consumed, tokens));
 
 			} else if(tokens.get(0) == token) {
 				consumed.add(tokens.remove(0));
-				return new Result(Result.State.SUCCESS, new TerminalNode(token));
+				return new Result(Result.State.MATCH, new TerminalNode(token));
 
 			} else {
-				return new Result(Result.State.UNEXPECTED_SYMBOL, null, ErrorMessages.genMessage_unexpectedSymbol(token.symbol, consumed, tokens));
+				return new Result(Result.State.NO_MATCH, null, ErrorMessages.genMessage_unexpectedSymbol(this, token.symbol, consumed, tokens));
 			}
 
 		}

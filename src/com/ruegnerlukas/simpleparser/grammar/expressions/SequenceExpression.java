@@ -1,8 +1,8 @@
 package com.ruegnerlukas.simpleparser.grammar.expressions;
 
-import com.ruegnerlukas.simpleparser.ErrorMessages;
 import com.ruegnerlukas.simpleparser.grammar.Token;
-import com.ruegnerlukas.simpleparser.tree.*;
+import com.ruegnerlukas.simpleparser.tree.Node;
+import com.ruegnerlukas.simpleparser.tree.PlaceholderNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,24 +40,19 @@ public class SequenceExpression extends Expression {
 
 			Result resultExpr = expr.apply(consumed, tokens, trace);
 
-			if (resultExpr.state == Result.State.SUCCESS) {
+			if (resultExpr.state == Result.State.MATCH) {
 				node.children.add(resultExpr.node);
 			}
-			if (resultExpr.state == Result.State.END_OF_STREAM) {
-				if (expressions.indexOf(expr) != expressions.size() - 1) {
-					return new Result(Result.State.ERROR, node, ErrorMessages.genMessage_endOfStream());
-				}
-			}
-			if (resultExpr.state == Result.State.UNEXPECTED_SYMBOL) {
-				return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_unexpectedSymbol(consumed, tokens));
+			if (resultExpr.state == Result.State.NO_MATCH) {
+				return resultExpr;
 			}
 			if (resultExpr.state == Result.State.ERROR) {
-				return new Result(Result.State.ERROR, null, resultExpr.message);
+				return resultExpr;
 			}
 
 		}
 
-		return new Result(Result.State.SUCCESS, node);
+		return new Result(Result.State.MATCH, node);
 	}
 
 

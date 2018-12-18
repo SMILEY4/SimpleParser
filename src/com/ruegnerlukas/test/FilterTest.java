@@ -3,6 +3,7 @@ package com.ruegnerlukas.test;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.simpleparser.grammar.GrammarBuilder;
 import com.ruegnerlukas.simpleparser.grammar.Token;
+import com.ruegnerlukas.simpleparser.grammar.expressions.Expression;
 import com.ruegnerlukas.simpleparser.grammar.expressions.Result;
 import com.ruegnerlukas.simpleparser.tokenizer.Tokenizer;
 import com.ruegnerlukas.simpleparser.tree.Node;
@@ -34,7 +35,12 @@ public class FilterTest {
 		AND_EXPRESSION 	-> COMPONENT {"and" COMPONENT}
 		COMPONENT 		-> STATEMENT | ( "(" OR_EXPRESSION ")"
 		STATEMENT		-> "expr"
+
+		TOKENS: [TOKEN:'expr', TOKEN:'or', TOKEN:'(', UNDEFINED:'x ', TOKEN:'and', TOKEN:'expr', TOKEN:')']
+
 		*/
+
+
 
 		GrammarBuilder gb = new GrammarBuilder();
 
@@ -86,11 +92,8 @@ public class FilterTest {
 		System.out.println(grammar.createDotGraph());
 		System.out.println();
 
-		test(grammar, testStrings[4]);
+		test(grammar, "expr or (expr and expr");
 
-//		for(String testString : testStrings) {
-//			test(grammar, testString);
-//		}
 
 	}
 
@@ -104,8 +107,9 @@ public class FilterTest {
 
 		System.out.println("TREE: ");
 		TreeBuilder treeBuilder = new TreeBuilder();
+		treeBuilder.enableTrace(true);
 		Result result = treeBuilder.build(grammar, tokens);
-		System.out.println("RESULT: " + result.state + (result.message.length() == 0 ? "" : result.message) );
+		System.out.println("RESULT: " + result.state + ": " + (result.message.length() == 0 ? "" : result.message) );
 		Node root = result.node;
 		System.out.println(root.createDotTree());
 
@@ -114,33 +118,13 @@ public class FilterTest {
 		root = treeBuilder.collapseTree(root, "OR_EXPRESSION", "AND_EXPRESSION", "COMPONENT");
 		System.out.println(root.createDotTree());
 
+		System.out.println("TRACE");
+		for(Expression e : treeBuilder.getLastTrace()) {
+			System.out.println(e);
+		}
+
 		System.out.println();
 		System.out.println();
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

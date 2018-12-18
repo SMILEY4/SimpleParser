@@ -1,6 +1,15 @@
 
 TODO
 
+FATAL BUG:
+
+- tokenExpr reads undefined token -> returns error
+- error propagates up
+- repetition receives error in loop -> breaks loop -> returns success
+
+
+
+
 X simplify tree (remove given terminals, rules)
 
 ? validate grammar

@@ -5,10 +5,14 @@ import com.ruegnerlukas.simpleparser.tree.Node;
 public class Result {
 
 	public enum State {
-		SUCCESS,
-		ERROR,
-		UNEXPECTED_SYMBOL,
-		END_OF_STREAM,
+//		SUCCESS,
+//		ERROR,
+//		UNEXPECTED_SYMBOL,
+//		END_OF_STREAM,
+
+		MATCH,
+		NO_MATCH,
+		ERROR;
 
 	}
 

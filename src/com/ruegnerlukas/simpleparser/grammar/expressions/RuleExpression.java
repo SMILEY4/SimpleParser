@@ -1,6 +1,5 @@
 package com.ruegnerlukas.simpleparser.grammar.expressions;
 
-import com.ruegnerlukas.simpleparser.ErrorMessages;
 import com.ruegnerlukas.simpleparser.grammar.Rule;
 import com.ruegnerlukas.simpleparser.grammar.Token;
 import com.ruegnerlukas.simpleparser.tree.Node;
@@ -29,22 +28,13 @@ public class RuleExpression extends Expression {
 
 		Result resultRule = rule.expression.apply(consumed, tokens, trace);
 
-		if (resultRule.state == Result.State.SUCCESS) {
+		if (resultRule.state == Result.State.MATCH) {
 			Node node = new RuleNode(rule);
 			node.children.add(resultRule.node);
-			return new Result(Result.State.SUCCESS, node);
+			return new Result(Result.State.MATCH, node);
+		} else {
+			return resultRule;
 		}
-		if (resultRule.state == Result.State.END_OF_STREAM) {
-			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_endOfStream());
-		}
-		if (resultRule.state == Result.State.UNEXPECTED_SYMBOL) {
-			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_unexpectedSymbol(consumed, tokens));
-		}
-		if (resultRule.state == Result.State.ERROR) {
-			return new Result(Result.State.ERROR, null, resultRule.message);
-		}
-
-		return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_undefinedState());
 
 	}
 

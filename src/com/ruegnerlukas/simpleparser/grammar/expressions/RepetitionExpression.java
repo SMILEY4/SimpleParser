@@ -37,22 +37,18 @@ public class RepetitionExpression extends Expression {
 		while (!tokens.isEmpty()) {
 			Result resultExpr = expression.apply(consumed, tokens, trace);
 
-			if (resultExpr.state == Result.State.SUCCESS) {
+			if (resultExpr.state == Result.State.MATCH) {
 				node.children.add(resultExpr.node);
 			}
-			if (resultExpr.state == Result.State.END_OF_STREAM) {
-				return new Result(Result.State.SUCCESS, node);
-			}
-			if (resultExpr.state == Result.State.UNEXPECTED_SYMBOL) {
-				return new Result(Result.State.SUCCESS, node);
+			if (resultExpr.state == Result.State.NO_MATCH) {
+				return new Result(Result.State.MATCH, node);
 			}
 			if (resultExpr.state == Result.State.ERROR) {
-				break;
-//				return new Result(Result.State.ERROR, null, resultExpr.message);
+				return resultExpr;
 			}
 		}
 
-		return new Result(Result.State.SUCCESS, node);
+		return new Result(Result.State.MATCH, node);
 	}
 
 
