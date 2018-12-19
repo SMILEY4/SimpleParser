@@ -1,6 +1,7 @@
-package com.ruegnerlukas.simpleparser.grammar;
+package com.ruegnerlukas.simpleparser.grammar.expressions;
 
-import com.ruegnerlukas.simpleparser.grammar.expressions.*;
+import com.ruegnerlukas.simpleparser.grammar.Grammar;
+import com.ruegnerlukas.simpleparser.grammar.Rule;
 
 import java.security.InvalidParameterException;
 

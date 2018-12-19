@@ -4,7 +4,7 @@ import com.ruegnerlukas.simpleparser.grammar.Token;
 
 public class TerminalNode extends Node {
 
-	public Token token;
+	public final Token token;
 	
 	public TerminalNode(Token token) {
 		this.token = token;

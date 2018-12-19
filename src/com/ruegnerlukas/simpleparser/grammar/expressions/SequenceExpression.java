@@ -15,16 +15,29 @@ public class SequenceExpression extends Expression {
 
 
 	public List<Expression> expressions = new ArrayList<Expression>();
+	private Expression parent;
 
 
 
-
-	public SequenceExpression(Expression... expressions) {
+	protected SequenceExpression(Expression... expressions) {
 		for(Expression expr : expressions) {
 			this.expressions.add(expr);
+			expr.setParent(this);
 		}
 	}
 
+
+
+	@Override
+	public void setParent(Expression parent) {
+		this.parent = parent;
+	}
+
+
+	@Override
+	public Expression getParent() {
+		return parent;
+	}
 	
 
 
@@ -44,6 +57,13 @@ public class SequenceExpression extends Expression {
 				node.children.add(resultExpr.node);
 			}
 			if (resultExpr.state == Result.State.NO_MATCH) {
+				if(tokens.isEmpty()) {
+					SequenceExpression sequenceExpression = new SequenceExpression();
+					for(int i=expressions.indexOf(expr); i<expressions.size(); i++) {
+						sequenceExpression.expressions.add(expressions.get(i));
+					}
+					Expression.printPossible(sequenceExpression, this);
+				}
 				return resultExpr;
 			}
 			if (resultExpr.state == Result.State.ERROR) {
@@ -53,6 +73,25 @@ public class SequenceExpression extends Expression {
 		}
 
 		return new Result(Result.State.MATCH, node);
+	}
+
+
+
+
+	@Override
+	public boolean collectPossibleTokens(Set<Expression> visited, Set<Token> possibleTokens) {
+		if(visited.contains(this)) {
+			return false;
+		} else {
+			visited.add(this);
+			for(Expression expression : expressions) {
+				boolean opt = expression.collectPossibleTokens(visited, possibleTokens);
+				if(!opt) {
+					return false;
+				}
+			}
+			return true;
+		}
 	}
 
 

@@ -11,38 +11,38 @@ public class Grammar {
 	private Map<String,Rule> rules = new HashMap<String,Rule>();
 	private Map<String,Token> tokens = new HashMap<String,Token>();
 	private String startingRule;
-	
-	
-	
-	
-	protected Grammar() {
+
+
+
+
+	public Grammar() {
 	}
-	
-	
-	
-	
-	protected void addRules(String... names) {
+
+
+
+
+	public void addRules(String... names) {
 		for(String name : names) {
 			Rule rule = new Rule(name.toUpperCase());
 			rules.put(rule.name, rule);
 		}
 	}
-	
-	
-	
-	
-	protected boolean addTokens(String... symbols) {
+
+
+
+
+	public boolean addTokens(String... symbols) {
 		for(String symbol : symbols) {
 			Token atom = new Token(symbol);
 			tokens.put(atom.symbol, atom);
 		}
 		return true;
 	}
-	
-	
-	
-	
-	protected boolean defineRule(String name, Expression op) {
+
+
+
+
+	public boolean defineRule(String name, Expression op) {
 		Rule rule = rules.get(name.toUpperCase());
 		if(rule == null) {
 			return false;
@@ -51,11 +51,11 @@ public class Grammar {
 			return true;
 		}
 	}
-	
-	
-	
-	
-	protected boolean setStartingRule(String name) {
+
+
+
+
+	public boolean setStartingRule(String name) {
 		this.startingRule = name;
 		return rules.containsKey(name.toUpperCase());
 	}

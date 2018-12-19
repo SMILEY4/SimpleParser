@@ -15,14 +15,27 @@ public class RepetitionExpression extends Expression {
 
 	
 	public Expression expression = null;
-	
-	
-	
-	
-	public RepetitionExpression(Expression expression) {
+	private Expression parent;
+
+
+
+	protected RepetitionExpression(Expression expression) {
 		this.expression = expression;
+		expression.setParent(this);
 	}
 
+
+
+	@Override
+	public void setParent(Expression parent) {
+		this.parent = parent;
+	}
+
+
+	@Override
+	public Expression getParent() {
+		return parent;
+	}
 	
 	
 
@@ -48,7 +61,22 @@ public class RepetitionExpression extends Expression {
 			}
 		}
 
+		Expression.printPossible(this);
 		return new Result(Result.State.MATCH, node);
+	}
+
+
+
+
+	@Override
+	public boolean collectPossibleTokens(Set<Expression> visited, Set<Token> possibleTokens) {
+		if(visited.contains(this)) {
+			return false;
+		} else {
+			visited.add(this);
+			expression.collectPossibleTokens(visited, possibleTokens);
+			return true;
+		}
 	}
 
 

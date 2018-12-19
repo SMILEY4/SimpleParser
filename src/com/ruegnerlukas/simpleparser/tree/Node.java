@@ -125,7 +125,7 @@ public abstract class Node {
 		}
 
 		if(this instanceof RecommendationNode) {
-			builder.append("    ").append(this).append(" [color=\"1.0 1.0 1.0\"];").append(System.lineSeparator());
+			builder.append("    ").append(this).append(" [color=\"0.5 1.0 1.0\"];").append(System.lineSeparator());
 		}
 
 		if(isRoot) {

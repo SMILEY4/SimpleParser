@@ -11,10 +11,31 @@ import java.util.Set;
 public class RuleExpression extends Expression {
 
 	public final Rule rule;
-	
-	
-	public RuleExpression(Rule rule) {
+	public Expression parent;
+
+
+
+
+	protected RuleExpression(Rule rule) {
 		this.rule = rule;
+		if(rule.expression != null) {
+			rule.expression.setParent(this);
+		} else {
+			rule.tmpParent = this;
+		}
+	}
+
+
+
+	@Override
+	public void setParent(Expression parent) {
+		this.parent = parent;
+	}
+
+
+	@Override
+	public Expression getParent() {
+		return parent;
 	}
 
 	
@@ -36,6 +57,19 @@ public class RuleExpression extends Expression {
 			return resultRule;
 		}
 
+	}
+
+
+
+
+	@Override
+	public boolean collectPossibleTokens(Set<Expression> visited, Set<Token> possibleTokens) {
+		if(visited.contains(this)) {
+			return false;
+		} else {
+			visited.add(this);
+			return rule.expression.collectPossibleTokens(visited, possibleTokens);
+		}
 	}
 
 

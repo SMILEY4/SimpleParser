@@ -15,14 +15,28 @@ public class OptionalExpression extends Expression {
 
 	
 	public Expression expression = null;
-	
-	
-	
-	
-	public OptionalExpression(Expression expression) {
+	private Expression parent;
+
+
+
+	protected OptionalExpression(Expression expression) {
 		this.expression = expression;
+		expression.setParent(this);
 	}
 
+
+
+
+	@Override
+	public void setParent(Expression parent) {
+		this.parent = parent;
+	}
+
+
+	@Override
+	public Expression getParent() {
+		return parent;
+	}
 	
 	
 
@@ -50,6 +64,21 @@ public class OptionalExpression extends Expression {
 			}
 
 			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_undefinedState(this));
+		}
+	}
+
+
+
+
+
+	@Override
+	public boolean collectPossibleTokens(Set<Expression> visited, Set<Token> possibleTokens) {
+		if(visited.contains(this)) {
+			return false;
+		} else {
+			visited.add(this);
+			expression.collectPossibleTokens(visited, possibleTokens);
+			return true;
 		}
 	}
 

@@ -11,10 +11,28 @@ import java.util.Set;
 public class TokenExpression extends Expression {
 
 	public Token token;
-	
-	public TokenExpression(Token token) {
+	private Expression parent;
+
+
+	protected TokenExpression(Token token) {
 		this.token = token;
 	}
+
+
+
+
+	@Override
+	public void setParent(Expression parent) {
+		this.parent = parent;
+	}
+
+
+	@Override
+	public Expression getParent() {
+		return parent;
+	}
+
+
 
 
 	@Override
@@ -39,6 +57,20 @@ public class TokenExpression extends Expression {
 				return new Result(Result.State.NO_MATCH, null, ErrorMessages.genMessage_unexpectedSymbol(this, token.symbol, consumed, tokens));
 			}
 
+		}
+	}
+
+
+
+
+	@Override
+	public boolean collectPossibleTokens(Set<Expression> visited, Set<Token> possibleTokens) {
+		if(visited.contains(this)) {
+			return false;
+		} else {
+			visited.add(this);
+			possibleTokens.add(token);
+			return false;
 		}
 	}
 

@@ -1,7 +1,7 @@
 package com.ruegnerlukas.test;
 
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
-import com.ruegnerlukas.simpleparser.grammar.GrammarBuilder;
+import com.ruegnerlukas.simpleparser.grammar.expressions.GrammarBuilder;
 import com.ruegnerlukas.simpleparser.grammar.Token;
 import com.ruegnerlukas.simpleparser.grammar.expressions.Expression;
 import com.ruegnerlukas.simpleparser.grammar.expressions.Result;
@@ -96,6 +96,8 @@ public class FilterTest {
 
 
 	}
+
+
 
 
 	static void test(Grammar grammar, String testString) {

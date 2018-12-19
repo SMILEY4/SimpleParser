@@ -14,18 +14,33 @@ public class AlternativeExpression extends Expression {
 
 	
 	public List<Expression> expressions = new ArrayList<Expression>();
-
+	private Expression parent;
 	
 	
 	
-	public AlternativeExpression(Expression... expressions) {
+	protected AlternativeExpression(Expression... expressions) {
 		for(Expression expr : expressions) {
 			this.expressions.add(expr);
+			expr.setParent(this);
 		}
 	}
 
+
+
+
+	@Override
+	public void setParent(Expression parent) {
+		this.parent = parent;
+	}
+
+
+	@Override
+	public Expression getParent() {
+		return parent;
+	}
 	
-	
+
+
 
 	@Override
 	public Result apply(List<Token> consumed, List<Token> tokens, List<Expression> trace) {
@@ -48,12 +63,34 @@ public class AlternativeExpression extends Expression {
 
 		}
 
+		Expression.printPossible(this);
+
 		if(tokens.isEmpty()) {
 			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_endOfStream(this));
 		} else {
 			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_unexpectedSymbol(this, consumed, tokens));
 		}
 
+	}
+
+
+
+
+	@Override
+	public boolean collectPossibleTokens(Set<Expression> visited, Set<Token> possibleTokens) {
+		if(visited.contains(this)) {
+			return false;
+		} else {
+			visited.add(this);
+			boolean isOptional = true;
+			for(Expression expression : expressions) {
+				boolean opt = expression.collectPossibleTokens(visited, possibleTokens);
+				if(!opt) {
+					isOptional = false;
+				}
+			}
+			return isOptional;
+		}
 	}
 
 

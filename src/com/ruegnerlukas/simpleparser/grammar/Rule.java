@@ -7,8 +7,8 @@ public class Rule {
 	
 	public final String name;
 	public Expression expression = null;
-	
 
+	public Expression tmpParent;
 	
 	
 	protected Rule(String name) {
@@ -22,6 +22,7 @@ public class Rule {
 	
 	public void define(Expression op) {
 		this.expression = op;
+		this.expression.setParent(tmpParent);
 	}
 	
 	
