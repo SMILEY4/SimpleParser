@@ -66,9 +66,9 @@ public class AlternativeExpression extends Expression {
 		Expression.printPossible(this);
 
 		if(tokens.isEmpty()) {
-			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_endOfStream(this));
+			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_endOfStream(this), consumed.size());
 		} else {
-			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_unexpectedSymbol(this, consumed, tokens));
+			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_unexpectedSymbol(this, consumed, tokens), consumed.size());
 		}
 
 	}

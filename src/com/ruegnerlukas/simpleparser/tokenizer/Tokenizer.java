@@ -1,6 +1,7 @@
 package com.ruegnerlukas.simpleparser.tokenizer;
 
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
+import com.ruegnerlukas.simpleparser.grammar.IgnorableToken;
 import com.ruegnerlukas.simpleparser.grammar.Token;
 import com.ruegnerlukas.simpleparser.grammar.UndefinedToken;
 
@@ -64,6 +65,11 @@ public class Tokenizer {
 			String str = string.substring(i);
 
 			if(ignoreWhitespace && str.startsWith(" ")) {
+				if(isError) {
+					isError = false;
+					tokens.add(new UndefinedToken(string.substring(indexError, i)));
+				}
+				tokens.add(new IgnorableToken(" "));
 				i++;
 				continue;
 			}
@@ -93,6 +99,11 @@ public class Tokenizer {
 				i += currAtom.symbol.length();
 			}
 			
+		}
+
+		if(isError) {
+			isError = false;
+			tokens.add(new UndefinedToken(string.substring(indexError)));
 		}
 		
 		return tokens;

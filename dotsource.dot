@@ -1,3 +1,16 @@
 digraph G {
     node [style=filled];
+    "Rule:26e8db56: OR_EXPRESSION" -> "Placeholder:2f1a142a: 4554617c";
+    "Placeholder:2f1a142a: 4554617c" -> "Rule:17c1dada: AND_EXPRESSION";
+    "Placeholder:2f1a142a: 4554617c" -> "Placeholder:637e809a: 1540e19d";
+    "Rule:17c1dada: AND_EXPRESSION" -> "Placeholder:3acc5c8: 677327b6";
+    "Placeholder:3acc5c8: 677327b6" -> "Rule:7c683ad3: COMPONENT";
+    "Placeholder:3acc5c8: 677327b6" -> "Placeholder:65e6288e: 7f31245a";
+    "Rule:7c683ad3: COMPONENT" -> "Rule:728b1ef8: STATEMENT";
+    "Rule:728b1ef8: STATEMENT" -> "Terminal:176c07e4: e";
+    "Placeholder:65e6288e: 7f31245a" -> "Placeholder:2aef0978: 12a3a380";
+    "Placeholder:2aef0978: 12a3a380" -> "Terminal:7e99e6f3: and";
+    "Placeholder:2aef0978: 12a3a380" -> "Rule:544f4b06: COMPONENT";
+    "Rule:544f4b06: COMPONENT" -> "Rule:23eb254c: STATEMENT";
+    "Rule:23eb254c: STATEMENT" -> "Terminal:719d4c80: e";
 }

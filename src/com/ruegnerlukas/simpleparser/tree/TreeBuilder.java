@@ -1,6 +1,8 @@
 package com.ruegnerlukas.simpleparser.tree;
 
+import com.ruegnerlukas.simpleparser.ErrorMessages;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
+import com.ruegnerlukas.simpleparser.grammar.IgnorableToken;
 import com.ruegnerlukas.simpleparser.grammar.Rule;
 import com.ruegnerlukas.simpleparser.grammar.Token;
 import com.ruegnerlukas.simpleparser.grammar.expressions.Expression;
@@ -44,18 +46,19 @@ public class TreeBuilder {
 	public Result build(Grammar grammar, List<Token> tokens) {
 		trace.clear();
 
-		List<Token> tokenCopy = new ArrayList<>(tokens.size());
-		tokenCopy.addAll(tokens);
+		List<Token> consumed = new ArrayList<>(tokens.size());
+		List<Token> tokensCopy = new ArrayList<>(tokens.size());
+		tokensCopy.addAll(tokens);
 
 		Rule start = grammar.getRule(grammar.getStartingRule());
-		Result resultStart = start.expression.apply(new ArrayList<Token>(tokenCopy.size()), tokenCopy, (traceEnabled ? trace : null) );
+		Result resultStart = start.expression.apply(consumed, tokensCopy, (traceEnabled ? trace : null) );
 
 		Node root = new RuleNode(start);
 		if(resultStart.node != null) {
 			root.children.add(resultStart.node);
 		}
 
-//		root.eliminatePlaceholders();
+		root.eliminatePlaceholders();
 
 		Result.State state = Result.State.MATCH;
 		String message = resultStart.message;
@@ -63,12 +66,16 @@ public class TreeBuilder {
 		if(resultStart.state == Result.State.ERROR) {
 			state = Result.State.ERROR;
 		}
-		if(resultStart.state == Result.State.MATCH && !tokenCopy.isEmpty()) {
-			state = Result.State.ERROR;
-			message = "End of stream, but still tokens remaining.";
+		if(resultStart.state == Result.State.MATCH && !tokensCopy.isEmpty()) {
+			for(Token token : tokensCopy) {
+				if( !(token instanceof IgnorableToken) ) {
+					state = Result.State.ERROR;
+					message = ErrorMessages.genMessage_tokensRemaining(this, consumed, tokensCopy);
+				}
+			}
 		}
 
-		return new Result(state, root, message);
+		return new Result(state, root, message, consumed.size());
 	}
 
 

@@ -20,6 +20,8 @@ public abstract class Expression {
 		printPossible(e, e);
 	}
 
+	public static Set<Token> possible = new HashSet<>();
+
 	public static void printPossible(Expression e, Expression owner) {
 		Set<Expression> visited = new HashSet<>();
 		Set<Token> tokens = new HashSet<>();
@@ -30,11 +32,13 @@ public abstract class Expression {
 
 		e.collectPossibleTokens(visited, tokens);
 
-		System.out.print("POSSIBLE [" + owner + "]:  ");
-		for(Token t : tokens) {
-			System.out.print(t.symbol + "  ");
-		}
-		System.out.println();
+		possible.addAll(tokens);
+
+//		System.out.print("POSSIBLE [" + owner + "]:  ");
+//		for(Token t : tokens) {
+//			System.out.print(t.symbol + "  ");
+//		}
+//		System.out.println();
 	}
 
 }

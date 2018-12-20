@@ -63,7 +63,7 @@ public class OptionalExpression extends Expression {
 				return resultExpr;
 			}
 
-			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_undefinedState(this));
+			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_undefinedState(this), consumed.size());
 		}
 	}
 
