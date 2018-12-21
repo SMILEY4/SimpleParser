@@ -1,6 +1,6 @@
 package com.ruegnerlukas.simpleparser.tree;
 
-import com.ruegnerlukas.simpleparser.grammar.Token;
+import com.ruegnerlukas.simpleparser.tokens.Token;
 
 public class TerminalNode extends Node {
 

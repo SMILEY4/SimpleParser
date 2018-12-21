@@ -1,7 +1,7 @@
-package com.ruegnerlukas.simpleparser.grammar.expressions;
+package com.ruegnerlukas.simpleparser.expressions;
 
-import com.ruegnerlukas.simpleparser.ErrorMessages;
-import com.ruegnerlukas.simpleparser.grammar.Token;
+import com.ruegnerlukas.simpleparser.errors.ErrorMessages;
+import com.ruegnerlukas.simpleparser.tokens.Token;
 import com.ruegnerlukas.simpleparser.tree.PlaceholderNode;
 
 import java.util.List;
@@ -47,17 +47,17 @@ public class OptionalExpression extends Expression {
 		}
 
 		if(tokens.isEmpty()) {
-			return new Result(Result.State.MATCH, new PlaceholderNode());
+			return new Result(new PlaceholderNode());
 
 		} else {
 
 			Result resultExpr = expression.apply(consumed, tokens, trace);
 
 			if(resultExpr.state == Result.State.MATCH) {
-				return new Result(Result.State.MATCH, resultExpr.node);
+				return new Result(resultExpr.node);
 			}
 			if(resultExpr.state == Result.State.NO_MATCH) {
-				return new Result(Result.State.MATCH, resultExpr.node == null ? new PlaceholderNode() : resultExpr.node);
+				return new Result(resultExpr.node == null ? new PlaceholderNode() : resultExpr.node);
 			}
 			if(resultExpr.state == Result.State.ERROR) {
 				return resultExpr;

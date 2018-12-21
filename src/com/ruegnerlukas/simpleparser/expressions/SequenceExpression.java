@@ -1,6 +1,6 @@
-package com.ruegnerlukas.simpleparser.grammar.expressions;
+package com.ruegnerlukas.simpleparser.expressions;
 
-import com.ruegnerlukas.simpleparser.grammar.Token;
+import com.ruegnerlukas.simpleparser.tokens.Token;
 import com.ruegnerlukas.simpleparser.tree.Node;
 import com.ruegnerlukas.simpleparser.tree.PlaceholderNode;
 
@@ -72,7 +72,7 @@ public class SequenceExpression extends Expression {
 
 		}
 
-		return new Result(Result.State.MATCH, node);
+		return new Result(node);
 	}
 
 

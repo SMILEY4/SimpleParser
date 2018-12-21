@@ -1,6 +1,7 @@
 package com.ruegnerlukas.simpleparser.grammar;
 
-import com.ruegnerlukas.simpleparser.grammar.expressions.Expression;
+import com.ruegnerlukas.simpleparser.expressions.Expression;
+import com.ruegnerlukas.simpleparser.tokens.Token;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -93,7 +94,7 @@ public class Grammar {
 	
 	public List<Token> getTokens() {
 		List<Token> list = new ArrayList<Token>();
-		for(Entry<String,Token> entry : tokens.entrySet()) {
+		for(Entry<String, Token> entry : tokens.entrySet()) {
 			list.add(entry.getValue());
 		}
 		return list;

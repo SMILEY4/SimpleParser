@@ -1,9 +1,9 @@
 package com.ruegnerlukas.simpleparser.tokenizer;
 
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
-import com.ruegnerlukas.simpleparser.grammar.IgnorableToken;
-import com.ruegnerlukas.simpleparser.grammar.Token;
-import com.ruegnerlukas.simpleparser.grammar.UndefinedToken;
+import com.ruegnerlukas.simpleparser.tokens.IgnorableToken;
+import com.ruegnerlukas.simpleparser.tokens.Token;
+import com.ruegnerlukas.simpleparser.tokens.UndefinedToken;
 
 import java.util.ArrayList;
 import java.util.Comparator;

@@ -1,9 +1,9 @@
-package com.ruegnerlukas.simpleparser.grammar.expressions;
+package com.ruegnerlukas.simpleparser.expressions;
 
-import com.ruegnerlukas.simpleparser.ErrorMessages;
-import com.ruegnerlukas.simpleparser.grammar.IgnorableToken;
-import com.ruegnerlukas.simpleparser.grammar.Token;
-import com.ruegnerlukas.simpleparser.grammar.UndefinedToken;
+import com.ruegnerlukas.simpleparser.errors.ErrorMessages;
+import com.ruegnerlukas.simpleparser.tokens.IgnorableToken;
+import com.ruegnerlukas.simpleparser.tokens.Token;
+import com.ruegnerlukas.simpleparser.tokens.UndefinedToken;
 import com.ruegnerlukas.simpleparser.tree.TerminalNode;
 
 import java.util.List;
@@ -57,7 +57,7 @@ public class TokenExpression extends Expression {
 
 			} else if(tokens.get(0) == token) {
 				consumed.add(tokens.remove(0));
-				return new Result(Result.State.MATCH, new TerminalNode(token));
+				return new Result(new TerminalNode(token));
 
 			} else {
 				return new Result(Result.State.NO_MATCH, null, ErrorMessages.genMessage_unexpectedSymbol(this, token.symbol, consumed, tokens), consumed.size());

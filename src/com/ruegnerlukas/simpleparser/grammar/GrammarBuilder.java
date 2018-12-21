@@ -1,5 +1,6 @@
-package com.ruegnerlukas.simpleparser.grammar.expressions;
+package com.ruegnerlukas.simpleparser.grammar;
 
+import com.ruegnerlukas.simpleparser.expressions.*;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.simpleparser.grammar.Rule;
 
@@ -132,7 +133,7 @@ public class GrammarBuilder {
 	
 	
 	/**
-	 * @param terminal the terminal/token/symbol
+	 * @param terminal the terminal/tokens/symbol
 	 * @return T
 	 * */
 	public Expression terminal(String terminal) {

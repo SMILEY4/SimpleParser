@@ -1,7 +1,7 @@
-package com.ruegnerlukas.simpleparser.grammar.expressions;
+package com.ruegnerlukas.simpleparser.expressions;
 
 import com.ruegnerlukas.simpleparser.grammar.Rule;
-import com.ruegnerlukas.simpleparser.grammar.Token;
+import com.ruegnerlukas.simpleparser.tokens.Token;
 import com.ruegnerlukas.simpleparser.tree.Node;
 import com.ruegnerlukas.simpleparser.tree.RuleNode;
 
@@ -52,7 +52,7 @@ public class RuleExpression extends Expression {
 		if (resultRule.state == Result.State.MATCH) {
 			Node node = new RuleNode(rule);
 			node.children.add(resultRule.node);
-			return new Result(Result.State.MATCH, node);
+			return new Result(node);
 		} else {
 			return resultRule;
 		}

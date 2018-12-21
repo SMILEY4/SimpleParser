@@ -1,6 +1,6 @@
-package com.ruegnerlukas.simpleparser.grammar.expressions;
+package com.ruegnerlukas.simpleparser.expressions;
 
-import com.ruegnerlukas.simpleparser.grammar.Token;
+import com.ruegnerlukas.simpleparser.tokens.Token;
 
 import java.util.HashSet;
 import java.util.List;

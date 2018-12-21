@@ -1,7 +1,7 @@
-package com.ruegnerlukas.simpleparser.grammar.expressions;
+package com.ruegnerlukas.simpleparser.expressions;
 
-import com.ruegnerlukas.simpleparser.ErrorMessages;
-import com.ruegnerlukas.simpleparser.grammar.Token;
+import com.ruegnerlukas.simpleparser.errors.ErrorMessages;
+import com.ruegnerlukas.simpleparser.tokens.Token;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,7 @@ public class AlternativeExpression extends Expression {
 			Result resultExpr = expr.apply(consumed, tokens, trace);
 
 			if(resultExpr.state == Result.State.MATCH) {
-				return new Result(Result.State.MATCH, resultExpr.node);
+				return new Result(resultExpr.node);
 			}
 			if(resultExpr.state == Result.State.NO_MATCH) {
 				continue;

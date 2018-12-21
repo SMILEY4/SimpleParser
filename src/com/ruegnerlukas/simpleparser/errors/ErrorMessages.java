@@ -1,6 +1,6 @@
-package com.ruegnerlukas.simpleparser;
+package com.ruegnerlukas.simpleparser.errors;
 
-import com.ruegnerlukas.simpleparser.grammar.Token;
+import com.ruegnerlukas.simpleparser.tokens.Token;
 
 import java.util.List;
 

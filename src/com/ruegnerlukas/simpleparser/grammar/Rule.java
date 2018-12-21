@@ -1,6 +1,6 @@
 package com.ruegnerlukas.simpleparser.grammar;
 
-import com.ruegnerlukas.simpleparser.grammar.expressions.Expression;
+import com.ruegnerlukas.simpleparser.expressions.Expression;
 
 public class Rule {
 

@@ -1,4 +1,4 @@
-package com.ruegnerlukas.simpleparser.grammar;
+package com.ruegnerlukas.simpleparser.tokens;
 
 
 

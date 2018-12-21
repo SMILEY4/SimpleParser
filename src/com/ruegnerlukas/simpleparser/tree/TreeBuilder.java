@@ -1,12 +1,12 @@
 package com.ruegnerlukas.simpleparser.tree;
 
-import com.ruegnerlukas.simpleparser.ErrorMessages;
+import com.ruegnerlukas.simpleparser.errors.ErrorMessages;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
-import com.ruegnerlukas.simpleparser.grammar.IgnorableToken;
+import com.ruegnerlukas.simpleparser.tokens.IgnorableToken;
 import com.ruegnerlukas.simpleparser.grammar.Rule;
-import com.ruegnerlukas.simpleparser.grammar.Token;
-import com.ruegnerlukas.simpleparser.grammar.expressions.Expression;
-import com.ruegnerlukas.simpleparser.grammar.expressions.Result;
+import com.ruegnerlukas.simpleparser.tokens.Token;
+import com.ruegnerlukas.simpleparser.expressions.Expression;
+import com.ruegnerlukas.simpleparser.expressions.Result;
 
 import java.util.ArrayList;
 import java.util.List;

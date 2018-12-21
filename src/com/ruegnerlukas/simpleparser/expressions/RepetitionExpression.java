@@ -1,6 +1,6 @@
-package com.ruegnerlukas.simpleparser.grammar.expressions;
+package com.ruegnerlukas.simpleparser.expressions;
 
-import com.ruegnerlukas.simpleparser.grammar.Token;
+import com.ruegnerlukas.simpleparser.tokens.Token;
 import com.ruegnerlukas.simpleparser.tree.PlaceholderNode;
 import com.ruegnerlukas.simpleparser.tree.Node;
 
@@ -54,7 +54,7 @@ public class RepetitionExpression extends Expression {
 				node.children.add(resultExpr.node);
 			}
 			if (resultExpr.state == Result.State.NO_MATCH) {
-				return new Result(Result.State.MATCH, node);
+				return new Result(node);
 			}
 			if (resultExpr.state == Result.State.ERROR) {
 				return resultExpr;
@@ -62,7 +62,7 @@ public class RepetitionExpression extends Expression {
 		}
 
 		Expression.printPossible(this);
-		return new Result(Result.State.MATCH, node);
+		return new Result(node);
 	}
 
 
