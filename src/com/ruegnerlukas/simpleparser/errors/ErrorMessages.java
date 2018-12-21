@@ -21,7 +21,7 @@ public class ErrorMessages {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Syntax Error: @" + consumed.size() + " [" + source + "] Found unexpected symbol @").append(consumed.size()).append(": ");
 		for(int i=0; i<Math.min(3, tokens.size()); i++) {
-			builder.append('"').append(tokens.get(i).symbol).append('"').append(" ");
+			builder.append('"').append(tokens.get(i).getSymbol()).append('"').append(" ");
 		}
 		builder.append("...  Expected: ").append('"').append(expected).append('"');
 		return builder.toString();
@@ -34,7 +34,7 @@ public class ErrorMessages {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Syntax Error: @" + consumed.size() + " [" + source + "] Found unexpected symbol @").append(consumed.size()).append(": ");
 		for(int i=0; i<Math.min(3, tokens.size()); i++) {
-			builder.append('"').append(tokens.get(i).symbol).append('"').append(" ");
+			builder.append('"').append(tokens.get(i).getSymbol()).append('"').append(" ");
 		}
 		builder.append("...  ");
 		return builder.toString();
@@ -46,7 +46,7 @@ public class ErrorMessages {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Syntax Error: @" + consumed.size() + " [" + source + "] Found undefined symbol @").append(consumed.size()).append(": ");
 		for(int i=0; i<Math.min(3, tokens.size()); i++) {
-			builder.append('"').append(tokens.get(i).symbol).append('"').append(" ");
+			builder.append('"').append(tokens.get(i).getSymbol()).append('"').append(" ");
 		}
 		builder.append("...  Expected: ").append('"').append(expected).append('"');
 		return builder.toString();

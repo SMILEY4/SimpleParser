@@ -2,6 +2,7 @@ package com.ruegnerlukas.simpleparser.tree;
 
 public class PlaceholderNode extends Node {
 
+
 	public String name;
 
 
@@ -10,6 +11,8 @@ public class PlaceholderNode extends Node {
 	public PlaceholderNode() {
 		this("");
 	}
+
+
 
 
 	public PlaceholderNode(String name) {

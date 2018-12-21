@@ -10,44 +10,26 @@ import java.util.Set;
 
 public class RuleExpression extends Expression {
 
+
 	public final Rule rule;
-	public Expression parent;
 
 
 
 
-	protected RuleExpression(Rule rule) {
+	public RuleExpression(Rule rule) {
 		this.rule = rule;
-		if(rule.expression != null) {
-			rule.expression.setParent(this);
-		} else {
-			rule.tmpParent = this;
-		}
 	}
 
-
-
-	@Override
-	public void setParent(Expression parent) {
-		this.parent = parent;
-	}
-
-
-	@Override
-	public Expression getParent() {
-		return parent;
-	}
 
 	
 	
-
 	@Override
 	public Result apply(List<Token> consumed, List<Token> tokens, List<Expression> trace) {
 		if(trace != null) {
 			trace.add(this);
 		}
 
-		Result resultRule = rule.expression.apply(consumed, tokens, trace);
+		Result resultRule = rule.getExpression().apply(consumed, tokens, trace);
 
 		if (resultRule.state == Result.State.MATCH) {
 			Node node = new RuleNode(rule);
@@ -68,7 +50,7 @@ public class RuleExpression extends Expression {
 			return false;
 		} else {
 			visited.add(this);
-			return rule.expression.collectPossibleTokens(visited, possibleTokens);
+			return rule.getExpression().collectPossibleTokens(visited, possibleTokens);
 		}
 	}
 
@@ -77,7 +59,7 @@ public class RuleExpression extends Expression {
 
 	@Override
 	public String toString() {
-		return "\"" + "RULE:"+Integer.toHexString(this.hashCode())+ ": " + rule.name + "\"";
+		return "\"" + "RULE:"+Integer.toHexString(this.hashCode())+ ": " + rule.getName() + "\"";
 	}
 
 
@@ -90,10 +72,9 @@ public class RuleExpression extends Expression {
 		}
 		visited.add(this);
 
-		builder.append("    ").append(this).append(" -> ").append(rule.expression).append(';').append(System.lineSeparator());
-		rule.expression.createDotGraph(visited, builder);
+		builder.append("    ").append(this).append(" -> ").append(rule.getExpression()).append(';').append(System.lineSeparator());
+		rule.getExpression().createDotGraph(visited, builder);
 		builder.append("    ").append(this).append(" [color=\"1.0 1.0 1.0\"];").append(System.lineSeparator());
 	}
-
 
 }

@@ -7,41 +7,28 @@ import com.ruegnerlukas.simpleparser.tree.PlaceholderNode;
 import java.util.List;
 import java.util.Set;
 
-/**
- * X -> [E]
- *  => none or one E
- * */
 public class OptionalExpression extends Expression {
 
 	
-	public Expression expression = null;
-	private Expression parent;
+	public Expression expression;
 
 
 
-	protected OptionalExpression(Expression expression) {
+
+	/**
+	 * X -> [E]
+	 *  => none or one E
+	 * */
+	public OptionalExpression(Expression expression) {
 		this.expression = expression;
-		expression.setParent(this);
 	}
 
 
 
-
-	@Override
-	public void setParent(Expression parent) {
-		this.parent = parent;
-	}
-
-
-	@Override
-	public Expression getParent() {
-		return parent;
-	}
-	
-	
 
 	@Override
 	public Result apply(List<Token> consumed, List<Token> tokens, List<Expression> trace) {
+
 		if(trace != null) {
 			trace.add(this);
 		}
@@ -70,16 +57,18 @@ public class OptionalExpression extends Expression {
 
 
 
-
 	@Override
 	public boolean collectPossibleTokens(Set<Expression> visited, Set<Token> possibleTokens) {
+
 		if(visited.contains(this)) {
 			return false;
+
 		} else {
 			visited.add(this);
 			expression.collectPossibleTokens(visited, possibleTokens);
 			return true;
 		}
+
 	}
 
 
@@ -102,6 +91,5 @@ public class OptionalExpression extends Expression {
 		builder.append("    ").append(this).append(" -> ").append(expression).append(';').append(System.lineSeparator());
 		expression.createDotGraph(visited, builder);
 	}
-
 
 }

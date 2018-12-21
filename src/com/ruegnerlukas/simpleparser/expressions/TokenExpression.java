@@ -1,9 +1,8 @@
 package com.ruegnerlukas.simpleparser.expressions;
 
 import com.ruegnerlukas.simpleparser.errors.ErrorMessages;
-import com.ruegnerlukas.simpleparser.tokens.IgnorableToken;
 import com.ruegnerlukas.simpleparser.tokens.Token;
-import com.ruegnerlukas.simpleparser.tokens.UndefinedToken;
+import com.ruegnerlukas.simpleparser.tokens.TokenType;
 import com.ruegnerlukas.simpleparser.tree.TerminalNode;
 
 import java.util.List;
@@ -11,26 +10,15 @@ import java.util.Set;
 
 public class TokenExpression extends Expression {
 
+
 	public Token token;
 	private Expression parent;
 
 
-	protected TokenExpression(Token token) {
+
+
+	public TokenExpression(Token token) {
 		this.token = token;
-	}
-
-
-
-
-	@Override
-	public void setParent(Expression parent) {
-		this.parent = parent;
-	}
-
-
-	@Override
-	public Expression getParent() {
-		return parent;
 	}
 
 
@@ -48,10 +36,10 @@ public class TokenExpression extends Expression {
 
 		} else {
 
-			if(tokens.get(0) instanceof UndefinedToken) {
-				return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_undefinedSymbol(this, token.symbol, consumed, tokens), consumed.size());
+			if(tokens.get(0).getType() == TokenType.UNDEFINED) {
+				return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_undefinedSymbol(this, token.getSymbol(), consumed, tokens), consumed.size());
 
-			} else if(tokens.get(0) instanceof IgnorableToken) {
+			} else if(tokens.get(0).getType() == TokenType.IGNORABLE) {
 				consumed.add(tokens.remove(0));
 				return this.apply(consumed, tokens, trace);
 
@@ -60,7 +48,7 @@ public class TokenExpression extends Expression {
 				return new Result(new TerminalNode(token));
 
 			} else {
-				return new Result(Result.State.NO_MATCH, null, ErrorMessages.genMessage_unexpectedSymbol(this, token.symbol, consumed, tokens), consumed.size());
+				return new Result(Result.State.NO_MATCH, null, ErrorMessages.genMessage_unexpectedSymbol(this, token.getSymbol(), consumed, tokens), consumed.size());
 			}
 
 		}
@@ -85,7 +73,7 @@ public class TokenExpression extends Expression {
 
 	@Override
 	public String toString() {
-		return "\"" + "TOKEN:"+Integer.toHexString(this.hashCode())+ ": " + token.symbol + "\"";
+		return "\"" + "TOKEN:"+Integer.toHexString(this.hashCode())+ ": " + token.getSymbol() + "\"";
 	}
 
 

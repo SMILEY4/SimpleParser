@@ -8,18 +8,21 @@ import java.util.List;
 public abstract class Node {
 
 
-	public List<Node> children = new ArrayList<Node>();
+	public List<Node> children = new ArrayList<>();
 
 
 
 
+	/**
+	 * Removes all {@link PlaceholderNode} from the subtree with this node as the root.
+	 * */
 	protected void eliminatePlaceholders() {
 		
 		for(Node child : children) {
 			child.eliminatePlaceholders();
 		}
 		
-		List<Node> newChildren = new ArrayList<Node>();
+		List<Node> newChildren = new ArrayList<>();
 		
 		for(Node child : children) {
 			if(child instanceof PlaceholderNode) {
@@ -34,6 +37,12 @@ public abstract class Node {
 
 
 
+
+	/**
+	 * Removes specific {@link RuleNode} from the subtree with this node as the root and returns the (new) root of this subtree.
+	 * @param rules the list of names of rules that will be removed from the subtree
+	 * @return the new root of the subtree
+	 * */
 	protected Node collapseTree(String[] rules) {
 		if(this instanceof RuleNode) {
 
@@ -42,7 +51,7 @@ public abstract class Node {
 
 				boolean foundName = false;
 				for(String strRule : rules) {
-					if(strRule.equalsIgnoreCase(rule.name)) {
+					if(strRule.equalsIgnoreCase(rule.getName())) {
 						foundName = true;
 						break;
 					}
@@ -57,7 +66,6 @@ public abstract class Node {
 					children.add(child.collapseTree(rules));
 					return this;
 				}
-
 
 			} else {
 				List<Node> list = new ArrayList<>();
@@ -77,6 +85,11 @@ public abstract class Node {
 
 
 
+	/**
+	 * Removes specific tokens/terminals from the subtree with this node as the root and returns the (new) root of this subtree.
+	 * @param terminals the list of symbols that will be removed from the subtree
+	 * @return the new root of the subtree
+	 * */
 	public Node removeTerminals(String[] terminals) {
 		if(this instanceof RuleNode) {
 
@@ -86,7 +99,7 @@ public abstract class Node {
 					TerminalNode node = (TerminalNode)child;
 
 					for(String terminal : terminals) {
-						if(node.token.symbol.equals(terminal)) {
+						if(node.token.getSymbol().equals(terminal)) {
 							toRemove.add(child);
 							break;
 						}
@@ -103,6 +116,10 @@ public abstract class Node {
 
 
 
+
+	/**
+	 * @return the subtree with this node as root as a tree in the DOT-format
+	 * */
 	public String createDotTree() {
 		StringBuilder builder = new StringBuilder();
 		this.createDotTree(true, builder);
@@ -110,6 +127,12 @@ public abstract class Node {
 	}
 
 
+
+
+	/**
+	 * Creates a tree in the DOT-Format and appends it to the given StringBuilder.
+	 * @param isRoot whether this node is the root of the complete tree
+	 * */
 	protected void createDotTree(boolean isRoot, StringBuilder builder) {
 		
 		if(isRoot) {
@@ -131,10 +154,6 @@ public abstract class Node {
 		if(isRoot) {
 			builder.append('}').append(System.lineSeparator());
 		}
-		
 	}
-
-
-
 
 }

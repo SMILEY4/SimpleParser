@@ -7,14 +7,40 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class Expression {
+
+
+	/**
+	 * applies this Expression to the given list of tokens.
+	 * @param consumed the list of consumed tokens
+	 * @param tokens the list of remaining tokens
+	 * @param trace the list of applied expressions
+	 * @return the result of the operation
+	 * */
 	public abstract Result apply(List<Token> consumed, List<Token> tokens, List<Expression> trace);
 
+
+
+
+	/**
+	 * builds this expression (and its children) in the DOT-format and appends it to the given StringBuilder.
+	 * @param visited the expressions that have already been visited
+	 * */
 	public abstract void createDotGraph(Set<Expression> visited, StringBuilder builder);
 
+
+
+
+	/**
+	 * collects all possible Tokens of this expressions and adds them to the given list.
+	 * @param visited the expressions that have already been visited
+	 * */
 	public abstract boolean collectPossibleTokens(Set<Expression> visited, Set<Token> possibleTokens);
 
-	public abstract Expression getParent();
-	public abstract void setParent(Expression parent);
+
+
+
+
+
 
 	public static void printPossible(Expression e) {
 		printPossible(e, e);

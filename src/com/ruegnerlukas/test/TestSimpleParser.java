@@ -3,7 +3,7 @@
 //import com.ruegnerlukas.simpleparser.grammar.Grammar;
 //import com.ruegnerlukas.simpleparser.grammar.GrammarBuilder;
 //import com.ruegnerlukas.simpleparser.tokens.Token;
-//import com.ruegnerlukas.simpleparser.tokenizer.Tokenizer;
+//import com.ruegnerlukas.simpleparser.tokens.Tokenizer;
 //import com.ruegnerlukas.simpleparser.tree.Node;
 //import com.ruegnerlukas.simpleparser.tree.TreeBuilder;
 //

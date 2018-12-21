@@ -4,6 +4,7 @@ import com.ruegnerlukas.simpleparser.tree.Node;
 
 public class Result {
 
+
 	public enum State {
 		MATCH,
 		NO_MATCH,
@@ -22,6 +23,8 @@ public class Result {
 	public Result(Node node) {
 		this(State.MATCH, node, "", -1);
 	}
+
+
 
 
 	public Result(State state, Node node, String message, int errorIndex) {

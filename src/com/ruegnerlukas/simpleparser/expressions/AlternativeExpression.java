@@ -7,38 +7,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-/**
- * X -> E0 | E1 | ... | En
- * */
 public class AlternativeExpression extends Expression {
 
 	
-	public List<Expression> expressions = new ArrayList<Expression>();
-	private Expression parent;
-	
-	
-	
-	protected AlternativeExpression(Expression... expressions) {
+	public List<Expression> expressions = new ArrayList<>();
+
+
+
+
+	/**
+	 * E0 | E1 | ... | En
+	 * */
+	public AlternativeExpression(Expression... expressions) {
 		for(Expression expr : expressions) {
 			this.expressions.add(expr);
-			expr.setParent(this);
 		}
 	}
 
-
-
-
-	@Override
-	public void setParent(Expression parent) {
-		this.parent = parent;
-	}
-
-
-	@Override
-	public Expression getParent() {
-		return parent;
-	}
-	
 
 
 
@@ -70,7 +55,6 @@ public class AlternativeExpression extends Expression {
 		} else {
 			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_unexpectedSymbol(this, consumed, tokens), consumed.size());
 		}
-
 	}
 
 
@@ -78,8 +62,10 @@ public class AlternativeExpression extends Expression {
 
 	@Override
 	public boolean collectPossibleTokens(Set<Expression> visited, Set<Token> possibleTokens) {
+
 		if(visited.contains(this)) {
 			return false;
+
 		} else {
 			visited.add(this);
 			boolean isOptional = true;
@@ -91,6 +77,7 @@ public class AlternativeExpression extends Expression {
 			}
 			return isOptional;
 		}
+
 	}
 
 

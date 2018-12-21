@@ -1,8 +1,6 @@
 package com.ruegnerlukas.simpleparser.grammar;
 
 import com.ruegnerlukas.simpleparser.expressions.*;
-import com.ruegnerlukas.simpleparser.grammar.Grammar;
-import com.ruegnerlukas.simpleparser.grammar.Rule;
 
 import java.security.InvalidParameterException;
 
@@ -15,7 +13,7 @@ public class GrammarBuilder {
 	
 	
 	/**
-	 * define the starting/root production rule of the grammar
+	 * define the starting production rule of the grammar
 	 * @param rule			the name of the production rule
 	 * @param expression	the expression for the rule
 	 * */
@@ -31,7 +29,7 @@ public class GrammarBuilder {
 	
 	
 	/**
-	 * define the a production rule of the grammar
+	 * define a new production rule of the grammar
 	 * @param rule			the name of the production rule
 	 * @param expression	the expression for the rule
 	 * */
@@ -46,7 +44,7 @@ public class GrammarBuilder {
 	
 	
 	/**
-	 * @return "E0 | E1 | ... | En"
+	 * "E0 | E1 | ... | En"
 	 * */
 	public Expression alternative(Expression... expressions) {
 		return new AlternativeExpression(expressions);
@@ -56,7 +54,7 @@ public class GrammarBuilder {
 	
 	
 	/**
-	 * @return "T0 | T1 | ... | Tn"
+	 * "T0 | T1 | ... | Tn"
 	 * */
 	public Expression alternative(String... terminals) {
 		Expression[] terminalList = new Expression[terminals.length];
@@ -71,7 +69,7 @@ public class GrammarBuilder {
 
 
 	/**
-	 * @return "Tmin | ... | Tmax"
+	 * "Tmin | ... | Tmax"
 	 * */
 	public Expression alternative(int min, int max) {
 		if(min >= max) {
@@ -90,7 +88,7 @@ public class GrammarBuilder {
 	
 	
 	/**
-	 * @return "[E]"
+	 * "[E]"
 	 * */
 	public Expression optional(Expression expression) {
 		return new OptionalExpression(expression);
@@ -100,7 +98,7 @@ public class GrammarBuilder {
 	
 	
 	/**
-	 * @return "{E}"   or   "(E)*"
+	 * "{E}"   or   "(E)*"
 	 */
 	public Expression zeroOrMore(Expression expression) {
 		return new RepetitionExpression(expression);
@@ -109,8 +107,8 @@ public class GrammarBuilder {
 	
 	
 	/**
+	 * "NT"
 	 * @param nonTerminal the name of the Non-Terminal / Production Rule
-	 * @return NT
 	 * */
 	public Expression nonTerminal(String nonTerminal) {
 		if(grammar.getRule(nonTerminal) == null) {
@@ -123,7 +121,7 @@ public class GrammarBuilder {
 	
 	
 	/**
-	 * @return E0 E1 ... En
+	 * "E0 E1 ... En"
 	 * */
 	public Expression sequence(Expression... expressions) {
 		return new SequenceExpression(expressions);
@@ -133,8 +131,8 @@ public class GrammarBuilder {
 	
 	
 	/**
+	 * "T"
 	 * @param terminal the terminal/tokens/symbol
-	 * @return T
 	 * */
 	public Expression terminal(String terminal) {
 		if(grammar.getToken(terminal) == null) {
@@ -146,33 +144,10 @@ public class GrammarBuilder {
 	
 	
 	/**
-	 * @return the grammar
+	 * @return the created grammar
 	 * */
 	public Grammar get() {
 		return this.grammar;
 	}
-	
-	
-	/**
-	 * @return true, if the grammar is valid
-	 * */
-	public boolean checkValid() {
-		boolean validRules = validateRules();
-		return validRules;
-	}
-	
-	
-	
-	
-	private boolean validateRules() {
-		for(String name : grammar.getRules()) {
-			Rule rule = grammar.getRule(name);
-			if(rule.expression == null) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	
+
 }

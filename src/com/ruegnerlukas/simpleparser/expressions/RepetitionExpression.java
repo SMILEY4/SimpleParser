@@ -7,36 +7,23 @@ import com.ruegnerlukas.simpleparser.tree.Node;
 import java.util.List;
 import java.util.Set;
 
-/**
- * X -> E E*
- *  => one or more
- * */
 public class RepetitionExpression extends Expression {
 
 	
-	public Expression expression = null;
-	private Expression parent;
+	public Expression expression;
 
 
 
-	protected RepetitionExpression(Expression expression) {
+
+	/**
+	 * X -> E E*
+	 *  => one or more
+	 * */
+	public RepetitionExpression(Expression expression) {
 		this.expression = expression;
-		expression.setParent(this);
 	}
 
 
-
-	@Override
-	public void setParent(Expression parent) {
-		this.parent = parent;
-	}
-
-
-	@Override
-	public Expression getParent() {
-		return parent;
-	}
-	
 	
 
 	@Override
@@ -100,5 +87,4 @@ public class RepetitionExpression extends Expression {
 		expression.createDotGraph(visited, builder);
 	}
 
-	
 }

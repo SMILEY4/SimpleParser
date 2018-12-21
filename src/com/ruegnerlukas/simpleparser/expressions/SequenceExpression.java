@@ -8,37 +8,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-/**
- * X -> E0 E1 ... EN
- * */
 public class SequenceExpression extends Expression {
 
 
-	public List<Expression> expressions = new ArrayList<Expression>();
-	private Expression parent;
+	public List<Expression> expressions = new ArrayList<>();
 
 
 
-	protected SequenceExpression(Expression... expressions) {
+
+	/**
+	 * X -> E0 E1 ... EN
+	 * */
+	public SequenceExpression(Expression... expressions) {
 		for(Expression expr : expressions) {
 			this.expressions.add(expr);
-			expr.setParent(this);
 		}
 	}
 
 
-
-	@Override
-	public void setParent(Expression parent) {
-		this.parent = parent;
-	}
-
-
-	@Override
-	public Expression getParent() {
-		return parent;
-	}
-	
 
 
 	@Override
@@ -118,12 +105,6 @@ public class SequenceExpression extends Expression {
 		for(Expression e : expressions) {
 			e.createDotGraph(visited, builder);
 		}
-
 	}
+
 }
-
-
-
-
-
-

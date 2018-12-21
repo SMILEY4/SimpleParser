@@ -9,46 +9,68 @@ import java.util.Map.Entry;
 public class Grammar {
 
 	
-	private Map<String,Rule> rules = new HashMap<String,Rule>();
-	private Map<String,Token> tokens = new HashMap<String,Token>();
-	private String startingRule;
+	private Map<String,Rule> rules = new HashMap<>();
+	private Map<String,Token> tokens = new HashMap<>();
+	private Rule startingRule;
 
 
 
 
-	public Grammar() {
+	protected Grammar() {
 	}
 
 
 
 
-	public void addRules(String... names) {
+
+
+	/**
+	 * adds new rules to this grammar. The rules have to be defined with {@code defineRule(...)}.
+	 * A rule with a given name can only exists once and is case-insensitive.
+	 * If a rule with the name already exists, it does not get replaced.
+	 * @param names the name(s) of the rules (case-insensitive)
+	 * */
+	protected void addRules(String... names) {
 		for(String name : names) {
-			Rule rule = new Rule(name.toUpperCase());
-			rules.put(rule.name, rule);
+			if(getRule(name) == null) {
+				Rule rule = new Rule(name.toUpperCase());
+				rules.put(rule.getName(), rule);
+			}
 		}
 	}
 
 
 
 
-	public boolean addTokens(String... symbols) {
+	/**
+	 * adds new token/symbol to this grammar.
+	 * A given symbol can only exist once. If a token already exists, it does not get replaced.
+	 * @param symbols the tokens/symbols to add
+	 * */
+	protected void addTokens(String... symbols) {
 		for(String symbol : symbols) {
-			Token atom = new Token(symbol);
-			tokens.put(atom.symbol, atom);
+			if(getToken(symbol) == null) {
+				Token token = Token.token(symbol);
+				tokens.put(token.getSymbol(), token);
+			}
 		}
-		return true;
 	}
 
 
 
 
-	public boolean defineRule(String name, Expression op) {
+	/**
+	 * Defines the rule with the given name. The rule has to be added with {@code addRules(...)} first.
+	 * @param name the name of the rule (case-insensitive)
+	 * @param expression the expression for the given rule
+	 * @return false, if the rule with the given name does not exist
+	 * */
+	protected boolean defineRule(String name, Expression expression) {
 		Rule rule = rules.get(name.toUpperCase());
 		if(rule == null) {
 			return false;
 		} else {
-			rule.expression = op;
+			rule.define(expression);
 			return true;
 		}
 	}
@@ -56,44 +78,69 @@ public class Grammar {
 
 
 
-	public boolean setStartingRule(String name) {
-		this.startingRule = name;
-		return rules.containsKey(name.toUpperCase());
+	/**
+	 * Sets the starting rule of this grammar.
+	 * @param name the name of the rule (case-insensitive)
+	 * @return false, if the rule with the given name does not exist
+	 * */
+	protected boolean setStartingRule(String name) {
+		Rule rule = getRule(name);
+		if(rule == null) {
+			return false;
+		} else {
+			startingRule = rule;
+			return true;
+		}
 	}
-	
-	
-	
-	
+
+
+
+
+	/**
+	 * @return the rule with the given name (case-insensitive)
+	 * */
 	public Rule getRule(String name) {
 		return rules.get(name.toUpperCase());
 	}
-	
-	
-	
-	
-	public Set<String> getRules() {
+
+
+
+
+	/**
+	 * @return a unmodifiable set of the names of all rules
+	 * */
+	protected Set<String> getRules() {
 		return Collections.unmodifiableSet(rules.keySet());
 	}
-	
-	
-	
-	
+
+
+
+
+	/**
+	 * @return the name of the starting rule
+	 * */
 	public String getStartingRule() {
-		return startingRule;
+		return startingRule.getName();
 	}
-	
-	
-	
-	
-	public Token getToken(String symbol) {
+
+
+
+
+	/**
+	 * @return the token with the given symbol
+	 * */
+	protected Token getToken(String symbol) {
 		return tokens.get(symbol);
 	}
-	
-	
-	
-	
+
+
+
+
+	/**
+	 * @return a copy of the list of all tokens
+	 * */
 	public List<Token> getTokens() {
-		List<Token> list = new ArrayList<Token>();
+		List<Token> list = new ArrayList<>();
 		for(Entry<String, Token> entry : tokens.entrySet()) {
 			list.add(entry.getValue());
 		}
@@ -103,8 +150,11 @@ public class Grammar {
 
 
 
+	/**
+	 * @return this grammar as a graph in the DOT-format
+	 * */
 	public String createDotGraph() {
-		Expression start = getRule(getStartingRule()).expression;
+		Expression start = getRule(getStartingRule()).getExpression();
 		Set<Expression> visited = new HashSet<>();
 
 		StringBuilder builder = new StringBuilder();
@@ -117,7 +167,5 @@ public class Grammar {
 
 		return builder.toString();
 	}
-	
-	
-	
+
 }
