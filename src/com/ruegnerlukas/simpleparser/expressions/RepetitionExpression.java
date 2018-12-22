@@ -1,8 +1,9 @@
 package com.ruegnerlukas.simpleparser.expressions;
 
 import com.ruegnerlukas.simpleparser.tokens.Token;
-import com.ruegnerlukas.simpleparser.tree.PlaceholderNode;
 import com.ruegnerlukas.simpleparser.tree.Node;
+import com.ruegnerlukas.simpleparser.tree.PlaceholderNode;
+import com.ruegnerlukas.simpleparser.tree.TraceElement;
 
 import java.util.List;
 import java.util.Set;
@@ -27,9 +28,11 @@ public class RepetitionExpression extends Expression {
 	
 
 	@Override
-	public Result apply(List<Token> consumed, List<Token> tokens, List<Expression> trace) {
+	public Result apply(List<Token> consumed, List<Token> tokens, List<TraceElement> trace) {
+		TraceElement traceElement = null;
 		if(trace != null) {
-			trace.add(this);
+			traceElement = new TraceElement(this, Result.State.MATCH);
+			trace.add(traceElement);
 		}
 
 		Node node = new PlaceholderNode(Integer.toHexString(this.hashCode()));
@@ -44,6 +47,7 @@ public class RepetitionExpression extends Expression {
 				return new Result(node);
 			}
 			if (resultExpr.state == Result.State.ERROR) {
+				if(traceElement != null) { traceElement.state = Result.State.ERROR; }
 				return resultExpr;
 			}
 		}

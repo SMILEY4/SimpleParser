@@ -3,6 +3,7 @@ package com.ruegnerlukas.simpleparser.expressions;
 import com.ruegnerlukas.simpleparser.errors.UndefinedStateError;
 import com.ruegnerlukas.simpleparser.tokens.Token;
 import com.ruegnerlukas.simpleparser.tree.PlaceholderNode;
+import com.ruegnerlukas.simpleparser.tree.TraceElement;
 
 import java.util.List;
 import java.util.Set;
@@ -27,10 +28,12 @@ public class OptionalExpression extends Expression {
 
 
 	@Override
-	public Result apply(List<Token> consumed, List<Token> tokens, List<Expression> trace) {
+	public Result apply(List<Token> consumed, List<Token> tokens, List<TraceElement> trace) {
 
+		TraceElement traceElement = null;
 		if(trace != null) {
-			trace.add(this);
+			traceElement = new TraceElement(this, Result.State.MATCH);
+			trace.add(traceElement);
 		}
 
 		if(tokens.isEmpty()) {
@@ -47,9 +50,11 @@ public class OptionalExpression extends Expression {
 				return new Result(resultExpr.node == null ? new PlaceholderNode() : resultExpr.node);
 			}
 			if(resultExpr.state == Result.State.ERROR) {
+				if(traceElement != null) { traceElement.state = Result.State.ERROR; }
 				return resultExpr;
 			}
 
+			if(traceElement != null) { traceElement.state = Result.State.ERROR; }
 			return new Result(new UndefinedStateError(this, consumed.size()));
 		}
 	}

@@ -3,6 +3,7 @@ package com.ruegnerlukas.simpleparser.expressions;
 import com.ruegnerlukas.simpleparser.errors.EndOfStreamError;
 import com.ruegnerlukas.simpleparser.errors.UnexpectedSymbolError;
 import com.ruegnerlukas.simpleparser.tokens.Token;
+import com.ruegnerlukas.simpleparser.tree.TraceElement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,9 +29,11 @@ public class AlternativeExpression extends Expression {
 
 
 	@Override
-	public Result apply(List<Token> consumed, List<Token> tokens, List<Expression> trace) {
+	public Result apply(List<Token> consumed, List<Token> tokens, List<TraceElement> trace) {
+		TraceElement traceElement = null;
 		if(trace != null) {
-			trace.add(this);
+			traceElement = new TraceElement(this, Result.State.MATCH);
+			trace.add(traceElement);
 		}
 
 		for(Expression expr : expressions) {
@@ -43,6 +46,7 @@ public class AlternativeExpression extends Expression {
 				continue;
 			}
 			if(resultExpr.state == Result.State.ERROR) {
+				if(traceElement != null) { traceElement.state = Result.State.ERROR; }
 				return resultExpr;
 			}
 
@@ -50,6 +54,7 @@ public class AlternativeExpression extends Expression {
 
 		Expression.printPossible(this);
 
+		if(traceElement != null) { traceElement.state = Result.State.ERROR; }
 		if(tokens.isEmpty()) {
 			return new Result(new EndOfStreamError(this, consumed));
 		} else {

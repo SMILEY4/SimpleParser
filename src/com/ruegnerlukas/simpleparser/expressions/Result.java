@@ -9,7 +9,7 @@ public class Result {
 	public enum State {
 		MATCH,
 		NO_MATCH,
-		ERROR;
+		ERROR
 	}
 
 

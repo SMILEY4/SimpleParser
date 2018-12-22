@@ -1,11 +1,10 @@
 package com.ruegnerlukas.simpleparser.tree;
 
 import com.ruegnerlukas.simpleparser.errors.TokensRemainingError;
+import com.ruegnerlukas.simpleparser.expressions.Result;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.simpleparser.grammar.Rule;
 import com.ruegnerlukas.simpleparser.tokens.Token;
-import com.ruegnerlukas.simpleparser.expressions.Expression;
-import com.ruegnerlukas.simpleparser.expressions.Result;
 import com.ruegnerlukas.simpleparser.tokens.TokenType;
 
 import java.util.ArrayList;
@@ -15,13 +14,13 @@ public class TreeBuilder {
 
 
 	private boolean traceEnabled = false;
-	private List<Expression> trace = new ArrayList<>();
+	private List<TraceElement> trace = new ArrayList<>();
 
 
 
 
 	/**
-	 * @param enable true, to create a trace of all applied expressions while building the tree
+	 * @param enable true, to create a trace of all applied expressions and additional information while building the tree
 	 * */
 	public void enableTrace(boolean enable) {
 		this.traceEnabled = enable;
@@ -30,7 +29,7 @@ public class TreeBuilder {
 
 
 	/**
-	 * @return true, when a trace of all applied expressions while building the tree is created
+	 * @return true, when a trace of all applied expressions and additional information while building the tree is created
 	 * */
 	public boolean isTraceEnabled() {
 		return traceEnabled;
@@ -40,9 +39,9 @@ public class TreeBuilder {
 
 
 	/**
-	 * @return the list of all applied expressions while building the last tree
+	 * @return the list of all applied expressions and additional information while building the last tree
 	 * */
-	public List<Expression> getLastTrace() {
+	public List<TraceElement> getLastTrace() {
 		return this.trace;
 	}
 

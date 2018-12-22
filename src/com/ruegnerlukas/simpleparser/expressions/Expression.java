@@ -1,6 +1,7 @@
 package com.ruegnerlukas.simpleparser.expressions;
 
 import com.ruegnerlukas.simpleparser.tokens.Token;
+import com.ruegnerlukas.simpleparser.tree.TraceElement;
 
 import java.util.HashSet;
 import java.util.List;
@@ -16,7 +17,7 @@ public abstract class Expression {
 	 * @param trace the list of applied expressions
 	 * @return the result of the operation
 	 * */
-	public abstract Result apply(List<Token> consumed, List<Token> tokens, List<Expression> trace);
+	public abstract Result apply(List<Token> consumed, List<Token> tokens, List<TraceElement> trace);
 
 
 
