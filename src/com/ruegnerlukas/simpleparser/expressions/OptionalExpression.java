@@ -1,6 +1,6 @@
 package com.ruegnerlukas.simpleparser.expressions;
 
-import com.ruegnerlukas.simpleparser.errors.ErrorMessages;
+import com.ruegnerlukas.simpleparser.errors.UndefinedStateError;
 import com.ruegnerlukas.simpleparser.tokens.Token;
 import com.ruegnerlukas.simpleparser.tree.PlaceholderNode;
 
@@ -50,7 +50,7 @@ public class OptionalExpression extends Expression {
 				return resultExpr;
 			}
 
-			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_undefinedState(this), consumed.size());
+			return new Result(new UndefinedStateError(this, consumed.size()));
 		}
 	}
 

@@ -147,10 +147,6 @@ public abstract class Node {
 			child.createDotTree(false, builder);
 		}
 
-		if(this instanceof RecommendationNode) {
-			builder.append("    ").append(this).append(" [color=\"0.5 1.0 1.0\"];").append(System.lineSeparator());
-		}
-
 		if(isRoot) {
 			builder.append('}').append(System.lineSeparator());
 		}

@@ -1,6 +1,8 @@
 package com.ruegnerlukas.simpleparser.expressions;
 
-import com.ruegnerlukas.simpleparser.errors.ErrorMessages;
+import com.ruegnerlukas.simpleparser.errors.EndOfStreamError;
+import com.ruegnerlukas.simpleparser.errors.UndefinedSymbolError;
+import com.ruegnerlukas.simpleparser.errors.UnexpectedSymbolError;
 import com.ruegnerlukas.simpleparser.tokens.Token;
 import com.ruegnerlukas.simpleparser.tokens.TokenType;
 import com.ruegnerlukas.simpleparser.tree.TerminalNode;
@@ -32,12 +34,12 @@ public class TokenExpression extends Expression {
 		}
 
 		if(tokens.isEmpty()) {
-			return new Result(Result.State.NO_MATCH, null, ErrorMessages.genMessage_endOfStream(this), consumed.size());
+			return new Result(Result.State.NO_MATCH, null, new EndOfStreamError(this, consumed.size()));
 
 		} else {
 
 			if(tokens.get(0).getType() == TokenType.UNDEFINED) {
-				return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_undefinedSymbol(this, token.getSymbol(), consumed, tokens), consumed.size());
+				return new Result(new UndefinedSymbolError(this, consumed, tokens.get(0).getSymbol(), token.getSymbol()));
 
 			} else if(tokens.get(0).getType() == TokenType.IGNORABLE) {
 				consumed.add(tokens.remove(0));
@@ -48,7 +50,7 @@ public class TokenExpression extends Expression {
 				return new Result(new TerminalNode(token));
 
 			} else {
-				return new Result(Result.State.NO_MATCH, null, ErrorMessages.genMessage_unexpectedSymbol(this, token.getSymbol(), consumed, tokens), consumed.size());
+				return new Result(new UnexpectedSymbolError(this, consumed, tokens.get(0).getSymbol(), token.getSymbol()));
 			}
 
 		}

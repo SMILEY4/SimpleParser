@@ -1,6 +1,6 @@
 package com.ruegnerlukas.simpleparser.tree;
 
-import com.ruegnerlukas.simpleparser.errors.ErrorMessages;
+import com.ruegnerlukas.simpleparser.errors.TokensRemainingError;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.simpleparser.grammar.Rule;
 import com.ruegnerlukas.simpleparser.tokens.Token;
@@ -72,23 +72,16 @@ public class TreeBuilder {
 		// process finished tree
 		root.eliminatePlaceholders();
 
-		// create final result
-		Result.State state = Result.State.MATCH;
-		String message = resultStart.message;
-
-		if(resultStart.state == Result.State.ERROR) {
-			state = Result.State.ERROR;
-		}
+		// return final result
 		if(resultStart.state == Result.State.MATCH && !tokensCopy.isEmpty()) {
 			for(Token token : tokensCopy) {
 				if(token.getType() != TokenType.IGNORABLE ) {
-					state = Result.State.ERROR;
-					message = ErrorMessages.genMessage_tokensRemaining(this, consumed, tokensCopy);
+					return new Result(Result.State.ERROR, null, new TokensRemainingError(this, consumed));
 				}
 			}
-		}
 
-		return new Result(state, root, message, consumed.size());
+		}
+		return resultStart;
 	}
 
 

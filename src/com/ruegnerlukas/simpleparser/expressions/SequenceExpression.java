@@ -5,6 +5,7 @@ import com.ruegnerlukas.simpleparser.tree.Node;
 import com.ruegnerlukas.simpleparser.tree.PlaceholderNode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -20,9 +21,7 @@ public class SequenceExpression extends Expression {
 	 * X -> E0 E1 ... EN
 	 * */
 	public SequenceExpression(Expression... expressions) {
-		for(Expression expr : expressions) {
-			this.expressions.add(expr);
-		}
+		this.expressions.addAll(Arrays.asList(expressions));
 	}
 
 

@@ -1,9 +1,11 @@
 package com.ruegnerlukas.simpleparser.expressions;
 
-import com.ruegnerlukas.simpleparser.errors.ErrorMessages;
+import com.ruegnerlukas.simpleparser.errors.EndOfStreamError;
+import com.ruegnerlukas.simpleparser.errors.UnexpectedSymbolError;
 import com.ruegnerlukas.simpleparser.tokens.Token;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -19,9 +21,7 @@ public class AlternativeExpression extends Expression {
 	 * E0 | E1 | ... | En
 	 * */
 	public AlternativeExpression(Expression... expressions) {
-		for(Expression expr : expressions) {
-			this.expressions.add(expr);
-		}
+		this.expressions.addAll(Arrays.asList(expressions));
 	}
 
 
@@ -51,9 +51,9 @@ public class AlternativeExpression extends Expression {
 		Expression.printPossible(this);
 
 		if(tokens.isEmpty()) {
-			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_endOfStream(this), consumed.size());
+			return new Result(new EndOfStreamError(this, consumed));
 		} else {
-			return new Result(Result.State.ERROR, null, ErrorMessages.genMessage_unexpectedSymbol(this, consumed, tokens), consumed.size());
+			return new Result(new UnexpectedSymbolError(this, consumed));
 		}
 	}
 
