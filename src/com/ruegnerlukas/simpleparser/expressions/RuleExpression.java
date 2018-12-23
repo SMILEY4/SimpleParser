@@ -19,6 +19,11 @@ public class RuleExpression extends Expression {
 
 	public RuleExpression(Rule rule) {
 		this.rule = rule;
+		if(rule.getExpression() == null) {
+			rule.tmpParents.add(this);
+		} else {
+			rule.getExpression().addParent(this);
+		}
 	}
 
 
@@ -50,11 +55,28 @@ public class RuleExpression extends Expression {
 
 	@Override
 	public boolean collectPossibleTokens(Set<Expression> visited, Set<Token> possibleTokens) {
+//		if(visited.contains(this)) {
+//			return false;
+//		} else {
+			visited.add(this);
+			return rule.getExpression().collectPossibleTokens(visited, possibleTokens);
+//		}
+	}
+
+
+
+
+	@Override
+	public boolean collectPossibleTokens(Expression start, Set<Expression> visited, Set<Token> possibleTokens) {
+		System.out.println("collect @" + this);
 		if(visited.contains(this)) {
 			return false;
 		} else {
 			visited.add(this);
-			return rule.getExpression().collectPossibleTokens(visited, possibleTokens);
+			for(Expression parent : getParents()) {
+				parent.collectPossibleTokens(this, visited, possibleTokens);
+			}
+			return true;
 		}
 	}
 

@@ -3,11 +3,42 @@ package com.ruegnerlukas.simpleparser.expressions;
 import com.ruegnerlukas.simpleparser.tokens.Token;
 import com.ruegnerlukas.simpleparser.tree.TraceElement;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 public abstract class Expression {
+
+
+	public boolean isRoot = false;
+
+	private List<Expression> parents = new ArrayList<>();
+
+
+
+
+	public void addParent(Expression parent) {
+		this.parents.add(parent);
+	}
+
+
+	public void addParents(Collection<Expression> parents) {
+		this.parents.addAll(parents);
+	}
+
+
+
+
+	public List<Expression> getParents() {
+		if(isRoot) {
+			return new ArrayList<>();
+		} else {
+			return parents;
+		}
+	}
+
+
 
 
 	/**
@@ -30,7 +61,6 @@ public abstract class Expression {
 
 
 
-
 	/**
 	 * collects all possible Tokens of this expressions and adds them to the given list.
 	 * @param visited the expressions that have already been visited
@@ -38,34 +68,12 @@ public abstract class Expression {
 	public abstract boolean collectPossibleTokens(Set<Expression> visited, Set<Token> possibleTokens);
 
 
+	/**
+	 * collects all possible Tokens of this expressions and adds them to the given list.
+	 * @param visited the expressions that have already been visited
+	 * */
+	public abstract boolean collectPossibleTokens(Expression start, Set<Expression> visited, Set<Token> possibleTokens);
 
 
-
-
-
-	public static void printPossible(Expression e) {
-		printPossible(e, e);
-	}
-
-	public static Set<Token> possible = new HashSet<>();
-
-	public static void printPossible(Expression e, Expression owner) {
-		Set<Expression> visited = new HashSet<>();
-		Set<Token> tokens = new HashSet<>();
-
-		if(e != owner) {
-			visited.add(owner);
-		}
-
-		e.collectPossibleTokens(visited, tokens);
-
-		possible.addAll(tokens);
-
-//		System.out.print("POSSIBLE [" + owner + "]:  ");
-//		for(Token t : tokens) {
-//			System.out.print(t.symbol + "  ");
-//		}
-//		System.out.println();
-	}
 
 }

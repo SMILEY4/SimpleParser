@@ -74,7 +74,7 @@ public class TreeBuilder {
 		// return final result
 		if(resultStart.state == Result.State.MATCH && !tokensCopy.isEmpty()) {
 			for(Token token : tokensCopy) {
-				if(token.getType() != TokenType.IGNORABLE ) {
+				if( token.getType() != TokenType.IGNORABLE &&  token.getType() != TokenType.CURSOR ) {
 					return new Result(Result.State.ERROR, null, new TokensRemainingError(this, consumed));
 				}
 			}

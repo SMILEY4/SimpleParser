@@ -13,16 +13,20 @@ public class GrammarBuilder {
 	
 	
 	/**
-	 * define the starting production rule of the grammar
+	 * define the starting production rule of the grammar. This rule can not be defined twice. The first definition will be kept.
 	 * @param rule			the name of the production rule
 	 * @param expression	the expression for the rule
 	 * */
 	public void defineRootNonTerminal(String rule, Expression expression) {
+		if(grammar.hasStartingRule()) {
+			return;
+		}
 		if(grammar.getRule(rule) == null) {
 			grammar.addRules(rule);
 		}
 		grammar.defineRule(rule, expression);
 		grammar.setStartingRule(rule);
+		expression.isRoot = true;
 	}
 	
 	

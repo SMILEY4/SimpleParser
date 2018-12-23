@@ -1,6 +1,5 @@
 package com.ruegnerlukas.test;
 
-import com.ruegnerlukas.simpleparser.expressions.Expression;
 import com.ruegnerlukas.simpleparser.expressions.Result;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.simpleparser.grammar.GrammarBuilder;
@@ -129,13 +128,12 @@ public class GraphRenderer {
 
 				Tokenizer tokenizer = new Tokenizer(GRAMMAR);
 				final List<Token> tokens = tokenizer.tokenize(strInput, ignorables, false);
+				tokens.add(Token.cursor());
 
-				Expression.possible.clear();
 				TreeBuilder treeBuilder = new TreeBuilder();
 				treeBuilder.enableTrace(true);
 				final Result result = treeBuilder.build(GRAMMAR, tokens);
 				final Node root = result.node;
-
 
 				final DefaultStyledDocument doc = (DefaultStyledDocument)e.getDocument();
 				SwingUtilities.invokeLater(new Runnable() {
@@ -171,11 +169,14 @@ public class GraphRenderer {
 					}
 				});
 
+				System.out.println("===============");
+
 //				String strPossible = "";
 //				for(Token token : Expression.possible) {
 //					strPossible += token.getSymbol() + "  ";
 //				}
 //				labelTokens.setText(strPossible);
+
 //
 //				System.out.println();
 //				System.out.println(strInput);

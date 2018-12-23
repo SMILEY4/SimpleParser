@@ -2,12 +2,16 @@ package com.ruegnerlukas.simpleparser.grammar;
 
 import com.ruegnerlukas.simpleparser.expressions.Expression;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Rule {
 
 
 	private final String name;
 	private Expression expression = null;
 
+	public List<Expression> tmpParents = new ArrayList<>();
 
 
 
@@ -25,6 +29,7 @@ public class Rule {
 	 * define this rule with the given expression
 	 * */
 	public void define(Expression expression) {
+		expression.addParents(tmpParents);
 		this.expression = expression;
 	}
 	

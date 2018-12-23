@@ -21,6 +21,7 @@ public class RepetitionExpression extends Expression {
 	 *  => one or more
 	 * */
 	public RepetitionExpression(Expression expression) {
+		expression.addParent(this);
 		this.expression = expression;
 	}
 
@@ -52,7 +53,6 @@ public class RepetitionExpression extends Expression {
 			}
 		}
 
-		Expression.printPossible(this);
 		return new Result(node);
 	}
 
@@ -61,11 +61,29 @@ public class RepetitionExpression extends Expression {
 
 	@Override
 	public boolean collectPossibleTokens(Set<Expression> visited, Set<Token> possibleTokens) {
+//		if(visited.contains(this)) {
+//			return false;
+//		} else {
+			visited.add(this);
+			expression.collectPossibleTokens(visited, possibleTokens);
+			return true;
+//		}
+	}
+
+
+
+
+	@Override
+	public boolean collectPossibleTokens(Expression start, Set<Expression> visited, Set<Token> possibleTokens) {
+		System.out.println("collect @" + this);
 		if(visited.contains(this)) {
 			return false;
 		} else {
 			visited.add(this);
 			expression.collectPossibleTokens(visited, possibleTokens);
+			for(Expression parent : getParents()) {
+				parent.collectPossibleTokens(this, visited, possibleTokens);
+			}
 			return true;
 		}
 	}

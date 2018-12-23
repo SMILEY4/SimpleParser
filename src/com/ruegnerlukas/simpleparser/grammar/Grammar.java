@@ -127,6 +127,16 @@ public class Grammar {
 
 
 	/**
+	 * @return true, if the grammar has a starting rule
+	 * */
+	public boolean hasStartingRule() {
+		return startingRule != null;
+	}
+
+
+
+
+	/**
 	 * @return the token with the given symbol
 	 * */
 	protected Token getToken(String symbol) {

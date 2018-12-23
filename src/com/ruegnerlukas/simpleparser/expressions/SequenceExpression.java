@@ -6,7 +6,6 @@ import com.ruegnerlukas.simpleparser.tree.PlaceholderNode;
 import com.ruegnerlukas.simpleparser.tree.TraceElement;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -22,7 +21,10 @@ public class SequenceExpression extends Expression {
 	 * X -> E0 E1 ... EN
 	 * */
 	public SequenceExpression(Expression... expressions) {
-		this.expressions.addAll(Arrays.asList(expressions));
+		for(Expression e : expressions) {
+			e.addParent(this);
+			this.expressions.add(e);
+		}
 	}
 
 
@@ -40,19 +42,37 @@ public class SequenceExpression extends Expression {
 
 		for (Expression expr : expressions) {
 
+			// get possible tokens at cursor
+//			if(!tokens.isEmpty() && tokens.get(0).getType() == TokenType.CURSOR) {
+//				consumed.add(tokens.remove(0));
+//
+//				SequenceExpression sequenceExpression = new SequenceExpression();
+//				for(int i=expressions.indexOf(expr); i<expressions.size(); i++) {
+//					sequenceExpression.expressions.add(expressions.get(i));
+//				}
+//
+//				Set<Token> possible = new HashSet<>();
+//				Set<Expression> visited = new HashSet<>();
+//				visited.add(this);
+//				sequenceExpression.collectPossibleTokens(visited, possible);
+//
+//				if(getParent() != null) {
+//					getParent().collectPossibleTokens(this, visited, possible);
+//				}
+//
+//				System.out.println("-> " + visited.size());
+//				for(Token t : possible) {
+//					System.out.println("   " + t);
+//				}
+//
+//			}
+
 			Result resultExpr = expr.apply(consumed, tokens, trace);
 
 			if (resultExpr.state == Result.State.MATCH) {
 				node.children.add(resultExpr.node);
 			}
 			if (resultExpr.state == Result.State.NO_MATCH) {
-				if(tokens.isEmpty()) {
-					SequenceExpression sequenceExpression = new SequenceExpression();
-					for(int i=expressions.indexOf(expr); i<expressions.size(); i++) {
-						sequenceExpression.expressions.add(expressions.get(i));
-					}
-					Expression.printPossible(sequenceExpression, this);
-				}
 				if(traceElement != null) { traceElement.state = Result.State.NO_MATCH; }
 				return resultExpr;
 			}
@@ -71,20 +91,52 @@ public class SequenceExpression extends Expression {
 
 	@Override
 	public boolean collectPossibleTokens(Set<Expression> visited, Set<Token> possibleTokens) {
-		if(visited.contains(this)) {
-			return false;
-		} else {
+//		if(visited.contains(this)) {
+//			return false;
+//		} else {
 			visited.add(this);
 			for(Expression expression : expressions) {
-				boolean opt = expression.collectPossibleTokens(visited, possibleTokens);
+				boolean opt = expression.collectPossibleTokens( visited, possibleTokens);
 				if(!opt) {
 					return false;
 				}
 			}
 			return true;
-		}
+//		}
 	}
 
+
+
+	@Override
+	public boolean collectPossibleTokens(Expression start, Set<Expression> visited, Set<Token> possibleTokens) {
+		System.out.println("collect @" + this + "  root=" + isRoot);
+
+		if(visited.contains(this)) {
+			return false;
+		} else {
+			visited.add(this);
+
+			SequenceExpression sequence = new SequenceExpression();
+
+			int index = expressions.indexOf(start);
+
+			if(index == expressions.size()-1) {
+				return false;
+
+			} else {
+				for(int i=index+1; i<expressions.size(); i++) {
+					sequence.expressions.add(expressions.get(i));
+				}
+				sequence.collectPossibleTokens(visited, possibleTokens);
+
+				for(Expression parent : getParents()) {
+					parent.collectPossibleTokens(this, visited, possibleTokens);
+				}
+			}
+
+			return true;
+		}
+	}
 
 
 

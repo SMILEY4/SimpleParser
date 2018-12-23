@@ -6,7 +6,6 @@ import com.ruegnerlukas.simpleparser.tokens.Token;
 import com.ruegnerlukas.simpleparser.tree.TraceElement;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -22,7 +21,10 @@ public class AlternativeExpression extends Expression {
 	 * E0 | E1 | ... | En
 	 * */
 	public AlternativeExpression(Expression... expressions) {
-		this.expressions.addAll(Arrays.asList(expressions));
+		for(Expression e : expressions) {
+			e.addParent(this);
+			this.expressions.add(e);
+		}
 	}
 
 
@@ -52,8 +54,6 @@ public class AlternativeExpression extends Expression {
 
 		}
 
-		Expression.printPossible(this);
-
 		if(traceElement != null) { traceElement.state = Result.State.ERROR; }
 		if(tokens.isEmpty()) {
 			return new Result(new EndOfStreamError(this, consumed));
@@ -68,10 +68,10 @@ public class AlternativeExpression extends Expression {
 	@Override
 	public boolean collectPossibleTokens(Set<Expression> visited, Set<Token> possibleTokens) {
 
-		if(visited.contains(this)) {
-			return false;
-
-		} else {
+//		if(visited.contains(this)) {
+//			return false;
+//
+//		} else {
 			visited.add(this);
 			boolean isOptional = true;
 			for(Expression expression : expressions) {
@@ -81,8 +81,25 @@ public class AlternativeExpression extends Expression {
 				}
 			}
 			return isOptional;
-		}
+//		}
 
+	}
+
+
+
+
+	@Override
+	public boolean collectPossibleTokens(Expression start, Set<Expression> visited, Set<Token> possibleTokens) {
+		System.out.println("collect @" + this);
+		if(visited.contains(this)) {
+			return false;
+		} else {
+			visited.add(this);
+			for(Expression parent : getParents()) {
+				parent.collectPossibleTokens(this, visited, possibleTokens);
+			}
+			return true;
+		}
 	}
 
 

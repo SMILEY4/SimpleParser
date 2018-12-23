@@ -32,6 +32,10 @@ public class Token {
 	}
 
 
+	public static Token cursor() {
+		return new Token(TokenType.CURSOR, "");
+	}
+
 
 
 

@@ -8,6 +8,7 @@ import com.ruegnerlukas.simpleparser.tokens.TokenType;
 import com.ruegnerlukas.simpleparser.tree.TerminalNode;
 import com.ruegnerlukas.simpleparser.tree.TraceElement;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -15,7 +16,6 @@ public class TokenExpression extends Expression {
 
 
 	public Token token;
-	private Expression parent;
 
 
 
@@ -47,12 +47,27 @@ public class TokenExpression extends Expression {
 
 			} else if(tokens.get(0).getType() == TokenType.IGNORABLE) {
 				consumed.add(tokens.remove(0));
-				Result result =  this.apply(consumed, tokens, trace);
-				if(traceElement != null) { traceElement.state = result.state; }
+				Result result = this.apply(consumed, tokens, trace);
+				if (traceElement != null) {
+					traceElement.state = result.state;
+				}
 				return result;
 
 			} else if(tokens.get(0) == token) {
 				consumed.add(tokens.remove(0));
+
+				if(!getParents().isEmpty() && !tokens.isEmpty() && tokens.get(0).getType() == TokenType.CURSOR) {
+					Set<Token> possible = new HashSet<>();
+					Set<Expression> visited = new HashSet<>();
+					visited.add(this);
+					for(Expression parent : getParents()) {
+						parent.collectPossibleTokens(this, visited, possible);
+					}
+					for(Token t : possible) {
+						System.out.println("  " + t.getSymbol());
+					}
+				}
+
 				return new Result(new TerminalNode(token));
 
 			} else {
@@ -68,13 +83,21 @@ public class TokenExpression extends Expression {
 
 	@Override
 	public boolean collectPossibleTokens(Set<Expression> visited, Set<Token> possibleTokens) {
-		if(visited.contains(this)) {
-			return false;
-		} else {
+//		if(visited.contains(this)) {
+//			return false;
+//		} else {
 			visited.add(this);
 			possibleTokens.add(token);
 			return false;
-		}
+//		}
+	}
+
+
+
+
+	@Override
+	public boolean collectPossibleTokens(Expression start, Set<Expression> visited, Set<Token> possibleTokens) {
+		return false;
 	}
 
 
