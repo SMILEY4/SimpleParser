@@ -2,6 +2,8 @@ package com.ruegnerlukas.simpleparser.tree;
 
 import com.ruegnerlukas.simpleparser.tokens.Token;
 
+import java.util.List;
+
 public class TerminalNode extends Node {
 
 
@@ -14,6 +16,12 @@ public class TerminalNode extends Node {
 		this.token = token;
 	}
 
+
+
+	@Override
+	public void collectTerminalNodes(List<TerminalNode> nodes) {
+		nodes.add(this);
+	}
 
 
 

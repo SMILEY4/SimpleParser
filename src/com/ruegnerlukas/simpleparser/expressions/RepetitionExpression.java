@@ -21,8 +21,32 @@ public class RepetitionExpression extends Expression {
 	 *  => one or more
 	 * */
 	public RepetitionExpression(Expression expression) {
-		expression.addParent(this);
+		super(ExpressionType.REPETITION);
 		this.expression = expression;
+	}
+
+
+
+
+	public boolean isOptionalExpression() {
+		return true;
+	}
+
+
+
+
+	public boolean collectPossibleTokens(Expression start, Set<Token> tokens) {
+		if(start != null) {
+			collectPossibleTokens(tokens);
+		}
+		return true;
+	}
+
+
+
+
+	public void collectPossibleTokens(Set<Token> tokens) {
+		expression.collectPossibleTokens(tokens);
 	}
 
 
@@ -30,62 +54,43 @@ public class RepetitionExpression extends Expression {
 
 	@Override
 	public Result apply(List<Token> consumed, List<Token> tokens, List<TraceElement> trace) {
+
+		// handle trace
 		TraceElement traceElement = null;
 		if(trace != null) {
 			traceElement = new TraceElement(this, Result.State.MATCH);
 			trace.add(traceElement);
 		}
 
-		Node node = new PlaceholderNode(Integer.toHexString(this.hashCode()));
+		// create node
+		Node node = new PlaceholderNode().setExpression(this);
 
+		// repeat until end (if possible)
 		while (!tokens.isEmpty()) {
-			Result resultExpr = expression.apply(consumed, tokens, trace);
 
-			if (resultExpr.state == Result.State.MATCH) {
-				node.children.add(resultExpr.node);
+			// apply expression
+			Result result = expression.apply(consumed, tokens, trace);
+
+			// matching -> add result and continue
+			if (result.state == Result.State.MATCH) {
+				node.addChild(result.node);
+				continue;
 			}
-			if (resultExpr.state == Result.State.NO_MATCH) {
-				return new Result(node);
+
+			// does not match -> return matching nodes
+			if (result.state == Result.State.NO_MATCH) {
+				return Result.match( node );
 			}
-			if (resultExpr.state == Result.State.ERROR) {
+
+			// encountered error -> return error/result
+			if (result.state == Result.State.ERROR) {
 				if(traceElement != null) { traceElement.state = Result.State.ERROR; }
-				return resultExpr;
+				return result;
 			}
 		}
 
-		return new Result(node);
-	}
-
-
-
-
-	@Override
-	public boolean collectPossibleTokens(Set<Expression> visited, Set<Token> possibleTokens) {
-//		if(visited.contains(this)) {
-//			return false;
-//		} else {
-			visited.add(this);
-			expression.collectPossibleTokens(visited, possibleTokens);
-			return true;
-//		}
-	}
-
-
-
-
-	@Override
-	public boolean collectPossibleTokens(Expression start, Set<Expression> visited, Set<Token> possibleTokens) {
-		System.out.println("collect @" + this);
-		if(visited.contains(this)) {
-			return false;
-		} else {
-			visited.add(this);
-			expression.collectPossibleTokens(visited, possibleTokens);
-			for(Expression parent : getParents()) {
-				parent.collectPossibleTokens(this, visited, possibleTokens);
-			}
-			return true;
-		}
+		// no tokens remaining -> return matching nodes
+		return Result.match( node );
 	}
 
 

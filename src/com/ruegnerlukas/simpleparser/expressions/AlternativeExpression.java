@@ -3,6 +3,7 @@ package com.ruegnerlukas.simpleparser.expressions;
 import com.ruegnerlukas.simpleparser.errors.EndOfStreamError;
 import com.ruegnerlukas.simpleparser.errors.UnexpectedSymbolError;
 import com.ruegnerlukas.simpleparser.tokens.Token;
+import com.ruegnerlukas.simpleparser.tree.Node;
 import com.ruegnerlukas.simpleparser.tree.PlaceholderNode;
 import com.ruegnerlukas.simpleparser.tree.TraceElement;
 
@@ -23,6 +24,7 @@ public class AlternativeExpression extends Expression {
 	 * E0 | E1 | ... | En
 	 * */
 	public AlternativeExpression(Expression... expressions) {
+		super(ExpressionType.ALTERNATIVE);
 		this.expressions.addAll(Arrays.asList(expressions));
 	}
 
@@ -39,62 +41,100 @@ public class AlternativeExpression extends Expression {
 	}
 
 
-	public void collectPossibleTokens(Expression start, Set<Token> tokens) {
+
+
+	public boolean collectPossibleTokens(Expression start, Set<Token> tokens) {
+		return true;
 	}
 
 
 
 
+	public void collectPossibleTokens(Set<Token> tokens) {
+		for(Expression expression : expressions) {
+			expression.collectPossibleTokens(tokens);
+		}
+	}
+
+
+
 	@Override
 	public Result apply(List<Token> consumed, List<Token> tokens, List<TraceElement> trace) {
+
+		// handle trace
 		TraceElement traceElement = null;
 		if(trace != null) {
 			traceElement = new TraceElement(this, Result.State.MATCH);
 			trace.add(traceElement);
 		}
 
+		// no tokens remaining -> MATCH if optional or ERROR: end-of-stream
 		if(tokens.isEmpty()) {
 			if(this.isOptionalExpression()) {
-				return new Result(new PlaceholderNode().setExpression(this));
+				return Result.match(
+						new PlaceholderNode().setExpression(this)
+				);
+
 			} else {
-				return new Result(new EndOfStreamError(this, consumed));
+				return Result.error(
+						new PlaceholderNode().setExpression(this).setError(),
+						new EndOfStreamError(this, consumed)
+				);
 			}
 		}
 
+		// prepare
 		Token tokenStart = tokens.get(0);
 		List<Result> resultsMatched = new ArrayList<>();
+		Result result = null;
 
+		// apply each expression
 		for(Expression expr : expressions) {
+			result = expr.apply(consumed, tokens, trace);
 
-			Result resultExpr = expr.apply(consumed, tokens, trace);
-
-			if(resultExpr.state == Result.State.MATCH) {
-				resultsMatched.add(resultExpr);
-
+			// expression matches next token(s) -> consumed token: return result -> did not consume: continue
+			if(result.state == Result.State.MATCH) {
+				resultsMatched.add(result);
 				if(tokens.isEmpty() || tokenStart != tokens.get(0)) {
-					return resultExpr;
+					return result;
 				} else {
 					continue;
 				}
 
-			} else if(resultExpr.state == Result.State.NO_MATCH) {
+			// expression does not match token(s)
+			} else if(result.state == Result.State.NO_MATCH) {
 				continue;
 
-			} else if(resultExpr.state == Result.State.ERROR) {
-				return resultExpr;
+			// expression encountered error -> return error/result
+			} else if(result.state == Result.State.ERROR) {
+				return result;
 			}
 		}
 
+		// return if matched
 		if(resultsMatched.size() > 0) {
 			return resultsMatched.get(0);
+
+		// nothing matched
+		} else {
+			if(traceElement != null) { traceElement.state = Result.State.ERROR; }
+
+			// ... because no tokens remaining
+			if(tokens.isEmpty()) {
+				return Result.error(
+						new PlaceholderNode(result == null ? new Node[]{} : new Node[]{result.node}).setExpression(this).setError(),
+						new EndOfStreamError(this, consumed)
+				);
+
+			// ... because unexpected symbol
+			} else {
+				return Result.error(
+						new PlaceholderNode().setExpression(this).setError(),
+						new UnexpectedSymbolError(this, consumed)
+				);
+			}
 		}
 
-		if(traceElement != null) { traceElement.state = Result.State.ERROR; }
-		if(tokens.isEmpty()) {
-			return new Result(new EndOfStreamError(this, consumed));
-		} else {
-			return new Result(new UnexpectedSymbolError(this, consumed));
-		}
 	}
 
 

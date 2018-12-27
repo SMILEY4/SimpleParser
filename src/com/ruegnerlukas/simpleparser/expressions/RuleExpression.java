@@ -18,12 +18,32 @@ public class RuleExpression extends Expression {
 
 
 	public RuleExpression(Rule rule) {
+		super(ExpressionType.RULE);
 		this.rule = rule;
-		if(rule.getExpression() == null) {
-			rule.tmpParents.add(this);
-		} else {
-			rule.getExpression().addParent(this);
-		}
+	}
+
+
+
+
+	public boolean isOptionalExpression() {
+		return rule.getExpression().isOptionalExpression();
+	}
+
+
+
+
+	public boolean collectPossibleTokens(Expression start, Set<Token> tokens) {
+//		if(start != null) {
+//			rule.getExpression().collectPossibleTokens(this, tokens);
+//		}
+		return true;
+	}
+
+
+
+
+	public void collectPossibleTokens(Set<Token> tokens) {
+		rule.getExpression().collectPossibleTokens(tokens);
 	}
 
 
@@ -31,53 +51,28 @@ public class RuleExpression extends Expression {
 	
 	@Override
 	public Result apply(List<Token> consumed, List<Token> tokens, List<TraceElement> trace) {
+
+		// handle trace
 		TraceElement traceElement = null;
 		if(trace != null) {
 			traceElement = new TraceElement(this, Result.State.MATCH);
 			trace.add(traceElement);
 		}
 
-		Result resultRule = rule.getExpression().apply(consumed, tokens, trace);
+		// apply expression
+		Result result = rule.getExpression().apply(consumed, tokens, trace);
 
-		if (resultRule.state == Result.State.MATCH) {
-			Node node = new RuleNode(rule);
-			node.children.add(resultRule.node);
-			return new Result(node);
+		// matching
+		if (result.state == Result.State.MATCH) {
+			Node node = new RuleNode(rule).setExpression(this);
+			node.addChild(result.node);
+			return Result.match( node );
+
 		} else {
-			if(traceElement != null) { traceElement.state = resultRule.state; }
-			return resultRule;
+			if(traceElement != null) { traceElement.state = result.state; }
+			return result;
 		}
 
-	}
-
-
-
-
-	@Override
-	public boolean collectPossibleTokens(Set<Expression> visited, Set<Token> possibleTokens) {
-//		if(visited.contains(this)) {
-//			return false;
-//		} else {
-			visited.add(this);
-			return rule.getExpression().collectPossibleTokens(visited, possibleTokens);
-//		}
-	}
-
-
-
-
-	@Override
-	public boolean collectPossibleTokens(Expression start, Set<Expression> visited, Set<Token> possibleTokens) {
-		System.out.println("collect @" + this);
-		if(visited.contains(this)) {
-			return false;
-		} else {
-			visited.add(this);
-			for(Expression parent : getParents()) {
-				parent.collectPossibleTokens(this, visited, possibleTokens);
-			}
-			return true;
-		}
 	}
 
 

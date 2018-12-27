@@ -1,4 +1,4 @@
-package com.ruegnerlukas.test;
+package com.ruegnerlukas.sandbox;
 
 import com.ruegnerlukas.simpleparser.expressions.Result;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
@@ -7,6 +7,7 @@ import com.ruegnerlukas.simpleparser.tokens.Token;
 import com.ruegnerlukas.simpleparser.tokens.TokenType;
 import com.ruegnerlukas.simpleparser.tokens.Tokenizer;
 import com.ruegnerlukas.simpleparser.tree.Node;
+import com.ruegnerlukas.simpleparser.tree.TerminalNode;
 import com.ruegnerlukas.simpleparser.tree.TreeBuilder;
 import com.ruegnerlukas.utils.GraphViz;
 
@@ -22,6 +23,7 @@ import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -123,17 +125,45 @@ public class GraphRenderer {
 			private void update(DocumentEvent e) {
 				String strInput = inputField.getText();
 
+				System.out.println("===========");
+
 				Set<String> ignorables = new HashSet<>();
 				ignorables.add(" ");
 
 				Tokenizer tokenizer = new Tokenizer(GRAMMAR);
 				final List<Token> tokens = tokenizer.tokenize(strInput, ignorables, false);
-				tokens.add(Token.cursor());
 
 				TreeBuilder treeBuilder = new TreeBuilder();
 				treeBuilder.enableTrace(true);
 				final Result result = treeBuilder.build(GRAMMAR, tokens);
 				final Node root = result.node;
+
+				String strPossible = "";
+
+				if(root != null) {
+
+					List<TerminalNode> terminalNodes = new ArrayList<>();
+					root.collectTerminalNodes(terminalNodes);
+
+					if(terminalNodes.size() > 0) {
+						Set<Token> possibleTokens = new HashSet<>();
+						terminalNodes.get(terminalNodes.size()-1).collectPossibleTokens(null, possibleTokens);
+						for(Token token : possibleTokens) {
+							strPossible += token.getSymbol() + "  ";
+						}
+					}
+
+					root.eliminatePlaceholders();
+				}
+				labelTokens.setText(strPossible);
+
+
+				if(root == null) {
+					System.out.println(result.state + "  " + result.error);
+				} else {
+					System.out.println(result.state + "  " + result.error);
+					System.out.println(root.createDotTree());
+				}
 
 				final DefaultStyledDocument doc = (DefaultStyledDocument)e.getDocument();
 				SwingUtilities.invokeLater(new Runnable() {
@@ -168,8 +198,6 @@ public class GraphRenderer {
 
 					}
 				});
-
-				System.out.println("===============");
 
 //				String strPossible = "";
 //				for(Token token : Expression.possible) {

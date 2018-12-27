@@ -1,4 +1,4 @@
-//package com.ruegnerlukas.test;
+//package com.ruegnerlukas.sandbox;
 //
 //import com.ruegnerlukas.simpleparser.expressions.Result;
 //import com.ruegnerlukas.simpleparser.grammar.Grammar;
@@ -32,10 +32,17 @@
 //		String[] testStrings = source.split(System.lineSeparator());
 //
 //		/*
+
+
+
+
 //		OR_EXPRESSION 	-> AND_EXPRESSION {"or" AND_EXPRESSION}
 //		AND_EXPRESSION 	-> COMPONENT {"and" COMPONENT}
 //		COMPONENT 		-> STATEMENT | ( "(" OR_EXPRESSION ")"
 //		STATEMENT		-> "expr"
+
+
+
 //
 //		TOKENS: [TOKEN:'expr', TOKEN:'or', TOKEN:'(', UNDEFINED:'x ', TOKEN:'and', TOKEN:'expr', TOKEN:')']
 //
@@ -93,7 +100,7 @@
 //		System.out.println(grammar.createDotGraph());
 //		System.out.println();
 //
-//		test(grammar, "expr or (expr and expr)");
+//		sandbox(grammar, "expr or (expr and expr)");
 //
 //
 //	}
@@ -101,7 +108,7 @@
 //
 //
 //
-//	static void test(Grammar grammar, String testString) {
+//	static void sandbox(Grammar grammar, String testString) {
 //		System.out.println("INPUT: " + testString);
 //
 //		Set<String> ignorables = new HashSet<>();

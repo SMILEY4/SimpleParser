@@ -1,14 +1,111 @@
 package com.ruegnerlukas.simpleparser.tree;
 
+import com.ruegnerlukas.simpleparser.expressions.Expression;
+import com.ruegnerlukas.simpleparser.expressions.Result;
 import com.ruegnerlukas.simpleparser.grammar.Rule;
+import com.ruegnerlukas.simpleparser.tokens.Token;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public abstract class Node {
 
 
-	public List<Node> children = new ArrayList<>();
+	private List<Node> children = new ArrayList<>();
+	private Node parent;
+	private Expression expression;
+
+	public Result.State state = Result.State.MATCH;
+
+
+
+	public Node setError() {
+		this.state = Result.State.ERROR;
+		return this;
+	}
+
+	public Node setState(Result.State state) {
+		this.state = state;
+		return this;
+	}
+
+
+	public Node setExpression(Expression expression) {
+		this.expression = expression;
+		return this;
+	}
+
+
+
+
+	public Expression getExpression() {
+		return expression;
+	}
+
+
+
+
+	public void addChild(Node node) {
+		node.setParent(this);
+		this.children.add(node);
+	}
+
+
+
+
+	public void addChildren(Collection<Node> nodes) {
+		for (Node n : nodes) {
+			n.setParent(this);
+		}
+		this.children.addAll(nodes);
+	}
+
+
+
+
+	public List<Node> getChildren() {
+		return children;
+	}
+
+
+
+
+	private void setParent(Node parent) {
+		this.parent = parent;
+	}
+
+
+
+
+	public Node getParent() {
+		return this.parent;
+	}
+
+
+
+	public void collectPossibleTokens(Expression prev, Set<Token> tokens) {
+
+		boolean continueUp = true;
+
+		if(getExpression() != null) {
+			continueUp = getExpression().collectPossibleTokens(prev, tokens);
+		}
+
+		if(continueUp && getParent() != null) {
+			getParent().collectPossibleTokens(getExpression(), tokens);
+		}
+	}
+
+
+
+
+	public void collectTerminalNodes(List<TerminalNode> nodes) {
+		for(Node n : children) {
+			n.collectTerminalNodes(nodes);
+		}
+	}
 
 
 
@@ -16,7 +113,7 @@ public abstract class Node {
 	/**
 	 * Removes all {@link PlaceholderNode} from the subtree with this node as the root.
 	 * */
-	protected void eliminatePlaceholders() {
+	public void eliminatePlaceholders() {
 		
 		for(Node child : children) {
 			child.eliminatePlaceholders();
@@ -143,6 +240,11 @@ public abstract class Node {
 		for(Node child : children) {
 			builder.append("    ").append(this).append(" -> ").append(child).append(';').append(System.lineSeparator());
 		}
+		if(this.state == Result.State.ERROR) {
+			builder.append("    " + this.toString() + " [color=\"1.0 1.0 1.0\"];").append(System.lineSeparator());
+		}
+
+
 		for(Node child : children) {
 			child.createDotTree(false, builder);
 		}

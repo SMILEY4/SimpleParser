@@ -17,9 +17,4 @@ public enum TokenType {
 	 * */
 	UNDEFINED,
 
-	/**
-	 * Marks the current place of the cursor, can be ignored when processing an input
-	 * */
-	CURSOR
-
 }

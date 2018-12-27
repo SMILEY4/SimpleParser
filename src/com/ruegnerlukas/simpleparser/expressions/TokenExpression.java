@@ -5,10 +5,10 @@ import com.ruegnerlukas.simpleparser.errors.UndefinedSymbolError;
 import com.ruegnerlukas.simpleparser.errors.UnexpectedSymbolError;
 import com.ruegnerlukas.simpleparser.tokens.Token;
 import com.ruegnerlukas.simpleparser.tokens.TokenType;
+import com.ruegnerlukas.simpleparser.tree.PlaceholderNode;
 import com.ruegnerlukas.simpleparser.tree.TerminalNode;
 import com.ruegnerlukas.simpleparser.tree.TraceElement;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +21,27 @@ public class TokenExpression extends Expression {
 
 
 	public TokenExpression(Token token) {
+		super(ExpressionType.TOKEN);
 		this.token = token;
+	}
+
+
+
+	public boolean isOptionalExpression() {
+		return false;
+	}
+
+
+
+	public boolean collectPossibleTokens(Expression start, Set<Token> tokens) {
+		return true;
+	}
+
+
+
+
+	public void collectPossibleTokens(Set<Token> tokens) {
+		tokens.add(token);
 	}
 
 
@@ -29,23 +49,44 @@ public class TokenExpression extends Expression {
 
 	@Override
 	public Result apply(List<Token> consumed, List<Token> tokens, List<TraceElement> trace) {
+
+		// handle trace
 		TraceElement traceElement = null;
 		if(trace != null) {
 			traceElement = new TraceElement(this, Result.State.MATCH);
 			trace.add(traceElement);
 		}
 
+
+		// no tokens remaining
 		if(tokens.isEmpty()) {
 			if(traceElement != null) { traceElement.state = Result.State.NO_MATCH; }
-			return new Result(Result.State.NO_MATCH, null, new EndOfStreamError(this, consumed.size()));
 
+			return Result.noMatch(
+					new PlaceholderNode().setExpression(this).setError(),
+					new EndOfStreamError(this, consumed.size())
+			);
+
+
+		// tokens remaining
 		} else {
 
-			if(tokens.get(0).getType() == TokenType.UNDEFINED) {
-				if(traceElement != null) { traceElement.state = Result.State.ERROR; }
-				return new Result(new UndefinedSymbolError(this, consumed, tokens.get(0).getSymbol(), token.getSymbol()));
+			// get next
+			Token next = tokens.get(0);
 
-			} else if(tokens.get(0).getType() == TokenType.IGNORABLE) {
+
+			// next is undefined -> ERROR: undefined symbol
+			if(next.getType() == TokenType.UNDEFINED) {
+				if(traceElement != null) { traceElement.state = Result.State.ERROR; }
+
+				return Result.error(
+						new PlaceholderNode().setExpression(this).setError(),
+						new UndefinedSymbolError(this, consumed, tokens.get(0).getSymbol(), token.getSymbol())
+				);
+
+
+			// next is ignorable -> consume + apply again
+			} else if(next.getType() == TokenType.IGNORABLE) {
 				consumed.add(tokens.remove(0));
 				Result result = this.apply(consumed, tokens, trace);
 				if (traceElement != null) {
@@ -53,51 +94,29 @@ public class TokenExpression extends Expression {
 				}
 				return result;
 
-			} else if(tokens.get(0) == token) {
+
+			// next is matching token -> MATCH
+			} else if(next == token) {
 				consumed.add(tokens.remove(0));
 
-				if(!getParents().isEmpty() && !tokens.isEmpty() && tokens.get(0).getType() == TokenType.CURSOR) {
-					Set<Token> possible = new HashSet<>();
-					Set<Expression> visited = new HashSet<>();
-					visited.add(this);
-					for(Expression parent : getParents()) {
-						parent.collectPossibleTokens(this, visited, possible);
-					}
-					for(Token t : possible) {
-						System.out.println("  " + t.getSymbol());
-					}
-				}
+				return Result.match(
+						new TerminalNode(token).setExpression(this)
+				);
 
-				return new Result(new TerminalNode(token));
 
+			// next is not matching token -> NO_MATCH: unexpected symbol
 			} else {
 				if(traceElement != null) { traceElement.state = Result.State.ERROR; }
-				return new Result(Result.State.NO_MATCH, null, new UnexpectedSymbolError(this, consumed, tokens.get(0).getSymbol(), token.getSymbol()));
+
+				return Result.noMatch(
+						new PlaceholderNode().setExpression(this).setError(),
+						new UnexpectedSymbolError(this, consumed, tokens.get(0).getSymbol(), token.getSymbol())
+				);
+
 			}
 
+
 		}
-	}
-
-
-
-
-	@Override
-	public boolean collectPossibleTokens(Set<Expression> visited, Set<Token> possibleTokens) {
-//		if(visited.contains(this)) {
-//			return false;
-//		} else {
-			visited.add(this);
-			possibleTokens.add(token);
-			return false;
-//		}
-	}
-
-
-
-
-	@Override
-	public boolean collectPossibleTokens(Expression start, Set<Expression> visited, Set<Token> possibleTokens) {
-		return false;
 	}
 
 

@@ -26,7 +26,6 @@ public class GrammarBuilder {
 		}
 		grammar.defineRule(rule, expression);
 		grammar.setStartingRule(rule);
-		expression.isRoot = true;
 	}
 	
 	
@@ -80,7 +79,7 @@ public class GrammarBuilder {
 			throw new InvalidParameterException("min must be smaller than max");
 		}
 
-		Expression[] terminalList = new Expression[max-min];
+		Expression[] terminalList = new Expression[max-min+1];
 		int i = 0;
 		for(int j=min; j<=max; j++) {
 			terminalList[i++] = terminal(Integer.toString(j));

@@ -1,6 +1,7 @@
 package com.ruegnerlukas.simpleparser.tokens;
 
 
+import java.util.Objects;
 
 public class Token {
 
@@ -29,11 +30,6 @@ public class Token {
 	 * */
 	public static Token undefined(String symbol) {
 		return new Token(TokenType.UNDEFINED, symbol);
-	}
-
-
-	public static Token cursor() {
-		return new Token(TokenType.CURSOR, "");
 	}
 
 
@@ -78,10 +74,28 @@ public class Token {
 
 
 
-
 	@Override
 	public String toString() {
 		return getType().toString() + "'" + symbol + "'";
 	}
-	
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Token) {
+			Token other = (Token)obj;
+			return this.getType() == other.getType() && this.getSymbol() == other.getSymbol();
+		} else {
+			return false;
+		}
+	}
+
+
+
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(symbol, type);
+	}
+
 }

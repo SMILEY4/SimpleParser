@@ -109,7 +109,7 @@ public class Grammar {
 	/**
 	 * @return a unmodifiable set of the names of all rules
 	 * */
-	protected Set<String> getRules() {
+	public Set<String> getRules() {
 		return Collections.unmodifiableSet(rules.keySet());
 	}
 

@@ -1,4 +1,4 @@
-//package com.ruegnerlukas.test;
+//package com.ruegnerlukas.sandbox;
 //
 //import com.ruegnerlukas.simpleparser.grammar.Grammar;
 //import com.ruegnerlukas.simpleparser.grammar.GrammarBuilder;
@@ -131,7 +131,7 @@
 //
 //
 //		Grammar grammar = gb.get();
-//		test(grammar, testStrings[2]);
+//		sandbox(grammar, testStrings[2]);
 //
 //
 ////		Grammar grammar = new Grammar();
@@ -229,7 +229,7 @@
 ////			);
 ////
 ////
-////		test(grammar, testStrings[1]);
+////		sandbox(grammar, testStrings[1]);
 //
 ////		/*
 ////
@@ -284,7 +284,7 @@
 ////				));
 ////
 ////		for(String str : testStrings) {
-////			test(grammar, str);
+////			sandbox(grammar, str);
 ////		}
 //
 //	}
@@ -292,7 +292,7 @@
 //
 //
 //
-//	private static void test(Grammar grammar, String testString) {
+//	private static void sandbox(Grammar grammar, String testString) {
 //
 //		System.out.println("==== TEST: " + testString);
 //

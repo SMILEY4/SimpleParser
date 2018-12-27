@@ -21,79 +21,78 @@ public class OptionalExpression extends Expression {
 	 *  => none or one E
 	 * */
 	public OptionalExpression(Expression expression) {
-		expression.addParent(this);
+		super(ExpressionType.OPTIONAL);
 		this.expression = expression;
 	}
 
+
+
+	public boolean isOptionalExpression() {
+		return true;
+	}
+
+
+
+	public boolean collectPossibleTokens(Expression start, Set<Token> tokens) {
+		return true;
+	}
+
+
+
+
+	public void collectPossibleTokens(Set<Token> tokens) {
+		expression.collectPossibleTokens(tokens);
+	}
 
 
 
 	@Override
 	public Result apply(List<Token> consumed, List<Token> tokens, List<TraceElement> trace) {
 
+		// handle trace
 		TraceElement traceElement = null;
 		if(trace != null) {
 			traceElement = new TraceElement(this, Result.State.MATCH);
 			trace.add(traceElement);
 		}
 
+		// no tokens remaining -> MATCH
 		if(tokens.isEmpty()) {
-			return new Result(new PlaceholderNode());
+			return Result.match(
+				new PlaceholderNode().setExpression(this)
+			);
 
+
+		// tokens remaining
 		} else {
 
-			Result resultExpr = expression.apply(consumed, tokens, trace);
+			// apply expression
+			Result result = expression.apply(consumed, tokens, trace);
 
-			if(resultExpr.state == Result.State.MATCH) {
-				return new Result(resultExpr.node);
+			// is matching
+			if(result.state == Result.State.MATCH) {
+				return result;
 			}
-			if(resultExpr.state == Result.State.NO_MATCH) {
-				return new Result(resultExpr.node == null ? new PlaceholderNode() : resultExpr.node);
+
+			// does not match
+			if(result.state == Result.State.NO_MATCH) {
+				return Result.match( result.node );
 			}
-			if(resultExpr.state == Result.State.ERROR) {
+
+			// encountered error
+			if(result.state == Result.State.ERROR) {
 				if(traceElement != null) { traceElement.state = Result.State.ERROR; }
-				return resultExpr;
+				return result;
 			}
 
+			// none of the above
 			if(traceElement != null) { traceElement.state = Result.State.ERROR; }
-			return new Result(new UndefinedStateError(this, consumed.size()));
+			return Result.error(
+					new PlaceholderNode().setExpression(this).setError(),
+					new UndefinedStateError(this, consumed)
+			);
 		}
 	}
-
-
-
-
-	@Override
-	public boolean collectPossibleTokens(Set<Expression> visited, Set<Token> possibleTokens) {
-
-//		if(visited.contains(this)) {
-//			return false;
-
-//		} else {
-			visited.add(this);
-			expression.collectPossibleTokens(visited, possibleTokens);
-			return true;
-//		}
-
-	}
-
-
-
-
-	@Override
-	public boolean collectPossibleTokens(Expression start, Set<Expression> visited, Set<Token> possibleTokens) {
-		System.out.println("collect @" + this);
-		if(visited.contains(this)) {
-			return false;
-		} else {
-			visited.add(this);
-			for(Expression parent : getParents()) {
-				parent.collectPossibleTokens(this, visited, possibleTokens);
-			}
-			return true;
-		}
-	}
-
 
 
 

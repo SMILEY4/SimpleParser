@@ -65,17 +65,20 @@ public class TreeBuilder {
 
 		Node root = new RuleNode(start);
 		if(resultStart.node != null) {
-			root.children.add(resultStart.node);
+			root.addChild(resultStart.node);
 		}
 
 		// process finished tree
-		root.eliminatePlaceholders();
+//		root.eliminatePlaceholders();
 
 		// return final result
 		if(resultStart.state == Result.State.MATCH && !tokensCopy.isEmpty()) {
 			for(Token token : tokensCopy) {
-				if( token.getType() != TokenType.IGNORABLE &&  token.getType() != TokenType.CURSOR ) {
-					return new Result(Result.State.ERROR, null, new TokensRemainingError(this, consumed));
+				if(token.getType() != TokenType.IGNORABLE) {
+					return Result.error(
+							root,
+							new TokensRemainingError(this, consumed)
+					);
 				}
 			}
 

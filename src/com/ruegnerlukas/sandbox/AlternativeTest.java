@@ -1,4 +1,4 @@
-package com.ruegnerlukas.test;
+package com.ruegnerlukas.sandbox;
 
 import com.ruegnerlukas.simpleparser.expressions.Result;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
