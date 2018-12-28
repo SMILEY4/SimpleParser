@@ -1,9 +1,6 @@
 package com.ruegnerlukas.simpleparser.systems;
 
-import com.ruegnerlukas.simpleparser.errors.EndOfStreamError;
-import com.ruegnerlukas.simpleparser.errors.UndefinedStateError;
-import com.ruegnerlukas.simpleparser.errors.UndefinedSymbolError;
-import com.ruegnerlukas.simpleparser.errors.UnexpectedSymbolError;
+import com.ruegnerlukas.simpleparser.errors.*;
 import com.ruegnerlukas.simpleparser.expressions.*;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.simpleparser.tokens.Token;
@@ -41,7 +38,36 @@ public class ExpressionProcessor {
 	public static Result apply(Expression expression, List<Token> tokens) {
 		trace.clear();
 		List<Token> consumed = new ArrayList<>();
-		return apply(expression, consumed, new ArrayList<>(tokens));
+		List<Token> tokenList = new ArrayList<>(tokens);
+		Result result = apply(expression, consumed, tokenList);
+
+		if(result.state == Result.State.NO_MATCH) {
+			result = Result.error(
+				result.node,
+				result.error == null ? new NoMatchError(ExpressionProcessor.class, consumed) : result.error
+			);
+		}
+
+		if(tokenList.isEmpty()) {
+			return result;
+
+		} else {
+			boolean remainingOptional = true;
+			for(Token t : tokens) {
+				if(t.getType() != TokenType.IGNORABLE) {
+					remainingOptional = false;
+					break;
+				}
+			}
+			if(!remainingOptional) {
+				return Result.error(
+						result.node,
+						new TokensRemainingError(ExpressionProcessor.class, consumed)
+				);
+			}
+			return result;
+		}
+
 	}
 
 
@@ -92,7 +118,7 @@ public class ExpressionProcessor {
 
 
 
-	public static Result applyAlternative(AlternativeExpression expression, List<Token> consumed, List<Token> tokens) {
+	private static Result applyAlternative(AlternativeExpression expression, List<Token> consumed, List<Token> tokens) {
 
 		// no tokens remaining -> is optional -> MATCH; else -> EOS-ERROR
 		if(tokens.isEmpty()) {
@@ -163,7 +189,7 @@ public class ExpressionProcessor {
 
 
 
-	public static Result applyOptional(OptionalExpression expression, List<Token> consumed, List<Token> tokens) {
+	private static Result applyOptional(OptionalExpression expression, List<Token> consumed, List<Token> tokens) {
 
 		// no tokens remaining -> MATCH
 		if(tokens.isEmpty()) {
@@ -205,7 +231,7 @@ public class ExpressionProcessor {
 
 
 
-	public static Result applyRepetition(RepetitionExpression expression, List<Token> consumed, List<Token> tokens) {
+	private static Result applyRepetition(RepetitionExpression expression, List<Token> consumed, List<Token> tokens) {
 
 		// create node
 		Node node = new PlaceholderNode().setExpression(expression);
@@ -241,7 +267,7 @@ public class ExpressionProcessor {
 
 
 
-	public static Result applyRule(RuleExpression expression, List<Token> consumed, List<Token> tokens) {
+	private static Result applyRule(RuleExpression expression, List<Token> consumed, List<Token> tokens) {
 
 		// apply expression
 		Result result = apply(expression.rule.getExpression(), consumed, tokens);
@@ -261,7 +287,7 @@ public class ExpressionProcessor {
 
 
 
-	public static Result applySequence(SequenceExpression expression, List<Token> consumed, List<Token> tokens) {
+	private static Result applySequence(SequenceExpression expression, List<Token> consumed, List<Token> tokens) {
 
 		// create node
 		Node node = new PlaceholderNode().setExpression(expression);
@@ -295,7 +321,7 @@ public class ExpressionProcessor {
 
 
 
-	public static Result applyToken(TokenExpression expression, List<Token> consumed, List<Token> tokens) {
+	private static Result applyToken(TokenExpression expression, List<Token> consumed, List<Token> tokens) {
 
 
 		// no tokens remaining
@@ -306,7 +332,7 @@ public class ExpressionProcessor {
 			);
 
 
-			// tokens remaining
+		// tokens remaining
 		} else {
 
 			// get next

@@ -11,7 +11,6 @@ import com.ruegnerlukas.simpleparser.tokens.TokenType;
 import com.ruegnerlukas.simpleparser.tokens.Tokenizer;
 import com.ruegnerlukas.simpleparser.tree.Node;
 import com.ruegnerlukas.simpleparser.tree.TerminalNode;
-import com.ruegnerlukas.simpleparser.tree.TreeBuilder;
 import com.ruegnerlukas.utils.GraphViz;
 
 import javax.swing.*;
@@ -136,9 +135,6 @@ public class GraphRenderer {
 				Tokenizer tokenizer = new Tokenizer(GRAMMAR);
 				final List<Token> tokens = tokenizer.tokenize(strInput, ignorables, false);
 
-				TreeBuilder treeBuilder = new TreeBuilder();
-				treeBuilder.enableTrace(true);
-//				final Result result = treeBuilder.build(GRAMMAR, tokens);
 				final Result result = ExpressionProcessor.apply(GRAMMAR, tokens);
 				final Node root = result.node;
 				final List<TraceElement> trace = ExpressionProcessor.getLastTrace();

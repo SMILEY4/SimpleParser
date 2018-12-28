@@ -3,9 +3,9 @@ package com.ruegnerlukas.tests;
 import com.ruegnerlukas.simpleparser.expressions.Result;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.simpleparser.grammar.GrammarBuilder;
+import com.ruegnerlukas.simpleparser.systems.ExpressionProcessor;
 import com.ruegnerlukas.simpleparser.tokens.Token;
 import com.ruegnerlukas.simpleparser.tokens.Tokenizer;
-import com.ruegnerlukas.simpleparser.tree.TreeBuilder;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
@@ -57,10 +57,7 @@ public class ParserTest {
 		for(TestItem item : testItems) {
 
 			List<Token> tokens = tokenizer.tokenize(item.string, ignorables, false);
-
-			TreeBuilder treeBuilder = new TreeBuilder();
-			treeBuilder.enableTrace(true);
-			Result result = treeBuilder.build(grammar, tokens);
+			Result result = ExpressionProcessor.apply(grammar, tokens);
 
 			try {
 				assertEquals(result.state, item.state, "Match " + item.string);
@@ -109,11 +106,9 @@ public class ParserTest {
 		boolean failed = false;
 		for(TestItem item : testItems) {
 
-			List<Token> tokens = tokenizer.tokenize(item.string, new HashSet<String>(), false);
+			List<Token> tokens = tokenizer.tokenize(item.string, new HashSet<>(), false);
+			Result result = ExpressionProcessor.apply(grammar, tokens);
 
-			TreeBuilder treeBuilder = new TreeBuilder();
-			treeBuilder.enableTrace(true);
-			Result result = treeBuilder.build(grammar, tokens);
 
 			try {
 				assertEquals(result.state, item.state, "Match " + item.string);
