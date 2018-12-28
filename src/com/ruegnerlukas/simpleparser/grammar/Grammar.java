@@ -158,24 +158,4 @@ public class Grammar {
 	}
 
 
-
-
-	/**
-	 * @return this grammar as a graph in the DOT-format
-	 * */
-	public String createDotGraph() {
-		Expression start = getRule(getStartingRule()).getExpression();
-		Set<Expression> visited = new HashSet<>();
-
-		StringBuilder builder = new StringBuilder();
-		builder.append("digraph G {").append(System.lineSeparator());
-		builder.append("    node [style=filled];").append(System.lineSeparator());
-		builder.append("    X -> ").append(start).append(System.lineSeparator());
-		builder.append("    X [color=\"1.0 1.0 1.0\"];").append(System.lineSeparator());
-		start.createDotGraph(visited, builder);
-		builder.append('}').append(System.lineSeparator());
-
-		return builder.toString();
-	}
-
 }

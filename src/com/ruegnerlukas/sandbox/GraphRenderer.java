@@ -3,6 +3,9 @@ package com.ruegnerlukas.sandbox;
 import com.ruegnerlukas.simpleparser.expressions.Result;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.simpleparser.grammar.GrammarBuilder;
+import com.ruegnerlukas.simpleparser.systems.DotGraphBuilder;
+import com.ruegnerlukas.simpleparser.systems.ExpressionProcessor;
+import com.ruegnerlukas.simpleparser.systems.TraceElement;
 import com.ruegnerlukas.simpleparser.tokens.Token;
 import com.ruegnerlukas.simpleparser.tokens.TokenType;
 import com.ruegnerlukas.simpleparser.tokens.Tokenizer;
@@ -38,7 +41,7 @@ public class GraphRenderer {
 
 	public static void main(String[] args) {
 
-		System.out.println(GRAMMAR.createDotGraph());
+		System.out.println(DotGraphBuilder.build(GRAMMAR));
 
 		JFrame frame = new JFrame();
 		frame.setTitle("Simple Parser Test - Lukas Ruegner (2018)");
@@ -135,8 +138,19 @@ public class GraphRenderer {
 
 				TreeBuilder treeBuilder = new TreeBuilder();
 				treeBuilder.enableTrace(true);
-				final Result result = treeBuilder.build(GRAMMAR, tokens);
+//				final Result result = treeBuilder.build(GRAMMAR, tokens);
+				final Result result = ExpressionProcessor.apply(GRAMMAR, tokens);
 				final Node root = result.node;
+				final List<TraceElement> trace = ExpressionProcessor.getLastTrace();
+
+				System.out.println("INPUT: " + strInput);
+				System.out.println(DotGraphBuilder.build(GRAMMAR, trace));
+
+				System.out.println();
+				System.out.println();
+				for(TraceElement t : trace) {
+					System.out.println(t);
+				}
 
 				String strPossible = "";
 
@@ -158,12 +172,12 @@ public class GraphRenderer {
 				labelTokens.setText(strPossible);
 
 
-				if(root == null) {
-					System.out.println(result.state + "  " + result.error);
-				} else {
-					System.out.println(result.state + "  " + result.error);
-					System.out.println(root.createDotTree());
-				}
+//				if(root == null) {
+//					System.out.println(result.state + "  " + result.error);
+//				} else {
+//					System.out.println(result.state + "  " + result.error);
+//					System.out.println(root.createDotTree());
+//				}
 
 				final DefaultStyledDocument doc = (DefaultStyledDocument)e.getDocument();
 				SwingUtilities.invokeLater(new Runnable() {
