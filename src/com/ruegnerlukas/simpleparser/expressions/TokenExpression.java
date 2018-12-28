@@ -2,8 +2,6 @@ package com.ruegnerlukas.simpleparser.expressions;
 
 import com.ruegnerlukas.simpleparser.tokens.Token;
 
-import java.util.Set;
-
 public class TokenExpression extends Expression {
 
 
@@ -16,22 +14,6 @@ public class TokenExpression extends Expression {
 		super(ExpressionType.TOKEN);
 		this.token = token;
 	}
-
-
-
-
-	public boolean collectPossibleTokens(Expression start, Set<Token> tokens) {
-		return true;
-	}
-
-
-
-
-	public void collectPossibleTokens(Set<Token> tokens) {
-		tokens.add(token);
-	}
-
-
 
 
 

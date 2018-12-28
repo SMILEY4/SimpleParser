@@ -1,9 +1,5 @@
 package com.ruegnerlukas.simpleparser.expressions;
 
-import com.ruegnerlukas.simpleparser.tokens.Token;
-
-import java.util.Set;
-
 public class RepetitionExpression extends Expression {
 
 	
@@ -20,25 +16,6 @@ public class RepetitionExpression extends Expression {
 		super(ExpressionType.REPETITION);
 		this.expression = expression;
 	}
-
-
-
-	public boolean collectPossibleTokens(Expression start, Set<Token> tokens) {
-		if(start != null) {
-			collectPossibleTokens(tokens);
-		}
-		return true;
-	}
-
-
-
-
-	public void collectPossibleTokens(Set<Token> tokens) {
-		expression.collectPossibleTokens(tokens);
-	}
-
-
-	
 
 
 

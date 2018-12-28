@@ -3,6 +3,7 @@ package com.ruegnerlukas.simpleparser.tree;
 import com.ruegnerlukas.simpleparser.expressions.Expression;
 import com.ruegnerlukas.simpleparser.expressions.Result;
 import com.ruegnerlukas.simpleparser.grammar.Rule;
+import com.ruegnerlukas.simpleparser.systems.RecommendationProcessor;
 import com.ruegnerlukas.simpleparser.tokens.Token;
 
 import java.util.ArrayList;
@@ -90,7 +91,7 @@ public abstract class Node {
 		boolean continueUp = true;
 
 		if(getExpression() != null) {
-			continueUp = getExpression().collectPossibleTokens(prev, tokens);
+			continueUp = RecommendationProcessor.collectPossibleTokens(getExpression(), prev, tokens);
 		}
 
 		if(continueUp && getParent() != null) {

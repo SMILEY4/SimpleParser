@@ -139,17 +139,7 @@ public class GraphRenderer {
 				final Node root = result.node;
 				final List<TraceElement> trace = ExpressionProcessor.getLastTrace();
 
-				System.out.println("INPUT: " + strInput);
-				System.out.println(DotGraphBuilder.build(GRAMMAR, trace));
-
-				System.out.println();
-				System.out.println();
-				for(TraceElement t : trace) {
-					System.out.println(t);
-				}
-
 				String strPossible = "";
-
 				if(root != null) {
 
 					List<TerminalNode> terminalNodes = new ArrayList<>();
