@@ -18,6 +18,7 @@ public class PlaceholderNode extends Node {
 	}
 
 
+
 	public PlaceholderNode(List<Result> results) {
 		for(Result r : results) {
 			this.addChild(r.node);
@@ -27,7 +28,7 @@ public class PlaceholderNode extends Node {
 
 	@Override
 	public String toString() {
-		return "\"" + "[PH] " + Integer.toHexString(this.hashCode()) + "-" + getExpression().toString().substring(1, getExpression().toString().length()-1) + "\"";
+		return "PH:" + Integer.toHexString(this.hashCode()) + "-" + (getExpression() == null ? "null" : getExpression().toString());
 	}
 	
 }

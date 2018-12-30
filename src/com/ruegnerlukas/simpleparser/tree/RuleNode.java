@@ -19,7 +19,7 @@ public class RuleNode extends Node {
 
 	@Override
 	public String toString() {
-		return "\"" + "Rule:"+Integer.toHexString(this.hashCode()) + ": " + (rule == null ? "null" : rule.getName()) + "\"";
+		return "Rule:"+Integer.toHexString(this.hashCode()) + ": " + (rule == null ? "null" : rule.getName());
 	}
 	
 }

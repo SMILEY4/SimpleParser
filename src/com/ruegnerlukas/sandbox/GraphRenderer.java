@@ -3,11 +3,8 @@ package com.ruegnerlukas.sandbox;
 import com.ruegnerlukas.simpleparser.expressions.Result;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.simpleparser.grammar.GrammarBuilder;
-import com.ruegnerlukas.simpleparser.systems.DotGraphBuilder;
-import com.ruegnerlukas.simpleparser.systems.ExpressionProcessor;
-import com.ruegnerlukas.simpleparser.systems.TraceElement;
+import com.ruegnerlukas.simpleparser.systems.*;
 import com.ruegnerlukas.simpleparser.tokens.Token;
-import com.ruegnerlukas.simpleparser.tokens.TokenType;
 import com.ruegnerlukas.simpleparser.tokens.Tokenizer;
 import com.ruegnerlukas.simpleparser.tree.Node;
 import com.ruegnerlukas.simpleparser.tree.TerminalNode;
@@ -25,7 +22,6 @@ import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -127,42 +123,54 @@ public class GraphRenderer {
 			private void update(DocumentEvent e) {
 				String strInput = inputField.getText();
 
+				System.out.println("");
+				System.out.println("");
+				System.out.println("");
 				System.out.println("===========");
 
 				Set<String> ignorables = new HashSet<>();
 				ignorables.add(" ");
 
 				Tokenizer tokenizer = new Tokenizer(GRAMMAR);
-				final List<Token> tokens = tokenizer.tokenize(strInput, ignorables, false);
+				final List<Token> tokens = tokenizer.tokenize(strInput, ignorables, true);
 
 				final Result result = ExpressionProcessor.apply(GRAMMAR, tokens);
-				final Node root = result.node;
+				Node root = result.node;
 				final List<TraceElement> trace = ExpressionProcessor.getLastTrace();
 
 				String strPossible = "";
 				if(root != null) {
 
-					List<TerminalNode> terminalNodes = new ArrayList<>();
-					root.collectTerminalNodes(terminalNodes);
+					List<TerminalNode> terminalNodes = NodeProcessor.collectTerminals(result.node);
 
 					if(terminalNodes.size() > 0) {
 						Set<Token> possibleTokens = new HashSet<>();
-						terminalNodes.get(terminalNodes.size()-1).collectPossibleTokens(null, possibleTokens);
+						RecommendationProcessor.collectPossibleTokens(terminalNodes.get(terminalNodes.size()-1), possibleTokens);
 						for(Token token : possibleTokens) {
 							strPossible += token.getSymbol() + "  ";
 						}
 					}
 
-					root.eliminatePlaceholders();
+					System.out.println(DotGraphBuilder.build(root));
+
+					root = NodeProcessor.eliminatePlaceholders(root);
+					System.out.println(DotGraphBuilder.build(root));
+
+					root = NodeProcessor.reduceRules(root, "STATEMENT", "COMPONENT");
+					System.out.println(DotGraphBuilder.build(root));
+
 				}
 				labelTokens.setText(strPossible);
+
+
+//				System.out.println(result.state + "  " + result.error);
 
 
 //				if(root == null) {
 //					System.out.println(result.state + "  " + result.error);
 //				} else {
 //					System.out.println(result.state + "  " + result.error);
-//					System.out.println(root.createDotTree());
+//					System.out.println(DotGraphBuilder.build(root));
 //				}
 
 				final DefaultStyledDocument doc = (DefaultStyledDocument)e.getDocument();
@@ -170,30 +178,30 @@ public class GraphRenderer {
 					@Override
 					public void run() {
 
-						doc.setCharacterAttributes(0, strInput.length(), defaultStyle, true);
-
-						int offset = 0;
-						for(Token token : tokens) {
-							if(token.getType() == TokenType.UNDEFINED) {
-								doc.setCharacterAttributes(offset, token.getSymbol().length(), undefinedStyle, true);
-							}
-							offset += token.getSymbol().length();
-						}
-
-						if(result.state != Result.State.MATCH) {
-							int errorIndex = 0;
-							for(int i=0; i<result.error.tokenIndex; i++) {
-								errorIndex += tokens.get(i).getSymbol().length();
-							}
-
-							if(errorIndex == strInput.length()) {
-								errorIndex -= tokens.get(tokens.size()-1).getSymbol().length();
-								doc.setCharacterAttributes(errorIndex, strInput.length()+1, errorStyle, true);
-							} else {
-								doc.setCharacterAttributes(errorIndex, strInput.length(), errorStyle, true);
-							}
-
-						}
+//						doc.setCharacterAttributes(0, strInput.length(), defaultStyle, true);
+//
+//						int offset = 0;
+//						for(Token token : tokens) {
+//							if(token.getType() == TokenType.UNDEFINED) {
+//								doc.setCharacterAttributes(offset, token.getSymbol().length(), undefinedStyle, true);
+//							}
+//							offset += token.getSymbol().length();
+//						}
+//
+//						if(result.state != Result.State.MATCH) {
+//							int errorIndex = 0;
+//							for(int i=0; i<result.error.tokenIndex; i++) {
+//								errorIndex += tokens.get(i).getSymbol().length();
+//							}
+//
+//							if(errorIndex == strInput.length()) {
+//								errorIndex -= tokens.get(tokens.size()-1).getSymbol().length();
+//								doc.setCharacterAttributes(errorIndex, strInput.length()+1, errorStyle, true);
+//							} else {
+//								doc.setCharacterAttributes(errorIndex, strInput.length(), errorStyle, true);
+//							}
+//
+//						}
 
 
 					}

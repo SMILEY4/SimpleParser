@@ -2,6 +2,7 @@ package com.ruegnerlukas.simpleparser.systems;
 
 import com.ruegnerlukas.simpleparser.expressions.*;
 import com.ruegnerlukas.simpleparser.tokens.Token;
+import com.ruegnerlukas.simpleparser.tree.Node;
 
 import java.util.Set;
 
@@ -10,7 +11,25 @@ public class RecommendationProcessor {
 
 
 
-	public static boolean collectPossibleTokens(Expression expression, Expression prev, Set<Token> tokens) {
+	public static void collectPossibleTokens(Node node, Set<Token> tokens) {
+		collectPossibleTokens(node, null, tokens);
+	}
+
+
+	public static void collectPossibleTokens(Node node, Expression prev, Set<Token> tokens) {
+		boolean continueUp = true;
+		if(node.getExpression() != null) {
+			continueUp = RecommendationProcessor.collectPossibleTokens(node.getExpression(), prev, tokens);
+		}
+		if(continueUp && node.getParent() != null) {
+			collectPossibleTokens(node.getParent(), node.getExpression(), tokens);
+		}
+	}
+
+
+
+
+	private static boolean collectPossibleTokens(Expression expression, Expression prev, Set<Token> tokens) {
 
 		if(ExpressionType.ALTERNATIVE == expression.getType()) {
 			return true;
@@ -39,7 +58,7 @@ public class RecommendationProcessor {
 			for(int i=index+1; i<sequenceExpression.expressions.size(); i++) {
 				Expression e = sequenceExpression.expressions.get(i);
 				subsequence.expressions.add(e);
-				if(!Optional.isOptional(e)) {
+				if(!OptionalCheck.isOptional(e)) {
 					allOptional = false;
 				}
 			}
@@ -86,7 +105,7 @@ public class RecommendationProcessor {
 			SequenceExpression sequenceExpression = (SequenceExpression)expression;
 			for(Expression e : sequenceExpression.expressions) {
 				collectPossibleTokens(e, tokens);
-				if(!Optional.isOptional(e)) {
+				if(!OptionalCheck.isOptional(e)) {
 					break;
 				}
 			}

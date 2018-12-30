@@ -140,7 +140,7 @@ public class Tokenizer {
 			
 		}
 
-		// reached end of input-string -> end final errors
+		// reached end of input-string -> end final errorsOld
 		if(isError) {
 			output.add(Token.undefined(strInput.substring(indexError)));
 		}

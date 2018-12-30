@@ -1,6 +1,6 @@
 package com.ruegnerlukas.simpleparser.systems;
 
-import com.ruegnerlukas.simpleparser.errors.*;
+import com.ruegnerlukas.simpleparser.errors.Error;
 import com.ruegnerlukas.simpleparser.expressions.*;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.simpleparser.tokens.Token;
@@ -10,13 +10,13 @@ import com.ruegnerlukas.simpleparser.tree.PlaceholderNode;
 import com.ruegnerlukas.simpleparser.tree.RuleNode;
 import com.ruegnerlukas.simpleparser.tree.TerminalNode;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
 
 public class ExpressionProcessor {
 
 
-	private static List<TraceElement> trace = new ArrayList<TraceElement>();
+	private static List<TraceElement> trace = new ArrayList<>();
 
 
 
@@ -44,7 +44,7 @@ public class ExpressionProcessor {
 		if(result.state == Result.State.NO_MATCH) {
 			result = Result.error(
 				result.node,
-				result.error == null ? new NoMatchError(ExpressionProcessor.class, consumed) : result.error
+				result.error == null ? new Error(Error.Type.UNKNOWN_ERROR, 0, tokens.size()) : result.error
 			);
 		}
 
@@ -62,7 +62,7 @@ public class ExpressionProcessor {
 			if(!remainingOptional) {
 				return Result.error(
 						result.node,
-						new TokensRemainingError(ExpressionProcessor.class, consumed)
+						result.error == null ? new Error(Error.Type.SYMBOLS_REMAINING, consumed.size(), consumed.size()) : result.error
 				);
 			}
 			return result;
@@ -122,7 +122,7 @@ public class ExpressionProcessor {
 
 		// no tokens remaining -> is optional -> MATCH; else -> EOS-ERROR
 		if(tokens.isEmpty()) {
-			if(Optional.isOptional(expression)) {
+			if(OptionalCheck.isOptional(expression)) {
 				return Result.match(
 						new PlaceholderNode().setExpression(expression)
 				);
@@ -130,12 +130,13 @@ public class ExpressionProcessor {
 			} else {
 				return Result.error(
 						new PlaceholderNode().setExpression(expression).setError(),
-						new EndOfStreamError(expression, consumed)
+						new Error(Error.Type.UNEXPECTED_END_OF_INPUT, consumed.size(), consumed.size())
 				);
 			}
 		}
 
 		// prepare
+		int indexStart = consumed.size()+1;
 		Token tokenStart = tokens.get(0);
 		List<Result> resultsMatched = new ArrayList<>();
 		Result result = null;
@@ -165,24 +166,27 @@ public class ExpressionProcessor {
 		if(resultsMatched.size() > 0) {
 			return resultsMatched.get(0);
 
-			// nothing matched
+		// nothing matched
 		} else {
 
 			// ... because no tokens remaining
 			if(tokens.isEmpty()) {
 				return Result.error(
 						new PlaceholderNode(result.node).setExpression(expression).setError(),
-						new EndOfStreamError(expression, consumed)
+						new Error(Error.Type.UNEXPECTED_END_OF_INPUT, consumed.size(), consumed.size())
 				);
 
-				// ... because unexpected symbol
+			// ... because unexpected symbol
 			} else {
+				Set<Token> expected = new HashSet<>();
+				RecommendationProcessor.collectPossibleTokens(expression, expected);
 				return Result.error(
 						new PlaceholderNode().setExpression(expression).setError(),
-						new UnexpectedSymbolError(expression, consumed)
+						new Error(Error.Type.UNEXPECTED_SYMBOL, consumed.size(), consumed.size(), expected, tokenStart)
 				);
 			}
 		}
+
 
 	}
 
@@ -222,7 +226,7 @@ public class ExpressionProcessor {
 			// none of the above
 			return Result.error(
 					new PlaceholderNode().setExpression(expression).setError(),
-					new UndefinedStateError(expression, consumed)
+					new Error(Error.Type.INTERNAL_ERROR, consumed.size(), consumed.size())
 			);
 		}
 
@@ -328,7 +332,7 @@ public class ExpressionProcessor {
 		if (tokens.isEmpty()) {
 			return Result.noMatch(
 					new PlaceholderNode().setExpression(expression).setError(),
-					new EndOfStreamError(expression, consumed.size())
+					new Error(Error.Type.UNEXPECTED_END_OF_INPUT, consumed.size(), consumed.size())
 			);
 
 
@@ -338,23 +342,19 @@ public class ExpressionProcessor {
 			// get next
 			Token next = tokens.get(0);
 
-
 			// next is undefined -> ERROR: undefined symbol
 			if (next.getType() == TokenType.UNDEFINED) {
-
 				return Result.error(
 						new PlaceholderNode().setExpression(expression).setError(),
-						new UndefinedSymbolError(expression, consumed, tokens.get(0).getSymbol(), expression.token.getSymbol())
+						new Error(Error.Type.ILLEGAL_CHARACTER, consumed.size(), consumed.size(), new HashSet<>(Collections.singleton(expression.token)), next)
 				);
 
-
-				// next is ignorable -> consume + apply again
+			// next is ignorable -> consume + apply again
 			} else if (next.getType() == TokenType.IGNORABLE) {
 				consumed.add(tokens.remove(0));
 				return applyToken(expression, consumed, tokens);
 
-
-				// next is matching token -> MATCH
+			// next is matching token -> MATCH
 			} else if (next == expression.token) {
 				consumed.add(tokens.remove(0));
 
@@ -362,12 +362,11 @@ public class ExpressionProcessor {
 						new TerminalNode(expression.token).setExpression(expression)
 				);
 
-
-				// next is not matching token -> NO_MATCH: unexpected symbol
+			// next is not matching token -> NO_MATCH: unexpected symbol
 			} else {
 				return Result.noMatch(
 						new PlaceholderNode().setExpression(expression).setError(),
-						new UnexpectedSymbolError(expression, consumed, tokens.get(0).getSymbol(), expression.token.getSymbol())
+						new Error(Error.Type.UNEXPECTED_SYMBOL, consumed.size(), consumed.size(), new HashSet<>(Collections.singleton(expression.token)), next)
 				);
 
 			}

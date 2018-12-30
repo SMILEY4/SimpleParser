@@ -2,7 +2,7 @@ package com.ruegnerlukas.simpleparser.systems;
 
 import com.ruegnerlukas.simpleparser.expressions.*;
 
-public class Optional {
+public class OptionalCheck {
 
 
 	public static boolean isOptional(Expression expression) {

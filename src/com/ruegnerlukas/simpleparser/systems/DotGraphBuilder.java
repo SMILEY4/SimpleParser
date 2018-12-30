@@ -2,10 +2,11 @@ package com.ruegnerlukas.simpleparser.systems;
 
 import com.ruegnerlukas.simpleparser.expressions.*;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
+import com.ruegnerlukas.simpleparser.tree.Node;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class DotGraphBuilder {
 
@@ -29,11 +30,13 @@ public class DotGraphBuilder {
 
 
 
+
 	public static String build(Grammar grammar, List<TraceElement> trace) {
 		StringBuilder builder = new StringBuilder();
 
 		Expression expression = grammar.getRule(grammar.getStartingRule()).getExpression();
 
+		labels.clear();
 		lines.clear();
 		styles.clear();
 
@@ -100,6 +103,7 @@ public class DotGraphBuilder {
 
 
 
+
 	private static void build(Expression expression, Set<Expression> visited, List<TraceElement> trace) {
 
 		if(visited.contains(expression)) {
@@ -156,6 +160,47 @@ public class DotGraphBuilder {
 
 
 
+	public static String build(Node node) {
+
+		StringBuilder builder = new StringBuilder();
+
+		builder.append("digraph G {").append(System.lineSeparator());
+		builder.append(INDENT + "node [style=filled];").append(System.lineSeparator());
+		build(node, builder);
+		builder.append('}').append(System.lineSeparator());
+
+		return builder.toString();
+	}
+
+
+
+
+	private static void build(Node node, StringBuilder builder) {
+
+		for(Node child : node.getChildren()) {
+			builder	.append(INDENT)
+					.append(quotes(node))
+					.append(" -> ")
+					.append(quotes(child))
+					.append(';')
+					.append(System.lineSeparator());
+			build(child, builder);
+		}
+
+		if(node.state == Result.State.ERROR) {
+			builder	.append(INDENT)
+					.append(quotes(node))
+					.append("[color=\"")
+					.append(color(200, 0, 0))
+					.append("\"];")
+					.append(System.lineSeparator());
+
+		}
+
+
+	}
+
+
 
 
 
@@ -207,6 +252,7 @@ public class DotGraphBuilder {
 
 
 
+
 	private static void appendStyle(Expression expression, int red, int green, int blue) {
 		appendStyle(quotes(expression), red, green, blue);
 	}
@@ -226,6 +272,7 @@ public class DotGraphBuilder {
 
 
 
+
 	private static String color(int r, int g, int b) {
 		final float[] hsb = Color.RGBtoHSB(r, g, b, null);
 		return hsb[0] + " " + hsb[1] + " " + hsb[2];
@@ -233,8 +280,16 @@ public class DotGraphBuilder {
 
 
 
+
 	private static String quotes(Expression expression) {
 		return "\"" + expression.toString() + "\"";
+	}
+
+
+
+
+	private static String quotes(Node node) {
+		return "\"" + node.toString() + "\"";
 	}
 
 

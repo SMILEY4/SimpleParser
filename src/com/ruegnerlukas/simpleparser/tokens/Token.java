@@ -1,8 +1,6 @@
 package com.ruegnerlukas.simpleparser.tokens;
 
 
-import java.util.Objects;
-
 public class Token {
 
 
@@ -90,12 +88,5 @@ public class Token {
 		}
 	}
 
-
-
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(symbol, type);
-	}
 
 }

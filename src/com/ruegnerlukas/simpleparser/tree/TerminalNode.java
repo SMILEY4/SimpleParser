@@ -2,8 +2,6 @@ package com.ruegnerlukas.simpleparser.tree;
 
 import com.ruegnerlukas.simpleparser.tokens.Token;
 
-import java.util.List;
-
 public class TerminalNode extends Node {
 
 
@@ -19,15 +17,8 @@ public class TerminalNode extends Node {
 
 
 	@Override
-	public void collectTerminalNodes(List<TerminalNode> nodes) {
-		nodes.add(this);
-	}
-
-
-
-	@Override
 	public String toString() {
-		return "\"" + "Terminal:"+Integer.toHexString(this.hashCode()) + ": " + (token == null ? "null" : token.getSymbol().replaceAll("\"", "\\\\\"")) + "\"";
+		return "Terminal:"+Integer.toHexString(this.hashCode()) + ": " + (token == null ? "null" : token.getSymbol().replaceAll("\"", "\\\\\""));
 	}
 
 }
