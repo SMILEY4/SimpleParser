@@ -1,7 +1,7 @@
 package com.ruegnerlukas.v2.simpleparser.grammar;
 
 
-import com.ruegnerlukas.v2.simpleparser.grammar.expressions.Expression;
+import com.ruegnerlukas.v2.simpleparser.expressions.Expression;
 
 public class Rule {
 

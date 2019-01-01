@@ -4,9 +4,10 @@ import com.ruegnerlukas.v2.simpleparser.Node;
 import com.ruegnerlukas.v2.simpleparser.Token;
 import com.ruegnerlukas.v2.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.v2.simpleparser.grammar.State;
-import com.ruegnerlukas.v2.simpleparser.grammar.expressions.Expression;
-import com.ruegnerlukas.v2.simpleparser.grammar.trace.Trace;
+import com.ruegnerlukas.v2.simpleparser.expressions.Expression;
+import com.ruegnerlukas.v2.simpleparser.trace.Trace;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Parser {
@@ -38,8 +39,16 @@ public class Parser {
 
 	public Parser parse(List<Token> tokens) {
 		reset();
+
+		List<Token> tokensCopy = new ArrayList<>(tokens);
+
 		Expression rootExpression = grammar.getRule(grammar.getStartingRule()).getExpression();
-		this.state = rootExpression.apply(this.root, tokens, this.trace);
+		this.state = rootExpression.apply(this.root, tokensCopy, this.trace);
+
+		if(!tokensCopy.isEmpty()) {
+			this.state = State.ERROR;
+		}
+
 		return this;
 	}
 

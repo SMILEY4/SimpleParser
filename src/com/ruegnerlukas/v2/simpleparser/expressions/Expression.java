@@ -1,18 +1,13 @@
-package com.ruegnerlukas.v2.simpleparser.grammar.expressions;
+package com.ruegnerlukas.v2.simpleparser.expressions;
 
-import com.ruegnerlukas.v2.simpleparser.ErrorType;
 import com.ruegnerlukas.v2.simpleparser.Node;
 import com.ruegnerlukas.v2.simpleparser.Token;
 import com.ruegnerlukas.v2.simpleparser.grammar.State;
-import com.ruegnerlukas.v2.simpleparser.grammar.trace.Trace;
+import com.ruegnerlukas.v2.simpleparser.trace.Trace;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Expression {
-
-	public static List<ErrorType> errors = new ArrayList<>();
-
 
 
 	private final ExpressionType type;

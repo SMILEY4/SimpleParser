@@ -23,6 +23,35 @@ public class DotUtils {
 	}
 
 
+	public static void appendConnection(StringBuilder builder, String from, String to, String label) {
+		builder.append("    ")
+				.append(from)
+				.append(" -> ")
+				.append(to)
+				.append(" [label=\"")
+				.append(label)
+				.append("\"]")
+				.append(';')
+				.append(System.lineSeparator());
+	}
+
+
+	public static void appendConnection(StringBuilder builder, String from, String to, String label, int r, int g, int b) {
+		builder.append("    ")
+				.append(from)
+				.append(" -> ")
+				.append(to)
+				.append(" [label=\"")
+				.append(label)
+				.append("\"")
+				.append(" color=\"")
+				.append(color(r, g, b))
+				.append("\"]")
+				.append(';')
+				.append(System.lineSeparator());
+	}
+
+
 	public static void appendStyle(StringBuilder builder, String node, int r, int g, int b) {
 		final String strColor = "[color=\"" + DotUtils.color(r, g, b) + "\"];";
 		builder.append("    ")

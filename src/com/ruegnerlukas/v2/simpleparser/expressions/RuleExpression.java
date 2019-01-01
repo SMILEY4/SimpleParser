@@ -1,11 +1,12 @@
-package com.ruegnerlukas.v2.simpleparser.grammar.expressions;
+package com.ruegnerlukas.v2.simpleparser.expressions;
 
 
 import com.ruegnerlukas.v2.simpleparser.Node;
 import com.ruegnerlukas.v2.simpleparser.Token;
 import com.ruegnerlukas.v2.simpleparser.grammar.Rule;
 import com.ruegnerlukas.v2.simpleparser.grammar.State;
-import com.ruegnerlukas.v2.simpleparser.grammar.trace.Trace;
+import com.ruegnerlukas.v2.simpleparser.trace.Trace;
+import com.ruegnerlukas.v2.simpleparser.trace.TraceElement;
 
 import java.util.List;
 
@@ -35,9 +36,15 @@ public class RuleExpression extends Expression {
 
 	@Override
 	public State apply(Node root, List<Token> tokens, Trace trace) {
+
+		TraceElement traceElement = new TraceElement(this);
+		trace.add(traceElement);
+
 		Node node = new Node().setExpression(this);
 		State state = rule.getExpression().apply(node, tokens, trace);
 		root.children.add(node);
+
+		traceElement.setState(state);
 		return state;
 	}
 

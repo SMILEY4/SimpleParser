@@ -2,7 +2,7 @@ package com.ruegnerlukas.v2.simpleparser.grammar;
 
 
 import com.ruegnerlukas.v2.simpleparser.Token;
-import com.ruegnerlukas.v2.simpleparser.grammar.expressions.Expression;
+import com.ruegnerlukas.v2.simpleparser.expressions.Expression;
 
 import java.util.*;
 import java.util.Map.Entry;

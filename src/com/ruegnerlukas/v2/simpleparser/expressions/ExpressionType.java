@@ -1,4 +1,4 @@
-package com.ruegnerlukas.v2.simpleparser.grammar.expressions;
+package com.ruegnerlukas.v2.simpleparser.expressions;
 
 public enum ExpressionType {
 	ALTERNATIVE,

@@ -1,9 +1,10 @@
-package com.ruegnerlukas.v2.simpleparser.grammar.expressions;
+package com.ruegnerlukas.v2.simpleparser.expressions;
 
 import com.ruegnerlukas.v2.simpleparser.Node;
 import com.ruegnerlukas.v2.simpleparser.Token;
 import com.ruegnerlukas.v2.simpleparser.grammar.State;
-import com.ruegnerlukas.v2.simpleparser.grammar.trace.Trace;
+import com.ruegnerlukas.v2.simpleparser.trace.Trace;
+import com.ruegnerlukas.v2.simpleparser.trace.TraceElement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +45,9 @@ public class SequenceExpression extends Expression {
 	@Override
 	public State apply(Node root, List<Token> tokens, Trace trace) {
 
+		TraceElement traceElement = new TraceElement(this);
+		trace.add(traceElement);
+
 		Node node = new Node().setExpression(this);
 		root.children.add(node);
 
@@ -54,14 +58,17 @@ public class SequenceExpression extends Expression {
 				continue;
 			}
 			if(state == State.NO_MATCH) {
+				traceElement.setState(State.NO_MATCH);
 				return State.NO_MATCH;
 			}
 			if(state == State.ERROR) {
+				traceElement.setState(State.ERROR);
 				return State.ERROR;
 			}
 
 		}
 
+		traceElement.setState(State.MATCH);
 		return State.MATCH;
 	}
 

@@ -5,6 +5,7 @@ import com.ruegnerlukas.v2.dotGraph.DotTreeBuilder;
 import com.ruegnerlukas.v2.simpleparser.Token;
 import com.ruegnerlukas.v2.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.v2.simpleparser.parser.Parser;
+import com.ruegnerlukas.v2.simpleparser.trace.TraceElement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +19,7 @@ public class Sandbox {
 
 		// build grammar
 		Grammar grammar = TestGrammarBuilder.buildBoolGrammar();
-		String dotGrammar = DotGrammarBuilder.build(grammar);
+		String dotGrammar = DotGrammarBuilder.build(grammar, null);
 		System.out.println(dotGrammar);
 
 		// e and (e or e)
@@ -40,7 +41,11 @@ public class Sandbox {
 		System.out.println("============");
 		System.out.println(DotTreeBuilder.build(parser.getRoot()));
 		System.out.println("============");
-
+		for(TraceElement e : parser.getTrace().getElements()) {
+			System.out.println(e.expression + "  -> " + e.state);
+		}
+		System.out.println("============");
+		System.out.println(DotGrammarBuilder.build(grammar, parser.getTrace()));
 
 
 	}

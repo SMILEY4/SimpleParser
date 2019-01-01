@@ -1,9 +1,10 @@
-package com.ruegnerlukas.v2.simpleparser.grammar.expressions;
+package com.ruegnerlukas.v2.simpleparser.expressions;
 
 import com.ruegnerlukas.v2.simpleparser.Node;
 import com.ruegnerlukas.v2.simpleparser.Token;
 import com.ruegnerlukas.v2.simpleparser.grammar.State;
-import com.ruegnerlukas.v2.simpleparser.grammar.trace.Trace;
+import com.ruegnerlukas.v2.simpleparser.trace.Trace;
+import com.ruegnerlukas.v2.simpleparser.trace.TraceElement;
 
 import java.util.List;
 
@@ -38,6 +39,9 @@ public class RepetitionExpression extends Expression {
 	@Override
 	public State apply(Node root, List<Token> tokens, Trace trace) {
 
+		TraceElement traceElement = new TraceElement(this);
+		trace.add(traceElement);
+
 		Node node = new Node().setExpression(this);
 		root.children.add(node);
 
@@ -50,16 +54,18 @@ public class RepetitionExpression extends Expression {
 			}
 
 			if(state == State.NO_MATCH) {
+				traceElement.setState(State.MATCH);
 				return State.MATCH;
 			}
 
 			if(state == State.ERROR) {
-
+				traceElement.setState(State.ERROR);
 				return State.ERROR;
 			}
 
 		}
 
+		traceElement.setState(State.MATCH);
 		return State.MATCH;
 	}
 

@@ -1,10 +1,10 @@
-package com.ruegnerlukas.v2.simpleparser.grammar.expressions;
+package com.ruegnerlukas.v2.simpleparser.expressions;
 
-import com.ruegnerlukas.v2.simpleparser.ErrorType;
 import com.ruegnerlukas.v2.simpleparser.Node;
 import com.ruegnerlukas.v2.simpleparser.Token;
 import com.ruegnerlukas.v2.simpleparser.grammar.State;
-import com.ruegnerlukas.v2.simpleparser.grammar.trace.Trace;
+import com.ruegnerlukas.v2.simpleparser.trace.Trace;
+import com.ruegnerlukas.v2.simpleparser.trace.TraceElement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +45,10 @@ public class AlternativeExpression extends Expression {
 	@Override
 	public State apply(Node root, List<Token> tokens, Trace trace) {
 
+		TraceElement traceElement = new TraceElement(this);
+		trace.add(traceElement);
+
+
 		Node[] nodes = new Node[expressions.size()];
 		State[] states = new State[expressions.size()];
 		int[] nConsumed = new int[expressions.size()];
@@ -81,10 +85,11 @@ public class AlternativeExpression extends Expression {
 				tokens.remove(0);
 			}
 			root.children.add(node);
+			traceElement.setState(State.MATCH);
 			return State.MATCH;
 
 		} else {
-			errors.add(ErrorType.UNKNOWN_ERROR);
+			traceElement.setState(State.ERROR);
 			return State.ERROR;
 		}
 
