@@ -43,34 +43,34 @@ public class ExpressionProcessor {
 		Node root = new PlaceholderNode();
 		apply(root, expression, consumed, tokenList);
 
-		return root;
+		if(state == Result.State.NO_MATCH) {
+			if(errors.isEmpty()) {
+				error(new Error(Error.Type.UNKNOWN_ERROR, 0, tokens.size()));
+			} else {
+				error(errors.get(errors.size()-1));
+			}
+		}
 
-//		if(state == Result.State.NO_MATCH) {
-//			result = Result.error(
-//				result.node,
-//				result.error == null ? new Error(Error.Type.UNKNOWN_ERROR, 0, tokens.size()) : result.error
-//			);
-//		}
-//
-//		if(tokenList.isEmpty()) {
-//			return result;
-//
-//		} else {
-//			boolean remainingOptional = true;
-//			for(Token t : tokens) {
-//				if(t.getType() != TokenType.IGNORABLE) {
-//					remainingOptional = false;
-//					break;
-//				}
-//			}
-//			if(!remainingOptional) {
-//				return Result.error(
-//						result.node,
-//						result.error == null ? new Error(Error.Type.SYMBOLS_REMAINING, consumed.size(), consumed.size()) : result.error
-//				);
-//			}
-//			return result;
-//		}
+		if(tokenList.isEmpty()) {
+			return root;
+
+		} else {
+			boolean remainingOptional = true;
+			for(Token t : tokens) {
+				if(t.getType() != TokenType.IGNORABLE) {
+					remainingOptional = false;
+					break;
+				}
+			}
+			if(!remainingOptional) {
+				if(errors.isEmpty()) {
+					error(new Error(Error.Type.UNKNOWN_ERROR, 0, tokens.size()));
+				} else {
+					error(errors.get(errors.size()-1));
+				}
+			}
+			return root;
+		}
 
 	}
 
@@ -140,7 +140,9 @@ public class ExpressionProcessor {
 		for(Expression expr : expression.expressions) {
 
 			Node tmpParent = new PlaceholderNode().setExpression(expression);
+			parent.addChild(tmpParent);
 			apply(tmpParent, expr, consumed, tokens);
+			parent.removeChild(tmpParent);
 
 			// expression matches next token(s) -> consumed token: return result -> did not consume: continue
 			if(state == Result.State.MATCH) {

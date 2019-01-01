@@ -1,12 +1,12 @@
 package com.ruegnerlukas.tests;
 
-import com.ruegnerlukas.simpleparser.expressions.Result;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.simpleparser.systems.ExpressionProcessor;
 import com.ruegnerlukas.simpleparser.systems.NodeProcessor;
 import com.ruegnerlukas.simpleparser.systems.RecommendationProcessor;
 import com.ruegnerlukas.simpleparser.tokens.Token;
 import com.ruegnerlukas.simpleparser.tokens.Tokenizer;
+import com.ruegnerlukas.simpleparser.tree.Node;
 import com.ruegnerlukas.simpleparser.tree.TerminalNode;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -64,9 +64,9 @@ public class RecommendationsTest {
 			TestItem item = testItems[i];
 
 			List<Token> tokens = tokenizer.tokenize(item.string, ignorables, false);
-			Result result = ExpressionProcessor.apply(grammar, tokens);
+			Node root = ExpressionProcessor.apply(grammar, tokens);
 
-			List<TerminalNode> terminalNodes = NodeProcessor.collectTerminals(result.node);
+			List<TerminalNode> terminalNodes = NodeProcessor.collectTerminals(root);
 
 			Set<Token> possibleTokens = new HashSet<>();
 			RecommendationProcessor.collectPossibleTokens(terminalNodes.get(terminalNodes.size()-1), possibleTokens);
@@ -111,9 +111,9 @@ public class RecommendationsTest {
 			TestItem item = testItems[i];
 
 			List<Token> tokens = tokenizer.tokenize(item.string, null, false);
-			Result result = ExpressionProcessor.apply(grammar, tokens);
+			Node root  = ExpressionProcessor.apply(grammar, tokens);
 
-			List<TerminalNode> terminalNodes = NodeProcessor.collectTerminals(result.node);
+			List<TerminalNode> terminalNodes = NodeProcessor.collectTerminals(root);
 
 			Set<Token> possibleTokens = new HashSet<>();
 			RecommendationProcessor.collectPossibleTokens(terminalNodes.get(terminalNodes.size()-1), possibleTokens);

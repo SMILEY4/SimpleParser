@@ -1,5 +1,6 @@
 package com.ruegnerlukas.simpleparser.tree;
 
+import com.ruegnerlukas.sandbox.debug.DebugManager;
 import com.ruegnerlukas.simpleparser.expressions.Expression;
 import com.ruegnerlukas.simpleparser.expressions.Result;
 
@@ -46,6 +47,7 @@ public abstract class Node {
 
 	public void addChild(Node node) {
 		node.setParent(this);
+		DebugManager.nodeAdded(node);
 		this.children.add(node);
 	}
 
@@ -55,11 +57,18 @@ public abstract class Node {
 	public Node addChildren(Collection<Node> nodes) {
 		for (Node n : nodes) {
 			n.setParent(this);
+			DebugManager.nodeAdded(n);
 		}
 		this.children.addAll(nodes);
 		return this;
 	}
 
+
+
+
+	public void removeChild(Node node) {
+		this.children.remove(node);
+	}
 
 
 

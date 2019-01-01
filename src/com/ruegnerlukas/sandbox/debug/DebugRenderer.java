@@ -39,7 +39,7 @@ public class DebugRenderer {
 
 		System.out.println(tokens);
 
-		Node root = (Node)(ExpressionProcessor.apply(grammar, tokens)[0]);
+		Node root = ExpressionProcessor.apply(grammar, tokens);
 
 		System.out.println(DotGraphBuilder.build(root));
 
@@ -95,7 +95,7 @@ public class DebugRenderer {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				if(e.getKeyChar() == ' ') {
-					System.out.println("next" + DebugManager.index);
+					System.out.println("next " + DebugManager.index);
 					DebugData data = DebugManager.getNext();
 					imgGraph = renderDotGraph(data.getGraph());
 					graphPanel.repaint();

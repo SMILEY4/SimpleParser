@@ -1,11 +1,11 @@
 package com.ruegnerlukas.tests;
 
-import com.ruegnerlukas.simpleparser.expressions.Result;
 import com.ruegnerlukas.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.simpleparser.systems.ExpressionProcessor;
 import com.ruegnerlukas.simpleparser.systems.NodeProcessor;
 import com.ruegnerlukas.simpleparser.tokens.Token;
 import com.ruegnerlukas.simpleparser.tokens.Tokenizer;
+import com.ruegnerlukas.simpleparser.tree.Node;
 import com.ruegnerlukas.simpleparser.tree.TerminalNode;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -60,9 +60,9 @@ public class TreeTerminalsTest {
 			TestItem item = testItems[i];
 
 			List<Token> tokens = tokenizer.tokenize(item.string, ignorables, false);
-			Result result = ExpressionProcessor.apply(grammar, tokens);
+			Node root = ExpressionProcessor.apply(grammar, tokens);
 
-			List<TerminalNode> terminalNodes = NodeProcessor.collectTerminals(result.node);
+			List<TerminalNode> terminalNodes = NodeProcessor.collectTerminals(root);
 
 			List<String> stringTerminalNodes = new ArrayList<>();
 			for(TerminalNode node : terminalNodes) {
@@ -104,9 +104,9 @@ public class TreeTerminalsTest {
 			TestItem item = testItems[i];
 
 			List<Token> tokens = tokenizer.tokenize(item.string, new HashSet<>(), false);
-			Result result = ExpressionProcessor.apply(grammar, tokens);
+			Node root = ExpressionProcessor.apply(grammar, tokens);
 
-			List<TerminalNode> terminalNodes = NodeProcessor.collectTerminals(result.node);
+			List<TerminalNode> terminalNodes = NodeProcessor.collectTerminals(root);
 
 			List<String> stringTerminalNodes = new ArrayList<>();
 			for(TerminalNode node : terminalNodes) {
