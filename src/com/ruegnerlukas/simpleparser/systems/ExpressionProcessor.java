@@ -28,162 +28,160 @@ public class ExpressionProcessor {
 
 
 
-	public static Result apply(Grammar grammar, List<Token> tokens) {
+	public static Node apply(Grammar grammar, List<Token> tokens) {
 		return apply(grammar.getRule(grammar.getStartingRule()).getExpression(), tokens);
 	}
 
 
 
 
-	public static Result apply(Expression expression, List<Token> tokens) {
+	public static Node apply(Expression expression, List<Token> tokens) {
 		trace.clear();
 		List<Token> consumed = new ArrayList<>();
 		List<Token> tokenList = new ArrayList<>(tokens);
-		Result result = apply(expression, consumed, tokenList);
 
-		if(result.state == Result.State.NO_MATCH) {
-			result = Result.error(
-				result.node,
-				result.error == null ? new Error(Error.Type.UNKNOWN_ERROR, 0, tokens.size()) : result.error
-			);
-		}
+		Node root = new PlaceholderNode();
+		apply(root, expression, consumed, tokenList);
 
-		if(tokenList.isEmpty()) {
-			return result;
+		return root;
 
-		} else {
-			boolean remainingOptional = true;
-			for(Token t : tokens) {
-				if(t.getType() != TokenType.IGNORABLE) {
-					remainingOptional = false;
-					break;
-				}
-			}
-			if(!remainingOptional) {
-				return Result.error(
-						result.node,
-						result.error == null ? new Error(Error.Type.SYMBOLS_REMAINING, consumed.size(), consumed.size()) : result.error
-				);
-			}
-			return result;
-		}
+//		if(state == Result.State.NO_MATCH) {
+//			result = Result.error(
+//				result.node,
+//				result.error == null ? new Error(Error.Type.UNKNOWN_ERROR, 0, tokens.size()) : result.error
+//			);
+//		}
+//
+//		if(tokenList.isEmpty()) {
+//			return result;
+//
+//		} else {
+//			boolean remainingOptional = true;
+//			for(Token t : tokens) {
+//				if(t.getType() != TokenType.IGNORABLE) {
+//					remainingOptional = false;
+//					break;
+//				}
+//			}
+//			if(!remainingOptional) {
+//				return Result.error(
+//						result.node,
+//						result.error == null ? new Error(Error.Type.SYMBOLS_REMAINING, consumed.size(), consumed.size()) : result.error
+//				);
+//			}
+//			return result;
+//		}
 
 	}
 
 
 
 
-	private static Result apply(Expression expression, List<Token> consumed, List<Token> tokens) {
+	private static void apply(Node parent, Expression expression, List<Token> consumed, List<Token> tokens) {
 
 		TraceElement traceElement = new TraceElement();
 		trace.add(traceElement);
 
-		Result result = null;
-
 		if(ExpressionType.ALTERNATIVE == expression.getType()) {
 			AlternativeExpression alternativeExpression = (AlternativeExpression)expression;
-			result = applyAlternative(alternativeExpression, consumed, tokens);
+			applyAlternative(parent, alternativeExpression, consumed, tokens);
 		}
 
 		if(ExpressionType.OPTIONAL == expression.getType()) {
 			OptionalExpression optionalExpression = (OptionalExpression)expression;
-			result = applyOptional(optionalExpression, consumed, tokens);
+			applyOptional(parent, optionalExpression, consumed, tokens);
 		}
 
 		if(ExpressionType.REPETITION == expression.getType()) {
 			RepetitionExpression repetitionExpression = (RepetitionExpression)expression;
-			result = applyRepetition(repetitionExpression, consumed, tokens);
+			applyRepetition(parent, repetitionExpression, consumed, tokens);
 		}
 
 		if(ExpressionType.RULE == expression.getType()) {
 			RuleExpression ruleExpression = (RuleExpression)expression;
-			result = applyRule(ruleExpression, consumed, tokens);
+			applyRule(parent, ruleExpression, consumed, tokens);
 		}
 
 		if(ExpressionType.SEQUENCE == expression.getType()) {
 			SequenceExpression sequenceExpression = (SequenceExpression)expression;
-			result = applySequence(sequenceExpression, consumed, tokens);
+			applySequence(parent, sequenceExpression, consumed, tokens);
 		}
 
 		if(ExpressionType.TOKEN == expression.getType()) {
 			TokenExpression tokenExpression = (TokenExpression)expression;
-			result = applyToken(tokenExpression, consumed, tokens);
+			applyToken(parent, tokenExpression, consumed, tokens);
 		}
 
-		traceElement.setExpression(expression);
-		traceElement.setState(result.state);
-		return result;
 	}
 
 
 
 
-	private static Result applyAlternative(AlternativeExpression expression, List<Token> consumed, List<Token> tokens) {
+	private static void applyAlternative(Node parent, AlternativeExpression expression, List<Token> consumed, List<Token> tokens) {
 
 		// no tokens remaining -> is optional -> MATCH; else -> EOS-ERROR
 		if(tokens.isEmpty()) {
 			if(OptionalCheck.isOptional(expression)) {
-				return Result.match(
-						new PlaceholderNode().setExpression(expression)
-				);
-
+				match();
+				return;
 			} else {
-				return Result.error(
-						new PlaceholderNode().setExpression(expression).setError(),
-						new Error(Error.Type.UNEXPECTED_END_OF_INPUT, consumed.size(), consumed.size())
-				);
+				error(new Error(Error.Type.UNEXPECTED_END_OF_INPUT, consumed.size(), consumed.size()));
+				return;
 			}
 		}
 
 		// prepare
 		int indexStart = consumed.size()+1;
 		Token tokenStart = tokens.get(0);
-		List<Result> resultsMatched = new ArrayList<>();
-		Result result = null;
+
+		List<Node> matchedNodes = new ArrayList<>();
 
 		// apply each expression
 		for(Expression expr : expression.expressions) {
-			result = apply(expr, consumed, tokens);
+
+			Node tmpParent = new PlaceholderNode().setExpression(expression);
+			apply(tmpParent, expr, consumed, tokens);
 
 			// expression matches next token(s) -> consumed token: return result -> did not consume: continue
-			if(result.state == Result.State.MATCH) {
-				resultsMatched.add(result);
+			if(state == Result.State.MATCH) {
+				matchedNodes.add(tmpParent);
 				if(tokens.isEmpty() || tokenStart != tokens.get(0)) {
-					return result;
+					parent.addChild(tmpParent);
+					match();
+					return;
 				}
 
 			// expression does not match token(s)
-			} else if(result.state == Result.State.NO_MATCH) {
+			} else if(state == Result.State.NO_MATCH) {
 				continue;
 
 			// expression encountered error -> return error/result
-			} else if(result.state == Result.State.ERROR) {
-				return result;
+			} else if(state == Result.State.ERROR) {
+				error();
+				return;
 			}
 		}
 
 		// return if matched
-		if(resultsMatched.size() > 0) {
-			return resultsMatched.get(0);
+		if(matchedNodes.size() > 0) {
+			parent.addChild(matchedNodes.get(0));
+			match();
+			return;
 
 		// nothing matched
 		} else {
 
 			// ... because no tokens remaining
 			if(tokens.isEmpty()) {
-				return Result.error(
-						new PlaceholderNode(result.node).setExpression(expression).setError(),
-						new Error(Error.Type.UNEXPECTED_END_OF_INPUT, consumed.size(), consumed.size())
-				);
+				error(new Error(Error.Type.UNEXPECTED_END_OF_INPUT, consumed.size(), consumed.size()));
+				return;
 
 			// ... because unexpected symbol
 			} else {
 				Set<Token> expected = new HashSet<>();
 				RecommendationProcessor.collectPossibleTokens(expression, expected);
-				return Result.error(
-						new PlaceholderNode().setExpression(expression).setError(),
-						new Error(Error.Type.UNEXPECTED_SYMBOL, consumed.size(), consumed.size(), expected, tokenStart)
-				);
+				error(new Error(Error.Type.UNEXPECTED_SYMBOL, consumed.size(), consumed.size(), expected, tokenStart));
+				return;
 			}
 		}
 
@@ -193,41 +191,40 @@ public class ExpressionProcessor {
 
 
 
-	private static Result applyOptional(OptionalExpression expression, List<Token> consumed, List<Token> tokens) {
+	private static void applyOptional(Node parent, OptionalExpression expression, List<Token> consumed, List<Token> tokens) {
 
 		// no tokens remaining -> MATCH
 		if(tokens.isEmpty()) {
-			return Result.match(
-					new PlaceholderNode().setExpression(expression)
-			);
+			parent.addChild(new PlaceholderNode().setExpression(expression));
+			match();
 
 
 		// tokens remaining
 		} else {
 
 			// apply expression
-			Result result = apply(expression.expression, consumed, tokens);
+			apply(parent, expression.expression, consumed, tokens);
 
 			// is matching
-			if(result.state == Result.State.MATCH) {
-				return result;
+			if(state == Result.State.MATCH) {
+				match();
+				return;
 			}
 
 			// does not match
-			if(result.state == Result.State.NO_MATCH) {
-				return Result.match( result.node );
+			if(state == Result.State.NO_MATCH) {
+				match();
+				return;
 			}
 
 			// encountered error
-			if(result.state == Result.State.ERROR) {
-				return result;
+			if(state == Result.State.ERROR) {
+				error();
+				return;
 			}
 
 			// none of the above
-			return Result.error(
-					new PlaceholderNode().setExpression(expression).setError(),
-					new Error(Error.Type.INTERNAL_ERROR, consumed.size(), consumed.size())
-			);
+			error(new Error(Error.Type.INTERNAL_ERROR, consumed.size(), consumed.size()));
 		}
 
 	}
@@ -235,105 +232,100 @@ public class ExpressionProcessor {
 
 
 
-	private static Result applyRepetition(RepetitionExpression expression, List<Token> consumed, List<Token> tokens) {
+	private static void applyRepetition(Node parent, RepetitionExpression expression, List<Token> consumed, List<Token> tokens) {
 
-		// create node
 		Node node = new PlaceholderNode().setExpression(expression);
+		parent.addChild(node);
 
 		// repeat until end (if possible)
 		while (!tokens.isEmpty()) {
 
 			// apply expression
-			Result result = apply(expression.expression, consumed, tokens);
+			apply(node, expression.expression, consumed, tokens);
 
 			// matching -> add result and continue
-			if (result.state == Result.State.MATCH) {
-				node.addChild(result.node);
+			if (state == Result.State.MATCH) {
+				match();
 				continue;
 			}
 
 			// does not match -> return matching nodes
-			if (result.state == Result.State.NO_MATCH) {
-				return Result.match( node );
+			if (state == Result.State.NO_MATCH) {
+				match();
+				return;
 			}
 
 			// encountered error -> return error/result
-			if (result.state == Result.State.ERROR) {
-				return result;
+			if (state == Result.State.ERROR) {
+				error();
+				return;
 			}
 		}
 
 		// no tokens remaining -> return matching nodes
-		return Result.match( node );
+		match();
 
 	}
 
 
 
 
-	private static Result applyRule(RuleExpression expression, List<Token> consumed, List<Token> tokens) {
+	private static void applyRule(Node parent, RuleExpression expression, List<Token> consumed, List<Token> tokens) {
 
 		// apply expression
-		Result result = apply(expression.rule.getExpression(), consumed, tokens);
+		Node node = new RuleNode(expression.rule).setExpression(expression);
+		parent.addChild(node);
 
-		// matching
-		if (result.state == Result.State.MATCH) {
-			Node node = new RuleNode(expression.rule).setExpression(expression);
-			node.addChild(result.node);
-			return Result.match( node );
+		apply(node, expression.rule.getExpression(), consumed, tokens);
 
-		} else {
-			return result;
-		}
 
 	}
 
 
 
 
-	private static Result applySequence(SequenceExpression expression, List<Token> consumed, List<Token> tokens) {
+	private static void applySequence(Node parent, SequenceExpression expression, List<Token> consumed, List<Token> tokens) {
 
 		// create node
 		Node node = new PlaceholderNode().setExpression(expression);
+		parent.addChild(node);
 
 		// apply each expression
 		for (Expression expr : expression.expressions) {
-			Result result = apply(expr, consumed, tokens);
+			apply(node, expr, consumed, tokens);
 
 			// matching -> add node
-			if (result.state == Result.State.MATCH) {
-				node.addChild(result.node);
+			if (state == Result.State.MATCH) {
+				match();
+				continue;
 			}
 
 			// does not match -> return nomatch and matched nodes
-			if (result.state == Result.State.NO_MATCH) {
-				node.addChild(result.node);
-				return Result.noMatch(node.setError());
+			if (state == Result.State.NO_MATCH) {
+				noMatch();
+				return;
 			}
 
 			// encountered error
-			if (result.state == Result.State.ERROR) {
-				node.addChild(result.node);
-				return Result.error(node.setError(), result.error);
+			if (state == Result.State.ERROR) {
+				error();
+				return;
 			}
 
 		}
 
-		return Result.match(node);
+		match();
 	}
 
 
 
 
-	private static Result applyToken(TokenExpression expression, List<Token> consumed, List<Token> tokens) {
+	private static void applyToken(Node parent, TokenExpression expression, List<Token> consumed, List<Token> tokens) {
 
 
 		// no tokens remaining
 		if (tokens.isEmpty()) {
-			return Result.noMatch(
-					new PlaceholderNode().setExpression(expression).setError(),
-					new Error(Error.Type.UNEXPECTED_END_OF_INPUT, consumed.size(), consumed.size())
-			);
+			noMatch(new Error(Error.Type.UNEXPECTED_END_OF_INPUT, consumed.size(), consumed.size()));
 
 
 		// tokens remaining
@@ -344,36 +336,59 @@ public class ExpressionProcessor {
 
 			// next is undefined -> ERROR: undefined symbol
 			if (next.getType() == TokenType.UNDEFINED) {
-				return Result.error(
-						new PlaceholderNode().setExpression(expression).setError(),
-						new Error(Error.Type.ILLEGAL_CHARACTER, consumed.size(), consumed.size(), new HashSet<>(Collections.singleton(expression.token)), next)
-				);
+				error(new Error(Error.Type.ILLEGAL_CHARACTER, consumed.size(), consumed.size(), new HashSet<>(Collections.singleton(expression.token)), next));
 
 			// next is ignorable -> consume + apply again
 			} else if (next.getType() == TokenType.IGNORABLE) {
 				consumed.add(tokens.remove(0));
-				return applyToken(expression, consumed, tokens);
+				applyToken(parent, expression, consumed, tokens);
 
 			// next is matching token -> MATCH
 			} else if (next == expression.token) {
 				consumed.add(tokens.remove(0));
-
-				return Result.match(
-						new TerminalNode(expression.token).setExpression(expression)
-				);
+				parent.addChild(new TerminalNode(expression.token).setExpression(expression));
+				match();
 
 			// next is not matching token -> NO_MATCH: unexpected symbol
 			} else {
-				return Result.noMatch(
-						new PlaceholderNode().setExpression(expression).setError(),
-						new Error(Error.Type.UNEXPECTED_SYMBOL, consumed.size(), consumed.size(), new HashSet<>(Collections.singleton(expression.token)), next)
-				);
-
+				noMatch(new Error(Error.Type.UNEXPECTED_SYMBOL, consumed.size(), consumed.size(), new HashSet<>(Collections.singleton(expression.token)), next));
 			}
 
 		}
 
 	}
 
+
+
+
+	public static List<Error> errors = new ArrayList<>();
+	public static Result.State state = Result.State.MATCH;
+
+
+	public static void match() {
+		state = Result.State.MATCH;
+	}
+
+
+	public static void noMatch() {
+		state = Result.State.NO_MATCH;
+	}
+
+
+	public static void noMatch(Error error) {
+		state = Result.State.NO_MATCH;
+		errors.add(error);
+	}
+
+
+	public static void error() {
+		state = Result.State.ERROR;
+	}
+
+
+	public static void error(Error error) {
+		state = Result.State.ERROR;
+		errors.add(error);
+	}
 
 }
