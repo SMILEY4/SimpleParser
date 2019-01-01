@@ -317,11 +317,11 @@ public class GraphViz {
 			if (img.delete() == false)
 				System.err.println("Warning: " + img.getAbsolutePath() + " could not be deleted!");
 		} catch (java.io.IOException ioe) {
-			System.err.println("Error:    in I/O processing of tempfile in dir " + GraphViz.TEMP_DIR + "\n");
+			System.err.println("ErrorType:    in I/O processing of tempfile in dir " + GraphViz.TEMP_DIR + "\n");
 			System.err.println("       or in calling external command");
 			ioe.printStackTrace();
 		} catch (java.lang.InterruptedException ie) {
-			System.err.println("Error: the execution of the external program was interrupted");
+			System.err.println("ErrorType: the execution of the external program was interrupted");
 			ie.printStackTrace();
 		}
 
@@ -350,7 +350,7 @@ public class GraphViz {
 			br.close();
 			fout.close();
 		} catch (Exception e) {
-			System.err.println("Error: I/O error while writing the dot source to temp file!");
+			System.err.println("ErrorType: I/O error while writing the dot source to temp file!");
 			return null;
 		}
 		return temp;
@@ -427,7 +427,7 @@ public class GraphViz {
 			}
 			dis.close();
 		} catch (Exception e) {
-			System.err.println("Error: " + e.getMessage());
+			System.err.println("ErrorType: " + e.getMessage());
 		}
 
 		this.graph = sb;

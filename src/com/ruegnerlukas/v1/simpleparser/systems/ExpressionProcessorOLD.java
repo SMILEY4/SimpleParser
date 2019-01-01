@@ -1,6 +1,6 @@
 //package com.ruegnerlukas.simpleparser.systems;
 //
-//import Error;
+//import ErrorType;
 //import com.ruegnerlukas.simpleparser.expressions.*;
 //import Grammar;
 //import Token;
@@ -44,7 +44,7 @@
 //		if(result.state == Result.State.NO_MATCH) {
 //			result = Result.error(
 //				result.node,
-//				result.error == null ? new Error(Error.Type.UNKNOWN_ERROR, 0, tokens.size()) : result.error
+//				result.error == null ? new ErrorType(ErrorType.Type.UNKNOWN_ERROR, 0, tokens.size()) : result.error
 //			);
 //		}
 //
@@ -62,7 +62,7 @@
 //			if(!remainingOptional) {
 //				return Result.error(
 //						result.node,
-//						result.error == null ? new Error(Error.Type.SYMBOLS_REMAINING, consumed.size(), consumed.size()) : result.error
+//						result.error == null ? new ErrorType(ErrorType.Type.SYMBOLS_REMAINING, consumed.size(), consumed.size()) : result.error
 //				);
 //			}
 //			return result;
@@ -130,7 +130,7 @@
 //			} else {
 //				return Result.error(
 //						new PlaceholderNode().setExpression(expression).setError(),
-//						new Error(Error.Type.UNEXPECTED_END_OF_INPUT, consumed.size(), consumed.size())
+//						new ErrorType(ErrorType.Type.UNEXPECTED_END_OF_INPUT, consumed.size(), consumed.size())
 //				);
 //			}
 //		}
@@ -173,7 +173,7 @@
 //			if(tokens.isEmpty()) {
 //				return Result.error(
 //						new PlaceholderNode(result.node).setExpression(expression).setError(),
-//						new Error(Error.Type.UNEXPECTED_END_OF_INPUT, consumed.size(), consumed.size())
+//						new ErrorType(ErrorType.Type.UNEXPECTED_END_OF_INPUT, consumed.size(), consumed.size())
 //				);
 //
 //			// ... because unexpected symbol
@@ -182,7 +182,7 @@
 //				RecommendationProcessor.collectPossibleTokens(expression, expected);
 //				return Result.error(
 //						new PlaceholderNode().setExpression(expression).setError(),
-//						new Error(Error.Type.UNEXPECTED_SYMBOL, consumed.size(), consumed.size(), expected, tokenStart)
+//						new ErrorType(ErrorType.Type.UNEXPECTED_SYMBOL, consumed.size(), consumed.size(), expected, tokenStart)
 //				);
 //			}
 //		}
@@ -226,7 +226,7 @@
 //			// none of the above
 //			return Result.error(
 //					new PlaceholderNode().setExpression(expression).setError(),
-//					new Error(Error.Type.INTERNAL_ERROR, consumed.size(), consumed.size())
+//					new ErrorType(ErrorType.Type.INTERNAL_ERROR, consumed.size(), consumed.size())
 //			);
 //		}
 //
@@ -332,7 +332,7 @@
 //		if (tokens.isEmpty()) {
 //			return Result.noMatch(
 //					new PlaceholderNode().setExpression(expression).setError(),
-//					new Error(Error.Type.UNEXPECTED_END_OF_INPUT, consumed.size(), consumed.size())
+//					new ErrorType(ErrorType.Type.UNEXPECTED_END_OF_INPUT, consumed.size(), consumed.size())
 //			);
 //
 //
@@ -346,7 +346,7 @@
 //			if (next.getType() == TokenType.UNDEFINED) {
 //				return Result.error(
 //						new PlaceholderNode().setExpression(expression).setError(),
-//						new Error(Error.Type.ILLEGAL_CHARACTER, consumed.size(), consumed.size(), new HashSet<>(Collections.singleton(expression.token)), next)
+//						new ErrorType(ErrorType.Type.ILLEGAL_CHARACTER, consumed.size(), consumed.size(), new HashSet<>(Collections.singleton(expression.token)), next)
 //				);
 //
 //			// next is ignorable -> consume + apply again
@@ -366,7 +366,7 @@
 //			} else {
 //				return Result.noMatch(
 //						new PlaceholderNode().setExpression(expression).setError(),
-//						new Error(Error.Type.UNEXPECTED_SYMBOL, consumed.size(), consumed.size(), new HashSet<>(Collections.singleton(expression.token)), next)
+//						new ErrorType(ErrorType.Type.UNEXPECTED_SYMBOL, consumed.size(), consumed.size(), new HashSet<>(Collections.singleton(expression.token)), next)
 //				);
 //
 //			}

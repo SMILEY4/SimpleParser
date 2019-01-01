@@ -1,7 +1,7 @@
 package com.ruegnerlukas.v2.simpleparser.grammar;
 
 
-import com.ruegnerlukas.v1.simpleparser.tokens.Token;
+import com.ruegnerlukas.v2.simpleparser.Token;
 import com.ruegnerlukas.v2.simpleparser.grammar.expressions.Expression;
 
 import java.util.*;
@@ -51,7 +51,7 @@ public class Grammar {
 	protected void addTokens(String... symbols) {
 		for(String symbol : symbols) {
 			if(getToken(symbol) == null) {
-				Token token = Token.token(symbol);
+				Token token = new Token(symbol);
 				tokens.put(token.getSymbol(), token);
 			}
 		}

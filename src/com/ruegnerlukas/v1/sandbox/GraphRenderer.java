@@ -36,7 +36,7 @@
 //
 //	public static void main(String[] args) {
 //
-//		System.out.println(DotGraphBuilder.build(GRAMMAR));
+//		System.out.println(DotGrammarBuilder.build(GRAMMAR));
 //
 //		JFrame frame = new JFrame();
 //		frame.setTitle("Simple Parser Test - Lukas Ruegner (2018)");
@@ -151,13 +151,13 @@
 //						}
 //					}
 //
-//					System.out.println(DotGraphBuilder.build(root));
+//					System.out.println(DotGrammarBuilder.build(root));
 //
 //					root = NodeProcessor.eliminatePlaceholders(root);
-//					System.out.println(DotGraphBuilder.build(root));
+//					System.out.println(DotGrammarBuilder.build(root));
 //
 //					root = NodeProcessor.reduceRules(root, "STATEMENT", "COMPONENT");
-//					System.out.println(DotGraphBuilder.build(root));
+//					System.out.println(DotGrammarBuilder.build(root));
 //
 //				}
 //				labelTokens.setText(strPossible);
@@ -170,7 +170,7 @@
 ////					System.out.println(result.state + "  " + result.error);
 ////				} else {
 ////					System.out.println(result.state + "  " + result.error);
-////					System.out.println(DotGraphBuilder.build(root));
+////					System.out.println(DotGrammarBuilder.build(root));
 ////				}
 //
 //				final DefaultStyledDocument doc = (DefaultStyledDocument)e.getDocument();
