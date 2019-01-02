@@ -2,7 +2,10 @@ package com.ruegnerlukas.v2.simpleparser.expressions;
 
 import com.ruegnerlukas.v2.simpleparser.Node;
 import com.ruegnerlukas.v2.simpleparser.Token;
+import com.ruegnerlukas.v2.simpleparser.errors.ErrorStack;
+import com.ruegnerlukas.v2.simpleparser.errors.GenericError;
 import com.ruegnerlukas.v2.simpleparser.grammar.State;
+import com.ruegnerlukas.v2.simpleparser.parser.Parser;
 import com.ruegnerlukas.v2.simpleparser.trace.Trace;
 import com.ruegnerlukas.v2.simpleparser.trace.TraceElement;
 
@@ -43,15 +46,18 @@ public class AlternativeExpression extends Expression {
 
 
 	@Override
-	public State apply(Node root, List<Token> tokens, Trace trace) {
+	public State apply(Node root, List<Token> tokens, Parser parser) {
+
+		Trace trace = parser.getTrace();
+		ErrorStack errorStack = parser.getErrorStack();
 
 		TraceElement traceElement = new TraceElement(this);
 		trace.add(traceElement);
 
-
 		Node[] nodes = new Node[expressions.size()];
 		State[] states = new State[expressions.size()];
 		int[] nConsumed = new int[expressions.size()];
+		ErrorStack[] errorStacks = new ErrorStack[expressions.size()];
 
 		// apply all expressions
 		for(int i=0; i<expressions.size(); i++) {
@@ -59,12 +65,14 @@ public class AlternativeExpression extends Expression {
 
 			Node tmpParent = new Node().setExpression(this);
 			List<Token> tmpTokens = new ArrayList<>(tokens);
+			ErrorStack tmpErrors = new ErrorStack();
 
-			State state = e.apply(tmpParent, tmpTokens, trace);
+			State state = e.apply(tmpParent, tmpTokens, parser);
 
 			nodes[i] = tmpParent;
 			states[i] = state;
 			nConsumed[i] = tokens.size() - tmpTokens.size();
+			errorStacks[i] = tmpErrors;
 
 		}
 
@@ -90,6 +98,14 @@ public class AlternativeExpression extends Expression {
 
 		} else {
 			traceElement.setState(State.ERROR);
+
+			for(int i=0; i<expressions.size(); i++) {
+				if(states[i] != State.MATCH && !errorStacks[i].errors.isEmpty()) {
+					errorStack.addError(errorStacks[i].errors.get(0));
+				}
+			}
+			errorStack.addError(new GenericError(), this, State.ERROR);
+
 			return State.ERROR;
 		}
 

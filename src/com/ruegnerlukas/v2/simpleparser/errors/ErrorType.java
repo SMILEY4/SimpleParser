@@ -1,9 +1,9 @@
-package com.ruegnerlukas.v2.simpleparser;
+package com.ruegnerlukas.v2.simpleparser.errors;
 
 public enum ErrorType {
 
 	/** encountered illegal character **/
-	ILLEGAL_CHARACTER,
+	ILLEGAL_SYMBOL,
 
 	/** encountered legal symbol at unexpected place. (has expected,actual) **/
 	UNEXPECTED_SYMBOL,
@@ -14,7 +14,9 @@ public enum ErrorType {
 	/** end of grammar, but symbols remaining **/
 	SYMBOLS_REMAINING,
 
-	UNKNOWN_ERROR,
+	/** child of a expression returned an error*/
+	ERROR,
+
 	INTERNAL_ERROR
 
 }

@@ -2,7 +2,11 @@ package com.ruegnerlukas.v2.simpleparser.expressions;
 
 import com.ruegnerlukas.v2.simpleparser.Node;
 import com.ruegnerlukas.v2.simpleparser.Token;
+import com.ruegnerlukas.v2.simpleparser.errors.ErrorStack;
+import com.ruegnerlukas.v2.simpleparser.errors.UnexpectedEndOfInputError;
+import com.ruegnerlukas.v2.simpleparser.errors.UnexpectedSymbolError;
 import com.ruegnerlukas.v2.simpleparser.grammar.State;
+import com.ruegnerlukas.v2.simpleparser.parser.Parser;
 import com.ruegnerlukas.v2.simpleparser.trace.Trace;
 import com.ruegnerlukas.v2.simpleparser.trace.TraceElement;
 
@@ -33,13 +37,15 @@ public class TokenExpression extends Expression {
 
 
 	@Override
-	public State apply(Node root, List<Token> tokens, Trace trace) {
+	public State apply(Node root, List<Token> tokens, Parser parser) {
 
+		Trace trace = parser.getTrace();
+		ErrorStack errorStack = parser.getErrorStack();
 
 		if(tokens.isEmpty()) {
 			trace.add(new TraceElement(this).setState(State.NO_MATCH));
+			errorStack.addError(new UnexpectedEndOfInputError(token.getSymbol()), this, State.NO_MATCH);
 			return State.NO_MATCH;
-
 
 		} else {
 			Token next = tokens.get(0);
@@ -53,6 +59,7 @@ public class TokenExpression extends Expression {
 
 			} else {
 				trace.add(new TraceElement(this).setState(State.NO_MATCH));
+				errorStack.addError(new UnexpectedSymbolError(token.getSymbol(), next.getSymbol(), parser.calcErrorIndex(tokens)), this, State.NO_MATCH);
 				return State.NO_MATCH;
 			}
 

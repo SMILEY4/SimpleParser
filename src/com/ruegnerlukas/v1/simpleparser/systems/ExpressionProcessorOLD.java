@@ -346,7 +346,7 @@
 //			if (next.getType() == TokenType.UNDEFINED) {
 //				return Result.error(
 //						new PlaceholderNode().setExpression(expression).setError(),
-//						new ErrorType(ErrorType.Type.ILLEGAL_CHARACTER, consumed.size(), consumed.size(), new HashSet<>(Collections.singleton(expression.token)), next)
+//						new ErrorType(ErrorType.Type.ILLEGAL_SYMBOL, consumed.size(), consumed.size(), new HashSet<>(Collections.singleton(expression.token)), next)
 //				);
 //
 //			// next is ignorable -> consume + apply again

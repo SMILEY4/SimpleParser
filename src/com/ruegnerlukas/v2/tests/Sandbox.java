@@ -1,11 +1,10 @@
 package com.ruegnerlukas.v2.tests;
 
 import com.ruegnerlukas.v2.dotGraph.DotGrammarBuilder;
-import com.ruegnerlukas.v2.dotGraph.DotTreeBuilder;
 import com.ruegnerlukas.v2.simpleparser.Token;
+import com.ruegnerlukas.v2.simpleparser.errors.ErrorElement;
 import com.ruegnerlukas.v2.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.v2.simpleparser.parser.Parser;
-import com.ruegnerlukas.v2.simpleparser.trace.TraceElement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,29 +22,39 @@ public class Sandbox {
 		System.out.println(dotGrammar);
 
 		// e and (e or e)
+//		List<Token> tokens = new ArrayList<>(Arrays.asList(
+//				new Token("e"),
+//				new Token("and"),
+//				new Token("("),
+//				new Token("e"),
+//				new Token("or"),
+//				new Token("e"),
+//				new Token(")")
+//		));
+
 		List<Token> tokens = new ArrayList<>(Arrays.asList(
 				new Token("e"),
 				new Token("and"),
-				new Token("("),
-				new Token("e"),
-				new Token("or"),
-				new Token("e"),
-				new Token(")")
+				new Token("(")
 		));
 
 
 		Parser parser = new Parser(grammar).parse(tokens);
 
-		System.out.println("============");
-		System.out.println(" -> " + parser.getState());
-		System.out.println("============");
-		System.out.println(DotTreeBuilder.build(parser.getRoot()));
-		System.out.println("============");
-		for(TraceElement e : parser.getTrace().getElements()) {
-			System.out.println(e.expression + "  -> " + e.state);
+		for(ErrorElement element : parser.getErrorStack().errors) {
+			System.out.println(element.error);
 		}
-		System.out.println("============");
-		System.out.println(DotGrammarBuilder.build(grammar, parser.getTrace()));
+
+//		System.out.println("============");
+//		System.out.println(" -> " + parser.getState());
+//		System.out.println("============");
+//		System.out.println(DotTreeBuilder.build(parser.getRoot()));
+//		System.out.println("============");
+//		for(TraceElement e : parser.getTrace().getElements()) {
+//			System.out.println(e.expression + "  -> " + e.state);
+//		}
+//		System.out.println("============");
+//		System.out.println(DotGrammarBuilder.build(grammar, parser.getTrace()));
 
 
 	}

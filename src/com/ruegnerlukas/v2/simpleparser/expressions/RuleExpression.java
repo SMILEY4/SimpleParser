@@ -3,8 +3,11 @@ package com.ruegnerlukas.v2.simpleparser.expressions;
 
 import com.ruegnerlukas.v2.simpleparser.Node;
 import com.ruegnerlukas.v2.simpleparser.Token;
+import com.ruegnerlukas.v2.simpleparser.errors.ErrorStack;
+import com.ruegnerlukas.v2.simpleparser.errors.GenericError;
 import com.ruegnerlukas.v2.simpleparser.grammar.Rule;
 import com.ruegnerlukas.v2.simpleparser.grammar.State;
+import com.ruegnerlukas.v2.simpleparser.parser.Parser;
 import com.ruegnerlukas.v2.simpleparser.trace.Trace;
 import com.ruegnerlukas.v2.simpleparser.trace.TraceElement;
 
@@ -35,14 +38,21 @@ public class RuleExpression extends Expression {
 
 
 	@Override
-	public State apply(Node root, List<Token> tokens, Trace trace) {
+	public State apply(Node root, List<Token> tokens, Parser parser) {
+
+		Trace trace = parser.getTrace();
+		ErrorStack errorStack = parser.getErrorStack();
 
 		TraceElement traceElement = new TraceElement(this);
 		trace.add(traceElement);
 
 		Node node = new Node().setExpression(this);
-		State state = rule.getExpression().apply(node, tokens, trace);
+		State state = rule.getExpression().apply(node, tokens, parser);
 		root.children.add(node);
+
+		if(state != State.MATCH) {
+			errorStack.addError(new GenericError(), this, state);
+		}
 
 		traceElement.setState(state);
 		return state;

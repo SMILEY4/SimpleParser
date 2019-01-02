@@ -2,7 +2,10 @@ package com.ruegnerlukas.v2.simpleparser.expressions;
 
 import com.ruegnerlukas.v2.simpleparser.Node;
 import com.ruegnerlukas.v2.simpleparser.Token;
+import com.ruegnerlukas.v2.simpleparser.errors.ErrorStack;
+import com.ruegnerlukas.v2.simpleparser.errors.GenericError;
 import com.ruegnerlukas.v2.simpleparser.grammar.State;
+import com.ruegnerlukas.v2.simpleparser.parser.Parser;
 import com.ruegnerlukas.v2.simpleparser.trace.Trace;
 import com.ruegnerlukas.v2.simpleparser.trace.TraceElement;
 
@@ -43,7 +46,10 @@ public class SequenceExpression extends Expression {
 
 
 	@Override
-	public State apply(Node root, List<Token> tokens, Trace trace) {
+	public State apply(Node root, List<Token> tokens, Parser parser) {
+
+		Trace trace = parser.getTrace();
+		ErrorStack errorStack = parser.getErrorStack();
 
 		TraceElement traceElement = new TraceElement(this);
 		trace.add(traceElement);
@@ -52,17 +58,19 @@ public class SequenceExpression extends Expression {
 		root.children.add(node);
 
 		for(Expression e : expressions) {
-			State state = e.apply(node, tokens, trace);
+			State state = e.apply(node, tokens, parser);
 
 			if(state == State.MATCH) {
 				continue;
 			}
 			if(state == State.NO_MATCH) {
 				traceElement.setState(State.NO_MATCH);
+				errorStack.addError(new GenericError(), this, State.NO_MATCH);
 				return State.NO_MATCH;
 			}
 			if(state == State.ERROR) {
 				traceElement.setState(State.ERROR);
+				errorStack.addError(new GenericError(), this, State.ERROR);
 				return State.ERROR;
 			}
 
