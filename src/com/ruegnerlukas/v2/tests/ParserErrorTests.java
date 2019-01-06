@@ -1,11 +1,13 @@
 package com.ruegnerlukas.v2.tests;
 
-import com.ruegnerlukas.v2.dotGraph.DotGrammarBuilder;
+import com.ruegnerlukas.v2.dotGraph.DotTreeBuilder;
+import com.ruegnerlukas.v2.simpleparser.Node;
 import com.ruegnerlukas.v2.simpleparser.Token;
-import com.ruegnerlukas.v2.simpleparser.errors.Error;
 import com.ruegnerlukas.v2.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.v2.simpleparser.grammar.State;
-import com.ruegnerlukas.v2.simpleparser.parser.Parser;
+import com.ruegnerlukas.v2.simpleparser.parser.TokenParser;
+import com.ruegnerlukas.v2.simpleparser.parser.ParserResult;
+import com.ruegnerlukas.v2.simpleparser.parser.ParserResultError;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +44,7 @@ public class ParserErrorTests {
 
 	@Test
 	public void testBool5() {
-		Assertions.assertEquals(State.ERROR, getState("e,and,e,or"));
+		Assertions.assertEquals(State.ERROR, getState("e,and,(,e,or,)"));
 	}
 
 	@Test
@@ -74,16 +76,29 @@ public class ParserErrorTests {
 
 
 	State getState(String csInput) {
+
 		List<Token> tokens = asTokenList(csInput);
-		Parser parser = new Parser(boolGrammar);
-		parser.parse(tokens);
 		System.out.println("PARSE: " + csInput + "  -> " + tokens);
-		System.out.println(DotGrammarBuilder.build(boolGrammar, parser.getTrace()));
-		for(Error error : parser.getPrimaryErrors()) {
-			System.out.println(error);
+
+		TokenParser parser = new TokenParser(boolGrammar);
+		ParserResult result = parser.parse(tokens, true, true);
+
+		if(result.failed()) {
+			ParserResultError errorResult = (ParserResultError)result;
+			int i=0;
+			for(List<Node> bucket : errorResult.getResultList()) {
+				System.out.print( (i++) + ":  ");
+				for(Node n : bucket) {
+					System.out.print(n + ",  ");
+				}
+				System.out.println();
+			}
 		}
+
+		System.out.println(DotTreeBuilder.build(result.getRoot()));
 		System.out.println();
-		return parser.getState();
+
+		return result.getState();
 	}
 
 

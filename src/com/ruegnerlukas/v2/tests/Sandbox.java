@@ -2,9 +2,9 @@ package com.ruegnerlukas.v2.tests;
 
 import com.ruegnerlukas.v2.dotGraph.DotGrammarBuilder;
 import com.ruegnerlukas.v2.simpleparser.Token;
-import com.ruegnerlukas.v2.simpleparser.errors.ErrorElement;
 import com.ruegnerlukas.v2.simpleparser.grammar.Grammar;
-import com.ruegnerlukas.v2.simpleparser.parser.Parser;
+import com.ruegnerlukas.v2.simpleparser.parser.TokenParser;
+import com.ruegnerlukas.v2.simpleparser.parser.ParserResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,11 +39,9 @@ public class Sandbox {
 		));
 
 
-		Parser parser = new Parser(grammar).parse(tokens);
+		TokenParser parser = new TokenParser(grammar);
+		ParserResult result = parser.parse(tokens, true, true);
 
-		for(ErrorElement element : parser.getErrorStack().errors) {
-			System.out.println(element.error);
-		}
 
 //		System.out.println("============");
 //		System.out.println(" -> " + parser.getState());

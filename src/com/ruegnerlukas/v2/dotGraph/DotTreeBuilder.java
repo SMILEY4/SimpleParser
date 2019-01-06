@@ -1,5 +1,6 @@
 package com.ruegnerlukas.v2.dotGraph;
 
+import com.ruegnerlukas.v2.simpleparser.ErrorNode;
 import com.ruegnerlukas.v2.simpleparser.Node;
 
 public class DotTreeBuilder {
@@ -27,6 +28,9 @@ public class DotTreeBuilder {
 			DotUtils.appendConnection(builder, asString(node), asString(n));
 			build(builder, n);
 		}
+		if(node instanceof ErrorNode) {
+			DotUtils.appendStyle(builder, asString(node), 250, 0, 0);
+		}
 	}
 
 
@@ -34,8 +38,16 @@ public class DotTreeBuilder {
 
 	private static String asString(Node node) {
 		String str = "\"" + "NullNode:" + Integer.toHexString(node.hashCode()) + "\"";
-		if(node.expression != null) {
-			str = "\"" + "Node:" + Integer.toHexString(node.hashCode()) + " - " + node.expression.toString() + "\"";
+		if(node instanceof ErrorNode) {
+			if(node.expression != null) {
+				str = "\"" + "Error: " + ((ErrorNode)node).error + " - " + Integer.toHexString(node.hashCode()) + " - " + node.expression.toString() + "\"";
+			} else {
+				str = "\"" + "Error:" + Integer.toHexString(node.hashCode()) + "\"";
+			}
+		} else {
+			if(node.expression != null) {
+				str = "\"" + "Node:" + Integer.toHexString(node.hashCode()) + " - " + node.expression.toString() + "\"";
+			}
 		}
 		return str;
 	}

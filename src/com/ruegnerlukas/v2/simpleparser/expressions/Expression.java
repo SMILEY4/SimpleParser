@@ -1,11 +1,9 @@
 package com.ruegnerlukas.v2.simpleparser.expressions;
 
 import com.ruegnerlukas.v2.simpleparser.Node;
-import com.ruegnerlukas.v2.simpleparser.Token;
+import com.ruegnerlukas.v2.simpleparser.TokenStream;
 import com.ruegnerlukas.v2.simpleparser.grammar.State;
-import com.ruegnerlukas.v2.simpleparser.parser.Parser;
-
-import java.util.List;
+import com.ruegnerlukas.v2.simpleparser.trace.Trace;
 
 public abstract class Expression {
 
@@ -34,7 +32,7 @@ public abstract class Expression {
 
 
 
-	public abstract State apply(Node root, List<Token> tokens, Parser parser);
+	public abstract State apply(Node root, TokenStream tokenStream, Trace trace);
 
 
 }

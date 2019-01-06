@@ -54,7 +54,7 @@ public class DebugRenderer {
 	public static void setupDisplay() {
 
 		JFrame frame = new JFrame();
-		frame.setTitle("Simple Parser Test - Lukas Ruegner (2018)");
+		frame.setTitle("Simple TokenParser Test - Lukas Ruegner (2018)");
 		frame.setSize(1280, 900);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -95,7 +95,7 @@ public class DebugRenderer {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				if(e.getKeyChar() == ' ') {
-					System.out.println("next " + DebugManager.index);
+					System.out.println("peek " + DebugManager.index);
 					DebugData data = DebugManager.getNext();
 					imgGraph = renderDotGraph(data.getGraph());
 					graphPanel.repaint();

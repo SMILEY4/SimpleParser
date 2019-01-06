@@ -39,7 +39,7 @@
 //		System.out.println(DotGrammarBuilder.build(GRAMMAR));
 //
 //		JFrame frame = new JFrame();
-//		frame.setTitle("Simple Parser Test - Lukas Ruegner (2018)");
+//		frame.setTitle("Simple TokenParser Test - Lukas Ruegner (2018)");
 //		frame.setSize(1280, 900);
 //		frame.setLocationRelativeTo(null);
 //		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

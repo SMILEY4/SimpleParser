@@ -145,7 +145,7 @@
 //		for(Expression expr : expression.expressions) {
 //			result = apply(expr, consumed, tokens);
 //
-//			// expression matches next token(s) -> consumed token: return result -> did not consume: continue
+//			// expression matches peek token(s) -> consumed token: return result -> did not consume: continue
 //			if(result.state == Result.State.MATCH) {
 //				resultsMatched.add(result);
 //				if(tokens.isEmpty() || tokenStart != tokens.get(0)) {
@@ -339,34 +339,34 @@
 //		// tokens remaining
 //		} else {
 //
-//			// get next
-//			Token next = tokens.get(0);
+//			// get peek
+//			Token peek = tokens.get(0);
 //
-//			// next is undefined -> ERROR: undefined symbol
-//			if (next.getType() == TokenType.UNDEFINED) {
+//			// peek is undefined -> ERROR: undefined symbol
+//			if (peek.getType() == TokenType.UNDEFINED) {
 //				return Result.error(
 //						new PlaceholderNode().setExpression(expression).setError(),
-//						new ErrorType(ErrorType.Type.ILLEGAL_SYMBOL, consumed.size(), consumed.size(), new HashSet<>(Collections.singleton(expression.token)), next)
+//						new ErrorType(ErrorType.Type.ILLEGAL_SYMBOL, consumed.size(), consumed.size(), new HashSet<>(Collections.singleton(expression.token)), peek)
 //				);
 //
-//			// next is ignorable -> consume + apply again
-//			} else if (next.getType() == TokenType.IGNORABLE) {
+//			// peek is ignorable -> consume + apply again
+//			} else if (peek.getType() == TokenType.IGNORABLE) {
 //				consumed.add(tokens.remove(0));
 //				return applyToken(expression, consumed, tokens);
 //
-//			// next is matching token -> MATCH
-//			} else if (next == expression.token) {
+//			// peek is matching token -> MATCH
+//			} else if (peek == expression.token) {
 //				consumed.add(tokens.remove(0));
 //
 //				return Result.match(
 //						new TerminalNode(expression.token).setExpression(expression)
 //				);
 //
-//			// next is not matching token -> NO_MATCH: unexpected symbol
+//			// peek is not matching token -> NO_MATCH: unexpected symbol
 //			} else {
 //				return Result.noMatch(
 //						new PlaceholderNode().setExpression(expression).setError(),
-//						new ErrorType(ErrorType.Type.UNEXPECTED_SYMBOL, consumed.size(), consumed.size(), new HashSet<>(Collections.singleton(expression.token)), next)
+//						new ErrorType(ErrorType.Type.UNEXPECTED_SYMBOL, consumed.size(), consumed.size(), new HashSet<>(Collections.singleton(expression.token)), peek)
 //				);
 //
 //			}

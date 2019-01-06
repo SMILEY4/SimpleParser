@@ -1,11 +1,8 @@
 package com.ruegnerlukas.v2.simpleparser.expressions;
 
 import com.ruegnerlukas.v2.simpleparser.Node;
-import com.ruegnerlukas.v2.simpleparser.Token;
-import com.ruegnerlukas.v2.simpleparser.errors.ErrorStack;
-import com.ruegnerlukas.v2.simpleparser.errors.GenericError;
+import com.ruegnerlukas.v2.simpleparser.TokenStream;
 import com.ruegnerlukas.v2.simpleparser.grammar.State;
-import com.ruegnerlukas.v2.simpleparser.parser.Parser;
 import com.ruegnerlukas.v2.simpleparser.trace.Trace;
 import com.ruegnerlukas.v2.simpleparser.trace.TraceElement;
 
@@ -46,10 +43,7 @@ public class AlternativeExpression extends Expression {
 
 
 	@Override
-	public State apply(Node root, List<Token> tokens, Parser parser) {
-
-		Trace trace = parser.getTrace();
-		ErrorStack errorStack = parser.getErrorStack();
+	public State apply(Node root, TokenStream tokenStream, Trace trace) {
 
 		TraceElement traceElement = new TraceElement(this);
 		trace.add(traceElement);
@@ -57,23 +51,19 @@ public class AlternativeExpression extends Expression {
 		Node[] nodes = new Node[expressions.size()];
 		State[] states = new State[expressions.size()];
 		int[] nConsumed = new int[expressions.size()];
-		ErrorStack[] errorStacks = new ErrorStack[expressions.size()];
 
 		// apply all expressions
 		for(int i=0; i<expressions.size(); i++) {
 			Expression e = expressions.get(i);
 
 			Node tmpParent = new Node().setExpression(this);
-			List<Token> tmpTokens = new ArrayList<>(tokens);
-			ErrorStack tmpErrors = new ErrorStack();
+			TokenStream tmpStream = new TokenStream(tokenStream.getIndex(), tokenStream.getRemaining());
 
-			State state = e.apply(tmpParent, tmpTokens, parser);
+			State state = e.apply(tmpParent, tmpStream, trace);
 
 			nodes[i] = tmpParent;
 			states[i] = state;
-			nConsumed[i] = tokens.size() - tmpTokens.size();
-			errorStacks[i] = tmpErrors;
-
+			nConsumed[i] = tmpStream.getIndexWithoutOffset();
 		}
 
 		Node node = null;
@@ -90,7 +80,7 @@ public class AlternativeExpression extends Expression {
 
 		if(node != null) {
 			for(int i=0; i<n; i++) {
-				tokens.remove(0);
+				tokenStream.consume();
 			}
 			root.children.add(node);
 			traceElement.setState(State.MATCH);
@@ -99,12 +89,33 @@ public class AlternativeExpression extends Expression {
 		} else {
 			traceElement.setState(State.ERROR);
 
+			// new version
+			int maxConsumed = 0;
 			for(int i=0; i<expressions.size(); i++) {
-				if(states[i] != State.MATCH && !errorStacks[i].errors.isEmpty()) {
-					errorStack.addError(errorStacks[i].errors.get(0));
+				if(nodes[i] != null) {
+					maxConsumed = Math.max(maxConsumed, nConsumed[i]);
 				}
 			}
-			errorStack.addError(new GenericError(), this, State.ERROR);
+
+			Node altNode = new Node().setExpression(this);
+			root.children.add(altNode);
+			for(int i=0; i<expressions.size(); i++) {
+				if(nConsumed[i] == maxConsumed) {
+					altNode.children.add(nodes[i]);
+				}
+			}
+
+			if(altNode.children.isEmpty()) {
+				altNode.children.addAll(Arrays.asList(nodes));
+			}
+			// end new version
+
+			/*
+			old version
+			Node errorNode = new ErrorNode(ErrorType.ERROR).setExpression(this);
+			errorNode.children.addAll(Arrays.asList(nodes));
+			root.children.add(errorNode);
+			*/
 
 			return State.ERROR;
 		}

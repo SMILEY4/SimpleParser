@@ -144,7 +144,7 @@ public class ExpressionProcessor {
 			apply(tmpParent, expr, consumed, tokens);
 			parent.removeChild(tmpParent);
 
-			// expression matches next token(s) -> consumed token: return result -> did not consume: continue
+			// expression matches peek token(s) -> consumed token: return result -> did not consume: continue
 			if(state == Result.State.MATCH) {
 				matchedNodes.add(tmpParent);
 				if(tokens.isEmpty() || tokenStart != tokens.get(0)) {
@@ -333,25 +333,25 @@ public class ExpressionProcessor {
 		// tokens remaining
 		} else {
 
-			// get next
+			// get peek
 			Token next = tokens.get(0);
 
-			// next is undefined -> ERROR: undefined symbol
+			// peek is undefined -> ERROR: undefined symbol
 			if (next.getType() == TokenType.UNDEFINED) {
 				error(new Error(Error.Type.ILLEGAL_CHARACTER, consumed.size(), consumed.size(), new HashSet<>(Collections.singleton(expression.token)), next));
 
-			// next is ignorable -> consume + apply again
+			// peek is ignorable -> consume + apply again
 			} else if (next.getType() == TokenType.IGNORABLE) {
 				consumed.add(tokens.remove(0));
 				applyToken(parent, expression, consumed, tokens);
 
-			// next is matching token -> MATCH
+			// peek is matching token -> MATCH
 			} else if (next == expression.token) {
 				consumed.add(tokens.remove(0));
 				parent.addChild(new TerminalNode(expression.token).setExpression(expression));
 				match();
 
-			// next is not matching token -> NO_MATCH: unexpected symbol
+			// peek is not matching token -> NO_MATCH: unexpected symbol
 			} else {
 				noMatch(new Error(Error.Type.UNEXPECTED_SYMBOL, consumed.size(), consumed.size(), new HashSet<>(Collections.singleton(expression.token)), next));
 			}
