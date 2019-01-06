@@ -1,5 +1,6 @@
 package com.ruegnerlukas.v2.simpleparser.expressions;
 
+import com.ruegnerlukas.v2.simpleparser.CharStream;
 import com.ruegnerlukas.v2.simpleparser.Node;
 import com.ruegnerlukas.v2.simpleparser.TokenStream;
 import com.ruegnerlukas.v2.simpleparser.grammar.State;
@@ -33,6 +34,9 @@ public abstract class Expression {
 
 
 	public abstract State apply(Node root, TokenStream tokenStream, Trace trace);
+
+
+	public abstract State apply(Node root, CharStream charStream, Trace trace);
 
 
 }

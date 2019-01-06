@@ -1,6 +1,7 @@
 package com.ruegnerlukas.v2.simpleparser.expressions;
 
 
+import com.ruegnerlukas.v2.simpleparser.CharStream;
 import com.ruegnerlukas.v2.simpleparser.Node;
 import com.ruegnerlukas.v2.simpleparser.TokenStream;
 import com.ruegnerlukas.v2.simpleparser.grammar.Rule;
@@ -46,6 +47,22 @@ public class RuleExpression extends Expression {
 		return state;
 	}
 
+
+
+
+	@Override
+	public State apply(Node root, CharStream charStream, Trace trace) {
+
+		TraceElement traceElement = new TraceElement(this);
+		trace.add(traceElement);
+
+		Node node = new Node().setExpression(this);
+		State state = rule.getExpression().apply(node, charStream, trace);
+		root.children.add(node);
+
+		traceElement.setState(state);
+		return state;
+	}
 
 
 

@@ -36,48 +36,56 @@ public class ParserResultError extends ParserResult {
 
 		List<Node> leafs = root.collectLeafNodes();
 
-		int nBuckets = 0;
-		for(Node node : leafs) {
-			if( !(node instanceof ErrorNode) ) {
-				nBuckets++;
-			} else {
-				ErrorNode error = (ErrorNode)node;
-				if(error.index > nBuckets) {
+		if(this.inputWasTokenList()) {
+
+			int nBuckets = 0;
+			for(Node node : leafs) {
+				if( !(node instanceof ErrorNode) ) {
 					nBuckets++;
+				} else {
+					ErrorNode error = (ErrorNode)node;
+					if(error.index > nBuckets) {
+						nBuckets++;
+					}
 				}
 			}
-		}
 
-		List[] buckets = new List[nBuckets+1];
+			List[] buckets = new List[nBuckets+1];
 
-		int index=-1;
-		for(Node node : leafs) {
+			int index=-1;
+			for(Node node : leafs) {
 
-			if( !(node instanceof ErrorNode) ) {
-				index++;
-			} else {
-				ErrorNode error = (ErrorNode)node;
-				if(error.index > index) {
+				if( !(node instanceof ErrorNode) ) {
 					index++;
+				} else {
+					ErrorNode error = (ErrorNode)node;
+					if(error.index > index) {
+						index++;
+					}
 				}
+
+				int bucket = index;
+				if(node instanceof ErrorNode) {
+					bucket = ((ErrorNode)node).index;
+				}
+
+				if (buckets[bucket] == null) {
+					buckets[bucket] = new ArrayList<Node>(Collections.singleton(node));
+
+				} else {
+					List list = buckets[bucket];
+					list.add(node);
+				}
+
 			}
 
-			int bucket = index;
-			if(node instanceof ErrorNode) {
-				bucket = ((ErrorNode)node).index;
-			}
+			this.resultList = (List<Node>[])buckets;
 
-			if (buckets[bucket] == null) {
-				buckets[bucket] = new ArrayList<Node>(Collections.singleton(node));
+		} else {
 
-			} else {
-				List list = buckets[bucket];
-				list.add(node);
-			}
+			this.resultList = new List[]{leafs};
 
 		}
-
-		this.resultList = (List<Node>[])buckets;
 	}
 
 

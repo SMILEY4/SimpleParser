@@ -1,5 +1,6 @@
 package com.ruegnerlukas.v2.simpleparser.expressions;
 
+import com.ruegnerlukas.v2.simpleparser.CharStream;
 import com.ruegnerlukas.v2.simpleparser.Node;
 import com.ruegnerlukas.v2.simpleparser.TokenStream;
 import com.ruegnerlukas.v2.simpleparser.grammar.State;
@@ -76,6 +77,41 @@ public class SequenceExpression extends Expression {
 		return State.MATCH;
 	}
 
+
+
+	@Override
+	public State apply(Node root, CharStream charStream, Trace trace) {
+
+		TraceElement traceElement = new TraceElement(this);
+		trace.add(traceElement);
+
+		if(!charStream.hasNext() && !this.isOptional()) {
+//			root.children.add(new ErrorNode(ErrorType.UNEXPECTED_END_OF_INPUT, tokenStream.getIndex()).setExpression(this));
+		}
+
+		Node node = new Node().setExpression(this);
+		root.children.add(node);
+
+		for(Expression e : expressions) {
+			State state = e.apply(node, charStream, trace);
+
+			if(state == State.MATCH) {
+				continue;
+			}
+			if(state == State.NO_MATCH) {
+				traceElement.setState(State.NO_MATCH);
+				return State.NO_MATCH;
+			}
+			if(state == State.ERROR) {
+				traceElement.setState(State.ERROR);
+				return State.ERROR;
+			}
+
+		}
+
+		traceElement.setState(State.MATCH);
+		return State.MATCH;
+	}
 
 
 

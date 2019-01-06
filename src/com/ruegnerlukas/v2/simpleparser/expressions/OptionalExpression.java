@@ -1,5 +1,6 @@
 package com.ruegnerlukas.v2.simpleparser.expressions;
 
+import com.ruegnerlukas.v2.simpleparser.CharStream;
 import com.ruegnerlukas.v2.simpleparser.Node;
 import com.ruegnerlukas.v2.simpleparser.TokenStream;
 import com.ruegnerlukas.v2.simpleparser.grammar.State;
@@ -57,6 +58,30 @@ public class OptionalExpression extends Expression {
 
 	}
 
+
+
+	@Override
+	public State apply(Node root, CharStream charStream, Trace trace) {
+
+		TraceElement traceElement = new TraceElement(this);
+		trace.add(traceElement);
+
+		if(!charStream.hasNext()) {
+			traceElement.setState(State.MATCH);
+			return State.MATCH;
+
+		} else {
+			State state = expression.apply(root, charStream, trace);
+			if(state == State.ERROR) {
+				traceElement.setState(State.ERROR);
+				return State.ERROR;
+			} else {
+				traceElement.setState(State.MATCH);
+				return State.MATCH;
+			}
+		}
+
+	}
 
 
 

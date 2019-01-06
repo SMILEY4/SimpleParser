@@ -4,6 +4,7 @@ import com.ruegnerlukas.v2.dotGraph.DotGrammarBuilder;
 import com.ruegnerlukas.v2.simpleparser.Token;
 import com.ruegnerlukas.v2.simpleparser.grammar.Grammar;
 import com.ruegnerlukas.v2.simpleparser.grammar.State;
+import com.ruegnerlukas.v2.simpleparser.parser.ParserResult;
 import com.ruegnerlukas.v2.simpleparser.parser.TokenParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -103,12 +104,12 @@ public class SimpleTokenParserTest {
 	State getState(String csInput) {
 		List<Token> tokens = asTokenList(csInput);
 		TokenParser parser = new TokenParser(boolGrammar);
-		parser.parse(tokens, false, false);
+		ParserResult result = parser.parse(tokens, false, false);
 		System.out.println("PARSE: " + csInput);
-		System.out.println(parser.getRoot().collectLeafNodes());
-		System.out.println(DotGrammarBuilder.build(boolGrammar, parser.getTrace()));
+		System.out.println(result.getRoot().collectLeafNodes());
+		System.out.println(DotGrammarBuilder.build(boolGrammar, result.getTrace()));
 		System.out.println();
-		return parser.getState();
+		return result.getState();
 	}
 
 
