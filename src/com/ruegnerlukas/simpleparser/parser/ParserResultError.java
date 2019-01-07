@@ -16,16 +16,21 @@ public class ParserResultError extends ParserResult {
 	private List<Node>[] resultList;
 
 
+
+
 	public ParserResultError(Node root, String inputString, Trace trace) {
 		super(State.ERROR, inputString, root, trace);
 		buildResultList();
 	}
 
 
+
+
 	public ParserResultError(Node root, List<Token> inputTokens, Trace trace) {
 		super(State.ERROR, inputTokens, root, trace);
 		buildResultList();
 	}
+
 
 
 
@@ -36,37 +41,37 @@ public class ParserResultError extends ParserResult {
 
 		List<Node> leafs = root.collectLeafNodes();
 
-		if(this.inputWasTokenList()) {
+		if (this.inputWasTokenList()) {
 
 			int nBuckets = 0;
-			for(Node node : leafs) {
-				if( !(node instanceof ErrorNode) ) {
+			for (Node node : leafs) {
+				if (!(node instanceof ErrorNode)) {
 					nBuckets++;
 				} else {
-					ErrorNode error = (ErrorNode)node;
-					if(error.index > nBuckets) {
+					ErrorNode error = (ErrorNode) node;
+					if (error.index > nBuckets) {
 						nBuckets++;
 					}
 				}
 			}
 
-			List[] buckets = new List[nBuckets+1];
+			List[] buckets = new List[nBuckets + 1];
 
-			int index=-1;
-			for(Node node : leafs) {
+			int index = -1;
+			for (Node node : leafs) {
 
-				if( !(node instanceof ErrorNode) ) {
+				if (!(node instanceof ErrorNode)) {
 					index++;
 				} else {
-					ErrorNode error = (ErrorNode)node;
-					if(error.index > index) {
+					ErrorNode error = (ErrorNode) node;
+					if (error.index > index) {
 						index++;
 					}
 				}
 
 				int bucket = index;
-				if(node instanceof ErrorNode) {
-					bucket = ((ErrorNode)node).index;
+				if (node instanceof ErrorNode) {
+					bucket = ((ErrorNode) node).index;
 				}
 
 				if (buckets[bucket] == null) {
@@ -79,7 +84,7 @@ public class ParserResultError extends ParserResult {
 
 			}
 
-			this.resultList = (List<Node>[])buckets;
+			this.resultList = (List<Node>[]) buckets;
 
 		} else {
 
@@ -91,6 +96,9 @@ public class ParserResultError extends ParserResult {
 
 
 
+	/**
+	 * @return an array of lists containing the tokens/errors at their index of the array
+	 * */
 	public List<Node>[] getResultList() {
 		return this.resultList;
 	}

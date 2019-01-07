@@ -28,7 +28,10 @@ public class TokenParser {
 
 
 
-
+	/**
+	 * @param eliminateNonTerminalLeafs Node.eliminateNonTerminalLeafs
+	 * @param eliminateNonRuleNodes     Node.eliminateNonRuleNodes
+	 */
 	public ParserResult parse(List<Token> tokens, boolean eliminateNonTerminalLeafs, boolean eliminateNonRuleNodes) {
 
 		TokenStream tokenStream = new TokenStream(tokens);
@@ -38,8 +41,8 @@ public class TokenParser {
 		Node root = new Node();
 		State state = rootExpression.apply(root, tokenStream, trace);
 
-		if(tokenStream.hasNext()) {
-			while(tokenStream.hasNext()) {
+		if (tokenStream.hasNext()) {
+			while (tokenStream.hasNext()) {
 				Token token = tokenStream.peek();
 				root.children.add(new ErrorNode(ErrorType.SYMBOLS_REMAINING, tokenStream.getIndex()).setExpression(new TokenExpression(token)));
 				tokenStream.consume();
@@ -47,7 +50,7 @@ public class TokenParser {
 			state = State.ERROR;
 		}
 
-		if(state == State.MATCH) {
+		if (state == State.MATCH) {
 			return buildResultMatch(root, tokens, trace, eliminateNonTerminalLeafs, eliminateNonRuleNodes);
 		} else {
 			return buildResultError(root, tokens, trace, eliminateNonTerminalLeafs, eliminateNonRuleNodes);
@@ -60,10 +63,10 @@ public class TokenParser {
 
 	private ParserResultMatch buildResultMatch(Node rootNode, List<Token> inputTokens, Trace trace, boolean eliminateNonTerminalLeafs, boolean eliminateNonRuleNodes) {
 		Node root = rootNode;
-		if(eliminateNonRuleNodes) {
+		if (eliminateNonRuleNodes) {
 			root = new Node(root.eliminateNonRuleNodes());
 		}
-		if(eliminateNonTerminalLeafs) {
+		if (eliminateNonTerminalLeafs) {
 			root = root.eliminateNonTerminalLeafs();
 		}
 		return new ParserResultMatch(root, inputTokens, trace);
@@ -74,10 +77,10 @@ public class TokenParser {
 
 	private ParserResultError buildResultError(Node rootNode, List<Token> inputTokens, Trace trace, boolean eliminateNonTerminalLeafs, boolean eliminateNonRuleNodes) {
 		Node root = rootNode;
-		if(eliminateNonRuleNodes) {
+		if (eliminateNonRuleNodes) {
 			root = new Node(root.eliminateNonRuleNodes());
 		}
-		if(eliminateNonTerminalLeafs) {
+		if (eliminateNonTerminalLeafs) {
 			root = root.eliminateNonTerminalLeafs();
 		}
 		return new ParserResultError(root, inputTokens, trace);

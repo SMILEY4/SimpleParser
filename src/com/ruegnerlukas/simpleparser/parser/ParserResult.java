@@ -10,6 +10,7 @@ import java.util.List;
 
 public abstract class ParserResult {
 
+
 	private final State state;
 	private final Node root;
 	private final Trace trace;
@@ -19,16 +20,21 @@ public abstract class ParserResult {
 
 
 
+
 	ParserResult(State state, List<Token> inputTokens, Node root, Trace trace) {
 		this(state, root, trace);
 		this.inputTokens = Collections.unmodifiableList(inputTokens);
 	}
 
 
+
+
 	ParserResult(State state, String inputString, Node root, Trace trace) {
 		this(state, root, trace);
 		this.inputString = inputString;
 	}
+
+
 
 
 	ParserResult(State state, Node root, Trace trace) {
@@ -40,6 +46,9 @@ public abstract class ParserResult {
 
 
 
+	/**
+	 * @return true/false if the input was a token-list/string
+	 */
 	public boolean inputWasTokenList() {
 		return inputTokens != null;
 	}
@@ -47,6 +56,9 @@ public abstract class ParserResult {
 
 
 
+	/**
+	 * @return the list of tokens used as input or null
+	 */
 	public List<Token> getInputTokens() {
 		return this.inputTokens;
 	}
@@ -54,6 +66,9 @@ public abstract class ParserResult {
 
 
 
+	/**
+	 * @return the string used as input or null
+	 */
 	public String getInputString() {
 		return this.inputString;
 	}
@@ -61,6 +76,9 @@ public abstract class ParserResult {
 
 
 
+	/**
+	 * @return the root node of the resulting tree
+	 */
 	public Node getRoot() {
 		return this.root;
 	}
@@ -68,6 +86,9 @@ public abstract class ParserResult {
 
 
 
+	/**
+	 * @return true, if the result was not a match
+	 */
 	public boolean failed() {
 		return state != State.MATCH;
 	}
@@ -75,6 +96,9 @@ public abstract class ParserResult {
 
 
 
+	/**
+	 * @return the result state
+	 */
 	public State getState() {
 		return this.state;
 	}
@@ -82,6 +106,9 @@ public abstract class ParserResult {
 
 
 
+	/**
+	 * @return the trace of the parsing-process
+	 */
 	public Trace getTrace() {
 		return this.trace;
 	}

@@ -66,11 +66,11 @@ public class RuleExpression extends Expression {
 
 
 
+
 	@Override
 	public String toString() {
-		return "RULE:"+Integer.toHexString(this.hashCode())+ ": " + rule.getName();
+		return "RULE:" + Integer.toHexString(this.hashCode()) + ": " + rule.getName();
 	}
-
 
 
 }

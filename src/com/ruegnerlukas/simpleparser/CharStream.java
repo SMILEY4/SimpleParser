@@ -2,6 +2,7 @@ package com.ruegnerlukas.simpleparser;
 
 public class CharStream {
 
+
 	private int indexOffset = 0;
 	private String string;
 	private StringBuilder consumed = new StringBuilder();
@@ -15,6 +16,8 @@ public class CharStream {
 	}
 
 
+
+
 	public CharStream(String strInput) {
 		this.string = strInput;
 	}
@@ -22,8 +25,11 @@ public class CharStream {
 
 
 
+	/**
+	 * @return true, if this stream has at least one character left
+	 */
 	public boolean hasNext() {
-		if(getIndexWithoutOffset() >= string.length()) {
+		if (getIndexWithoutOffset() >= string.length()) {
 			return false;
 		} else {
 			return true;
@@ -33,11 +39,16 @@ public class CharStream {
 
 
 
+	/**
+	 * consumes n-characters and returns them as a single token
+	 *
+	 * @return the consumed characters as a token
+	 */
 	public Token consume(int n) {
-		if(hasNext()) {
+		if (hasNext()) {
 			StringBuilder token = new StringBuilder();
-			int limit = Math.min(getIndexWithoutOffset()+n, string.length());
-			for(int i=getIndexWithoutOffset(); i<limit; i++) {
+			int limit = Math.min(getIndexWithoutOffset() + n, string.length());
+			for (int i = getIndexWithoutOffset(); i < limit; i++) {
 				token.append(string.charAt(i));
 				consumed.append(string.charAt(i));
 			}
@@ -50,9 +61,14 @@ public class CharStream {
 
 
 
+	/**
+	 * consumes the given word (if possible) and returns it as a token
+	 *
+	 * @return the consumed characters as a token, or null
+	 */
 	public Token consume(String word) {
-		if(hasNext()) {
-			if(getRemaining().startsWith(word)) {
+		if (hasNext()) {
+			if (getRemaining().startsWith(word)) {
 				consumed.append(word);
 				return new Token(word);
 			}
@@ -62,9 +78,14 @@ public class CharStream {
 
 
 
+
+	/**
+	 * @return null, of the stream does not start with the given word;
+	 * returns the word as a token otherwise
+	 */
 	public Token peek(String word) {
-		if(hasNext()) {
-			if(getRemaining().startsWith(word)) {
+		if (hasNext()) {
+			if (getRemaining().startsWith(word)) {
 				return new Token(word);
 			}
 		}
@@ -73,6 +94,10 @@ public class CharStream {
 
 
 
+
+	/**
+	 * @return the index in the total stream (includes offset)
+	 */
 	public int getIndex() {
 		return getIndexWithoutOffset() + indexOffset;
 	}
@@ -80,6 +105,9 @@ public class CharStream {
 
 
 
+	/**
+	 * @return the index of this stream
+	 */
 	public int getIndexWithoutOffset() {
 		return consumed.length();
 	}
@@ -87,6 +115,9 @@ public class CharStream {
 
 
 
+	/**
+	 * @return the amount of remaining characters
+	 */
 	public int size() {
 		return string.length() - getIndex();
 	}
@@ -94,6 +125,9 @@ public class CharStream {
 
 
 
+	/**
+	 * @return all consumed characters as a string
+	 */
 	public String getConsumed() {
 		return consumed.toString();
 	}
@@ -101,6 +135,9 @@ public class CharStream {
 
 
 
+	/**
+	 * @return all remaining characters as a string
+	 */
 	public String getRemaining() {
 		return string.substring(getIndexWithoutOffset(), string.length());
 	}

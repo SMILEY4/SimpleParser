@@ -9,7 +9,7 @@ import com.ruegnerlukas.simpleparser.trace.TraceElement;
 
 public class OptionalExpression extends Expression {
 
-	
+
 	public Expression expression;
 
 
@@ -17,8 +17,8 @@ public class OptionalExpression extends Expression {
 
 	/**
 	 * X -> [E]
-	 *  => none or one E
-	 * */
+	 * => none or one E
+	 */
 	public OptionalExpression(Expression expression) {
 		super(ExpressionType.OPTIONAL);
 		this.expression = expression;
@@ -41,13 +41,13 @@ public class OptionalExpression extends Expression {
 		TraceElement traceElement = new TraceElement(this);
 		trace.add(traceElement);
 
-		if(!tokenStream.hasNext()) {
+		if (!tokenStream.hasNext()) {
 			traceElement.setState(State.MATCH);
 			return State.MATCH;
 
 		} else {
 			State state = expression.apply(root, tokenStream, trace);
-			if(state == State.ERROR) {
+			if (state == State.ERROR) {
 				traceElement.setState(State.ERROR);
 				return State.ERROR;
 			} else {
@@ -57,6 +57,7 @@ public class OptionalExpression extends Expression {
 		}
 
 	}
+
 
 
 
@@ -66,13 +67,13 @@ public class OptionalExpression extends Expression {
 		TraceElement traceElement = new TraceElement(this);
 		trace.add(traceElement);
 
-		if(!charStream.hasNext()) {
+		if (!charStream.hasNext()) {
 			traceElement.setState(State.MATCH);
 			return State.MATCH;
 
 		} else {
 			State state = expression.apply(root, charStream, trace);
-			if(state == State.ERROR) {
+			if (state == State.ERROR) {
 				traceElement.setState(State.ERROR);
 				return State.ERROR;
 			} else {
@@ -85,9 +86,10 @@ public class OptionalExpression extends Expression {
 
 
 
+
 	@Override
 	public String toString() {
-		return "OPTIONAL:"+Integer.toHexString(this.hashCode());
+		return "OPTIONAL:" + Integer.toHexString(this.hashCode());
 	}
 
 

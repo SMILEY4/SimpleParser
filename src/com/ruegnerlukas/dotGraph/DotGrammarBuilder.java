@@ -14,28 +14,49 @@ import java.util.Set;
 public class DotGrammarBuilder {
 
 
+	/**
+	 * an edge with a state between the two expressions "from" and "to"
+	 */
 	static class Edge {
-		public Expression from, to;
-		public String label = "";
-		public State state = null;
-		public Edge(Expression from, Expression to) {
+
+		Expression from, to;
+		String label = "";
+		State state = null;
+
+		Edge(Expression from, Expression to) {
 			this.from = from;
 			this.to = to;
 		}
+
 	}
 
+
+
+
+	/**
+	 * a style/rgb-color of an expression
+	 */
 	static class Style {
-		public Expression expression;
-		public int r, g, b;
-		public Style(Expression expression, int r, int g, int b) {
+
+		Expression expression;
+		int r, g, b;
+
+		Style(Expression expression, int r, int g, int b) {
 			this.expression = expression;
 			this.r = r;
 			this.g = g;
 			this.b = b;
 		}
+
 	}
 
 
+
+
+	/**
+	 * @return the graph of expressions of the given grammar as a string in the dot-language.
+	 * If trace != null, the trace will be displayed in the graph
+	 */
 	public static String build(Grammar grammar, Trace trace) {
 
 		// prepare
@@ -47,39 +68,39 @@ public class DotGrammarBuilder {
 		build(expression, new HashSet<Expression>(), edgeList, styleList);
 
 		// add labels from trace
-		if(trace != null) {
+		if (trace != null) {
 
-			for(int i=1; i<trace.getElements().size(); i++) {
-				TraceElement prev = trace.getElements().get(i-1);
+			for (int i = 1; i < trace.getElements().size(); i++) {
+				TraceElement prev = trace.getElements().get(i - 1);
 				TraceElement curr = trace.getElements().get(i);
 
 				// is direct
-				if(hasDirectConnection(prev.expression, curr.expression)) {
+				if (hasDirectConnection(prev.expression, curr.expression)) {
 
 					Edge edge = getEdge(prev.expression, curr.expression, curr.state, edgeList);
 					int edgeIndex = trace.getElements().indexOf(curr);
-					if(edge.label.isEmpty()) {
+					if (edge.label.isEmpty()) {
 						edge.label = Integer.toString(edgeIndex);
 					} else {
 						edge.label += ", " + edgeIndex;
 					}
 
 
-				// is jump
+					// is jump
 				} else {
 
-					while(!hasDirectConnection(prev.expression, curr.expression)) {
-						int indexPrev = trace.getElements().indexOf(prev)-1;
-						if(indexPrev < 0) {
+					while (!hasDirectConnection(prev.expression, curr.expression)) {
+						int indexPrev = trace.getElements().indexOf(prev) - 1;
+						if (indexPrev < 0) {
 							break;
 						}
 						prev = trace.getElements().get(indexPrev);
 					}
 
-					if(hasDirectConnection(prev.expression, curr.expression)) {
+					if (hasDirectConnection(prev.expression, curr.expression)) {
 						Edge edge = getEdge(prev.expression, curr.expression, curr.state, edgeList);
 						int edgeIndex = trace.getElements().indexOf(curr);
-						if(edge.label.isEmpty()) {
+						if (edge.label.isEmpty()) {
 							edge.label = Integer.toString(edgeIndex);
 						} else {
 							edge.label += ", " + edgeIndex;
@@ -97,22 +118,22 @@ public class DotGrammarBuilder {
 		StringBuilder builder = new StringBuilder();
 		builder.append("digraph G {").append(System.lineSeparator());
 		builder.append("    node [style=filled];").append(System.lineSeparator());
-		for(Edge edge : edgeList) {
-			if(edge.label != null && !edge.label.isEmpty()) {
-				if(edge.state == State.MATCH) {
-					appendConnection(builder, edge.from, edge.to, "("+edge.label+")", 0, 150, 50);
+		for (Edge edge : edgeList) {
+			if (edge.label != null && !edge.label.isEmpty()) {
+				if (edge.state == State.MATCH) {
+					appendConnection(builder, edge.from, edge.to, "(" + edge.label + ")", 0, 150, 50);
 				}
-				if(edge.state == State.NO_MATCH) {
-					appendConnection(builder, edge.from, edge.to, "("+edge.label+")", 225, 200, 0);
+				if (edge.state == State.NO_MATCH) {
+					appendConnection(builder, edge.from, edge.to, "(" + edge.label + ")", 225, 200, 0);
 				}
-				if(edge.state == State.ERROR) {
-					appendConnection(builder, edge.from, edge.to, "("+edge.label+")", 220, 0, 0);
+				if (edge.state == State.ERROR) {
+					appendConnection(builder, edge.from, edge.to, "(" + edge.label + ")", 220, 0, 0);
 				}
 			} else {
 				appendConnection(builder, edge.from, edge.to);
 			}
 		}
-		for(Style style : styleList) {
+		for (Style style : styleList) {
 			appendStyle(builder, style.expression, style.r, style.g, style.b);
 		}
 		builder.append("}");
@@ -123,6 +144,9 @@ public class DotGrammarBuilder {
 
 
 
+	/**
+	 * builds the graph starting from the given expression
+	 */
 	private static void build(Expression expression, Set<Expression> visited, List<Edge> edgeList, List<Style> styleList) {
 
 		if (visited.contains(expression)) {
@@ -173,13 +197,16 @@ public class DotGrammarBuilder {
 
 
 
+	/**
+	 * finds the edge (from,to) with the given state in the given list or creates a new edge if none was found.
+	 */
 	private static Edge getEdge(Expression from, Expression to, State state, List<Edge> edgeList) {
-		for(Edge edge : findEdges(from, to, edgeList)) {
-			if(edge.state == null) {
+		for (Edge edge : findEdges(from, to, edgeList)) {
+			if (edge.state == null) {
 				edge.state = state;
 				return edge;
 
-			} else if(edge.state == state) {
+			} else if (edge.state == state) {
 				return edge;
 			}
 		}
@@ -190,10 +217,15 @@ public class DotGrammarBuilder {
 	}
 
 
+
+
+	/**
+	 * finds all edges (from,to) in the given list ignoring their state
+	 */
 	private static List<Edge> findEdges(Expression from, Expression to, List<Edge> edgeList) {
 		List<Edge> edges = new ArrayList<>();
-		for(Edge edge : edgeList) {
-			if(edge.from.equals(from) && edge.to.equals(to)) {
+		for (Edge edge : edgeList) {
+			if (edge.from.equals(from) && edge.to.equals(to)) {
 				edges.add(edge);
 			}
 		}
@@ -203,6 +235,9 @@ public class DotGrammarBuilder {
 
 
 
+	/**
+	 * @return true, if there is a direct connection from the expression "from" to the expression "to"
+	 */
 	private static boolean hasDirectConnection(Expression from, Expression to) {
 
 		if (ExpressionType.ALTERNATIVE == from.getType()) {
@@ -236,22 +271,29 @@ public class DotGrammarBuilder {
 
 
 
+	/**
+	 * appends the connection between the given expressions to the given StringBuilder
+	 */
 	private static void appendConnection(StringBuilder builder, Expression from, Expression to) {
 		DotUtils.appendConnection(builder, quotes(from), quotes(to));
 	}
 
 
 
-	private static void appendConnection(StringBuilder builder, Expression from, Expression to, String label) {
-		DotUtils.appendConnection(builder, quotes(from), quotes(to), label);
-	}
 
-
+	/**
+	 * appends the connection with the given rgb-color between the given expressions to the given StringBuilder
+	 */
 	private static void appendConnection(StringBuilder builder, Expression from, Expression to, String label, int r, int g, int b) {
 		DotUtils.appendConnection(builder, quotes(from), quotes(to), label, r, g, b);
 	}
 
 
+
+
+	/**
+	 * appends the style/rgb-color of the given expression to the given StringBuilder
+	 */
 	private static void appendStyle(StringBuilder builder, Expression expression, int red, int green, int blue) {
 		DotUtils.appendStyle(builder, quotes(expression), red, green, blue);
 	}
@@ -259,6 +301,9 @@ public class DotGrammarBuilder {
 
 
 
+	/**
+	 * @return the given expression as a quoted string
+	 */
 	private static String quotes(Expression expression) {
 		return "\"" + expression.toString() + "\"";
 	}

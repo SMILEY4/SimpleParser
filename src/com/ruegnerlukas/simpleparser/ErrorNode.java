@@ -8,8 +8,12 @@ import java.util.List;
 
 public class ErrorNode extends Node {
 
+
 	public ErrorType error;
 	public int index;
+
+
+
 
 	public ErrorNode(ErrorType error, int index) {
 		this.error = error;
@@ -30,7 +34,7 @@ public class ErrorNode extends Node {
 	@Override
 	public List<Node> eliminateNonRuleNodes() {
 		List<Node> nodes = new ArrayList<>();
-		for(Node child : children) {
+		for (Node child : children) {
 			nodes.addAll(child.eliminateNonRuleNodes());
 		}
 		this.children = nodes;
@@ -42,14 +46,14 @@ public class ErrorNode extends Node {
 
 	@Override
 	public Node eliminateNonTerminalLeafs() {
-		if(this.children.isEmpty()) {
+		if (this.children.isEmpty()) {
 			return this;
 
 		} else {
 			List<Node> nodes = new ArrayList<>();
-			for(Node child : children) {
+			for (Node child : children) {
 				Node n = child.eliminateNonTerminalLeafs();
-				if(n != null) {
+				if (n != null) {
 					nodes.add(n);
 				}
 			}
@@ -57,6 +61,7 @@ public class ErrorNode extends Node {
 			return this;
 		}
 	}
+
 
 
 

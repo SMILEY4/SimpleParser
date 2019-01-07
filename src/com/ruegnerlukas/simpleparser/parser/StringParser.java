@@ -26,7 +26,10 @@ public class StringParser {
 
 
 
-
+	/**
+	 * @param eliminateNonTerminalLeafs Node.eliminateNonTerminalLeafs
+	 * @param eliminateNonRuleNodes     Node.eliminateNonRuleNodes
+	 */
 	public ParserResult parse(String input, boolean eliminateNonTerminalLeafs, boolean eliminateNonRuleNodes) {
 
 		CharStream charStream = new CharStream(input);
@@ -36,8 +39,8 @@ public class StringParser {
 		Node root = new Node();
 		State state = rootExpression.apply(root, charStream, trace);
 
-		if(charStream.hasNext()) {
-			while(charStream.hasNext()) {
+		if (charStream.hasNext()) {
+			while (charStream.hasNext()) {
 				String strRemaining = charStream.getRemaining();
 				root.children.add(new ErrorNode(ErrorType.SYMBOLS_REMAINING, charStream.getIndex()).setExpression(new TokenExpression(new Token(strRemaining))));
 				charStream.consume(strRemaining.length());
@@ -45,7 +48,7 @@ public class StringParser {
 			state = State.ERROR;
 		}
 
-		if(state == State.MATCH) {
+		if (state == State.MATCH) {
 			return buildResultMatch(root, input, trace, eliminateNonTerminalLeafs, eliminateNonRuleNodes);
 		} else {
 			return buildResultError(root, input, trace, eliminateNonTerminalLeafs, eliminateNonRuleNodes);
@@ -58,10 +61,10 @@ public class StringParser {
 
 	private ParserResultMatch buildResultMatch(Node rootNode, String inputString, Trace trace, boolean eliminateNonTerminalLeafs, boolean eliminateNonRuleNodes) {
 		Node root = rootNode;
-		if(eliminateNonRuleNodes) {
+		if (eliminateNonRuleNodes) {
 			root = new Node(root.eliminateNonRuleNodes());
 		}
-		if(eliminateNonTerminalLeafs) {
+		if (eliminateNonTerminalLeafs) {
 			root = root.eliminateNonTerminalLeafs();
 		}
 		return new ParserResultMatch(root, inputString, trace);
@@ -72,10 +75,10 @@ public class StringParser {
 
 	private ParserResultError buildResultError(Node rootNode, String inputString, Trace trace, boolean eliminateNonTerminalLeafs, boolean eliminateNonRuleNodes) {
 		Node root = rootNode;
-		if(eliminateNonRuleNodes) {
+		if (eliminateNonRuleNodes) {
 			root = new Node(root.eliminateNonRuleNodes());
 		}
-		if(eliminateNonTerminalLeafs) {
+		if (eliminateNonTerminalLeafs) {
 			root = root.eliminateNonTerminalLeafs();
 		}
 		return new ParserResultError(root, inputString, trace);

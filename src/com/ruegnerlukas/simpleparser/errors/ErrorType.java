@@ -3,26 +3,20 @@ package com.ruegnerlukas.simpleparser.errors;
 public enum ErrorType {
 
 	/** encountered illegal character **/
-	ILLEGAL_SYMBOL(5),
+	ILLEGAL_SYMBOL,
 
 	/** encountered legal symbol at unexpected place. (has expected,actual) **/
-	UNEXPECTED_SYMBOL(4),
+	UNEXPECTED_SYMBOL,
 
 	/** end of input string **/
-	UNEXPECTED_END_OF_INPUT(3),
+	UNEXPECTED_END_OF_INPUT,
 
 	/** end of grammar, but symbols remaining **/
-	SYMBOLS_REMAINING(2),
+	SYMBOLS_REMAINING,
 
 	/** child of a expression returned an error*/
-	ERROR(1),
+	ERROR,
 
-	INTERNAL_ERROR(0);
-
-	public final int level;
-
-	private ErrorType(int level) {
-		this.level = level;
-	}
+	INTERNAL_ERROR
 
 }

@@ -2,18 +2,24 @@ package com.ruegnerlukas.dotGraph;
 
 import java.awt.*;
 
-public class DotUtils {
+class DotUtils {
 
 
-
-	public static String color(int r, int g, int b) {
+	/**
+	 * @return the given rgb-color as a hsv-color-string
+	 */
+	static String color(int r, int g, int b) {
 		final float[] hsb = Color.RGBtoHSB(r, g, b, null);
 		return hsb[0] + " " + hsb[1] + " " + hsb[2];
 	}
 
 
 
-	public static void appendConnection(StringBuilder builder, String from, String to) {
+
+	/**
+	 * appends the connection "from -> to" to the given StringBuilder
+	 */
+	static void appendConnection(StringBuilder builder, String from, String to) {
 		builder.append("    ")
 				.append(from)
 				.append(" -> ")
@@ -23,7 +29,12 @@ public class DotUtils {
 	}
 
 
-	public static void appendConnection(StringBuilder builder, String from, String to, String label) {
+
+
+	/**
+	 * appends the connection "from -> to" with the given label to the given StringBuilder
+	 */
+	static void appendConnection(StringBuilder builder, String from, String to, String label) {
 		builder.append("    ")
 				.append(from)
 				.append(" -> ")
@@ -36,7 +47,12 @@ public class DotUtils {
 	}
 
 
-	public static void appendConnection(StringBuilder builder, String from, String to, String label, int r, int g, int b) {
+
+
+	/**
+	 * appends the connection "from -> to" with the given label and color to the given StringBuilder
+	 */
+	static void appendConnection(StringBuilder builder, String from, String to, String label, int r, int g, int b) {
 		builder.append("    ")
 				.append(from)
 				.append(" -> ")
@@ -52,7 +68,12 @@ public class DotUtils {
 	}
 
 
-	public static void appendStyle(StringBuilder builder, String node, int r, int g, int b) {
+
+
+	/**
+	 * appends the style/rgb-color of the given node to the given StringBuilder
+	 */
+	static void appendStyle(StringBuilder builder, String node, int r, int g, int b) {
 		final String strColor = "[color=\"" + DotUtils.color(r, g, b) + "\"];";
 		builder.append("    ")
 				.append(node)

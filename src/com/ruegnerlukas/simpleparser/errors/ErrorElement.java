@@ -4,12 +4,9 @@ import com.ruegnerlukas.simpleparser.grammar.State;
 
 public class ErrorElement {
 
-
 	public Error error;
 	public Object origin;
 	public State state;
-
-
 
 
 	public ErrorElement(Error error, Object origin, State state) {
@@ -17,9 +14,5 @@ public class ErrorElement {
 		this.origin = origin;
 		this.state = state;
 	}
-
-
-
-
 
 }

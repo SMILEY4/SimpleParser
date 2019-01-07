@@ -21,7 +21,7 @@ public class SequenceExpression extends Expression {
 
 	/**
 	 * X -> E0 E1 ... EN
-	 * */
+	 */
 	public SequenceExpression(Expression... expressions) {
 		super(ExpressionType.SEQUENCE);
 		this.expressions.addAll(Arrays.asList(expressions));
@@ -32,8 +32,8 @@ public class SequenceExpression extends Expression {
 
 	@Override
 	public boolean isOptional() {
-		for(Expression e : expressions) {
-			if(!e.isOptional()) {
+		for (Expression e : expressions) {
+			if (!e.isOptional()) {
 				return false;
 			}
 		}
@@ -49,24 +49,24 @@ public class SequenceExpression extends Expression {
 		TraceElement traceElement = new TraceElement(this);
 		trace.add(traceElement);
 
-		if(!tokenStream.hasNext() && !this.isOptional()) {
+		if (!tokenStream.hasNext() && !this.isOptional()) {
 //			root.children.add(new ErrorNode(ErrorType.UNEXPECTED_END_OF_INPUT, tokenStream.getIndex()).setExpression(this));
 		}
 
 		Node node = new Node().setExpression(this);
 		root.children.add(node);
 
-		for(Expression e : expressions) {
+		for (Expression e : expressions) {
 			State state = e.apply(node, tokenStream, trace);
 
-			if(state == State.MATCH) {
+			if (state == State.MATCH) {
 				continue;
 			}
-			if(state == State.NO_MATCH) {
+			if (state == State.NO_MATCH) {
 				traceElement.setState(State.NO_MATCH);
 				return State.NO_MATCH;
 			}
-			if(state == State.ERROR) {
+			if (state == State.ERROR) {
 				traceElement.setState(State.ERROR);
 				return State.ERROR;
 			}
@@ -76,6 +76,7 @@ public class SequenceExpression extends Expression {
 		traceElement.setState(State.MATCH);
 		return State.MATCH;
 	}
+
 
 
 
@@ -85,24 +86,24 @@ public class SequenceExpression extends Expression {
 		TraceElement traceElement = new TraceElement(this);
 		trace.add(traceElement);
 
-		if(!charStream.hasNext() && !this.isOptional()) {
+		if (!charStream.hasNext() && !this.isOptional()) {
 //			root.children.add(new ErrorNode(ErrorType.UNEXPECTED_END_OF_INPUT, tokenStream.getIndex()).setExpression(this));
 		}
 
 		Node node = new Node().setExpression(this);
 		root.children.add(node);
 
-		for(Expression e : expressions) {
+		for (Expression e : expressions) {
 			State state = e.apply(node, charStream, trace);
 
-			if(state == State.MATCH) {
+			if (state == State.MATCH) {
 				continue;
 			}
-			if(state == State.NO_MATCH) {
+			if (state == State.NO_MATCH) {
 				traceElement.setState(State.NO_MATCH);
 				return State.NO_MATCH;
 			}
-			if(state == State.ERROR) {
+			if (state == State.ERROR) {
 				traceElement.setState(State.ERROR);
 				return State.ERROR;
 			}
@@ -115,9 +116,10 @@ public class SequenceExpression extends Expression {
 
 
 
+
 	@Override
 	public String toString() {
-		return "SEQUENCE:"+Integer.toHexString(this.hashCode());
+		return "SEQUENCE:" + Integer.toHexString(this.hashCode());
 	}
 
 

@@ -2,11 +2,17 @@ package com.ruegnerlukas.simpleparser;
 
 public class Token {
 
+
 	private String symbol;
+
+
+
 
 	public Token(String symbol) {
 		this.symbol = symbol;
 	}
+
+
 
 
 	public String getSymbol() {
@@ -14,13 +20,18 @@ public class Token {
 	}
 
 
+
+
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof Token) {
-			return this.symbol.equals(((Token)obj).getSymbol());
+		if (obj instanceof Token) {
+			return this.symbol.equals(((Token) obj).getSymbol());
 		}
 		return false;
 	}
+
+
+
 
 	@Override
 	public String toString() {

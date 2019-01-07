@@ -17,8 +17,8 @@ public class RepetitionExpression extends Expression {
 
 	/**
 	 * X -> E E*
-	 *  => one or more
-	 * */
+	 * => one or more
+	 */
 	public RepetitionExpression(Expression expression) {
 		super(ExpressionType.REPETITION);
 		this.expression = expression;
@@ -44,21 +44,21 @@ public class RepetitionExpression extends Expression {
 		Node node = new Node().setExpression(this);
 		root.children.add(node);
 
-		while(tokenStream.hasNext()) {
+		while (tokenStream.hasNext()) {
 
 			State state = expression.apply(node, tokenStream, trace);
 
-			if(state == State.MATCH) {
+			if (state == State.MATCH) {
 				continue;
 			}
 
-			if(state == State.NO_MATCH) {
+			if (state == State.NO_MATCH) {
 				node.eliminateErrorNodes();
 				traceElement.setState(State.MATCH);
 				return State.MATCH;
 			}
 
-			if(state == State.ERROR) {
+			if (state == State.ERROR) {
 				traceElement.setState(State.ERROR);
 				return State.ERROR;
 			}
@@ -68,6 +68,7 @@ public class RepetitionExpression extends Expression {
 		traceElement.setState(State.MATCH);
 		return State.MATCH;
 	}
+
 
 
 
@@ -80,21 +81,21 @@ public class RepetitionExpression extends Expression {
 		Node node = new Node().setExpression(this);
 		root.children.add(node);
 
-		while(charStream.hasNext()) {
+		while (charStream.hasNext()) {
 
 			State state = expression.apply(node, charStream, trace);
 
-			if(state == State.MATCH) {
+			if (state == State.MATCH) {
 				continue;
 			}
 
-			if(state == State.NO_MATCH) {
+			if (state == State.NO_MATCH) {
 				node.eliminateErrorNodes();
 				traceElement.setState(State.MATCH);
 				return State.MATCH;
 			}
 
-			if(state == State.ERROR) {
+			if (state == State.ERROR) {
 				traceElement.setState(State.ERROR);
 				return State.ERROR;
 			}
@@ -106,9 +107,11 @@ public class RepetitionExpression extends Expression {
 	}
 
 
+
+
 	@Override
 	public String toString() {
-		return "REPETITION:"+Integer.toHexString(this.hashCode());
+		return "REPETITION:" + Integer.toHexString(this.hashCode());
 	}
 
 

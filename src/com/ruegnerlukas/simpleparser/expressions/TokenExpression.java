@@ -33,7 +33,7 @@ public class TokenExpression extends Expression {
 	@Override
 	public State apply(Node root, TokenStream tokenStream, Trace trace) {
 
-		if(!tokenStream.hasNext()) {
+		if (!tokenStream.hasNext()) {
 			trace.add(new TraceElement(this).setState(State.NO_MATCH));
 			root.children.add(new ErrorNode(ErrorType.UNEXPECTED_END_OF_INPUT, tokenStream.getIndex()).setExpression(this));
 			return State.NO_MATCH;
@@ -41,7 +41,7 @@ public class TokenExpression extends Expression {
 		} else {
 			Token next = tokenStream.peek();
 
-			if(next.equals(token)) {
+			if (next.equals(token)) {
 				tokenStream.consume();
 				Node node = new Node().setExpression(this);
 				root.children.add(node);
@@ -59,10 +59,11 @@ public class TokenExpression extends Expression {
 
 
 
+
 	@Override
 	public State apply(Node root, CharStream charStream, Trace trace) {
 
-		if(!charStream.hasNext()) {
+		if (!charStream.hasNext()) {
 			trace.add(new TraceElement(this).setState(State.NO_MATCH));
 			root.children.add(new ErrorNode(ErrorType.UNEXPECTED_END_OF_INPUT, charStream.getIndex()).setExpression(this));
 			return State.NO_MATCH;
@@ -70,7 +71,7 @@ public class TokenExpression extends Expression {
 		} else {
 			Token next = charStream.peek(token.getSymbol());
 
-			if(next != null) {
+			if (next != null) {
 				charStream.consume(token.getSymbol());
 				Node node = new Node().setExpression(this);
 				root.children.add(node);
@@ -88,9 +89,10 @@ public class TokenExpression extends Expression {
 
 
 
+
 	@Override
 	public String toString() {
-		return "TOKEN:"+Integer.toHexString(this.hashCode())+ ": " + token.getSymbol();
+		return "TOKEN:" + Integer.toHexString(this.hashCode()) + ": " + token.getSymbol();
 	}
 
 }
