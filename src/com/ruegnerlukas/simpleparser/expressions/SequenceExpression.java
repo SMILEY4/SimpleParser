@@ -81,7 +81,7 @@ public class SequenceExpression extends Expression {
 
 
 	@Override
-	public State apply(Node root, CharStream charStream, Trace trace) {
+	public State apply(Node root, CharStream charStream, boolean ignoreWhitespace, Trace trace) {
 
 		TraceElement traceElement = new TraceElement(this);
 		trace.add(traceElement);
@@ -94,7 +94,7 @@ public class SequenceExpression extends Expression {
 		root.children.add(node);
 
 		for (Expression e : expressions) {
-			State state = e.apply(node, charStream, trace);
+			State state = e.apply(node, charStream, ignoreWhitespace, trace);
 
 			if (state == State.MATCH) {
 				continue;

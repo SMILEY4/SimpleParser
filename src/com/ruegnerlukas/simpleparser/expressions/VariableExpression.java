@@ -66,7 +66,7 @@ public class VariableExpression extends Expression {
 
 
 	@Override
-	public State apply(Node root, CharStream charStream, Trace trace) {
+	public State apply(Node root, CharStream charStream, boolean ignoreWhitespace, Trace trace) {
 
 		variable.value = null;
 
@@ -76,6 +76,12 @@ public class VariableExpression extends Expression {
 			return State.NO_MATCH;
 
 		} else {
+
+			if(ignoreWhitespace) {
+				while(charStream.peek() == ' ') {
+					charStream.consume(1);
+				}
+			}
 
 			String strStream = charStream.getRemaining();
 			String lastValid = null;

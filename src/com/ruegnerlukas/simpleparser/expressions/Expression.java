@@ -54,7 +54,7 @@ public abstract class Expression {
 	 *
 	 * @return the resulting state of this operation
 	 */
-	public abstract State apply(Node root, CharStream charStream, Trace trace);
+	public abstract State apply(Node root, CharStream charStream, boolean ignoreWhitespace, Trace trace);
 
 
 }

@@ -68,7 +68,7 @@ public class CommandParserTest {
 			System.out.println("INPUT: " + in);
 
 			long ts = System.currentTimeMillis();
-			ParserResult result = parser.parse(in, true, true);
+			ParserResult result = parser.parse(in, true, true, true);
 			long te = System.currentTimeMillis();
 			System.out.println("parsing took " + (te - ts) + "ms");
 
@@ -131,10 +131,10 @@ public class CommandParserTest {
 
 		builder.defineNonTerminal("PROJECT_RENAME",
 				builder.sequence(
-						builder.terminal("project rename "),
+						builder.terminal("project rename"),
 						builder.variable("name", String.class),
 						builder.optional(
-								builder.alternative(" -l", " --use-logic")
+								builder.alternative("-l", "--use-logic")
 						)
 				)
 		);

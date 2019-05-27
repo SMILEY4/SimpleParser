@@ -30,16 +30,16 @@ public class StringParser {
 	 * @param eliminateNonTerminalLeafs Node.eliminateNonTerminalLeafs
 	 * @param eliminateNonRuleNodes     Node.eliminateNonRuleNodes
 	 */
-	public ParserResult parse(String input, boolean eliminateNonTerminalLeafs, boolean eliminateNonRuleNodes) {
+	public ParserResult parse(String input, boolean ignoreWhitespace, boolean eliminateNonTerminalLeafs, boolean eliminateNonRuleNodes) {
 
 		CharStream charStream = new CharStream(input);
 		Trace trace = new Trace();
 
 		Expression rootExpression = grammar.getRule(grammar.getStartingRule()).getExpression();
 		Node root = new Node();
-		State state = rootExpression.apply(root, charStream, trace);
+		State state = rootExpression.apply(root, charStream, ignoreWhitespace, trace);
 
-		if (charStream.hasNext()) {
+		if (charStream.hasNext() && (charStream.getRemaining().trim().length() > 0 || !ignoreWhitespace) ) {
 			while (charStream.hasNext()) {
 				String strRemaining = charStream.getRemaining();
 				root.children.add(new ErrorNode(ErrorType.SYMBOLS_REMAINING, charStream.getIndex()).setExpression(new TokenExpression(new Token(strRemaining))));

@@ -99,7 +99,7 @@ public class SimpleStringParserTest {
 
 	State getState(String strInput) {
 		StringParser parser = new StringParser(boolGrammar);
-		ParserResult result = parser.parse(strInput.replaceAll(" ", ""), false, false);
+		ParserResult result = parser.parse(strInput.replaceAll(" ", ""), false, false, false);
 		System.out.println("PARSE: " + strInput);
 		System.out.println(result.getRoot().collectLeafNodes());
 		System.out.println(DotGrammarBuilder.build(boolGrammar, result.getTrace()));

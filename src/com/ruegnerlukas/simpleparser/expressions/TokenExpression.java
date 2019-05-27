@@ -61,7 +61,7 @@ public class TokenExpression extends Expression {
 
 
 	@Override
-	public State apply(Node root, CharStream charStream, Trace trace) {
+	public State apply(Node root, CharStream charStream, boolean ignoreWhitespace, Trace trace) {
 
 		if (!charStream.hasNext()) {
 			trace.add(new TraceElement(this).setState(State.NO_MATCH));
@@ -69,6 +69,13 @@ public class TokenExpression extends Expression {
 			return State.NO_MATCH;
 
 		} else {
+
+			if(ignoreWhitespace) {
+				while(charStream.peek(token.getSymbol()) == null && charStream.peek() == ' ') {
+					charStream.consume(1);
+				}
+			}
+
 			Token next = charStream.peek(token.getSymbol());
 
 			if (next != null) {

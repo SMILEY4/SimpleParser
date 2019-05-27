@@ -73,7 +73,7 @@ public class RepetitionExpression extends Expression {
 
 
 	@Override
-	public State apply(Node root, CharStream charStream, Trace trace) {
+	public State apply(Node root, CharStream charStream, boolean ignoreWhitespace, Trace trace) {
 
 		TraceElement traceElement = new TraceElement(this);
 		trace.add(traceElement);
@@ -83,7 +83,7 @@ public class RepetitionExpression extends Expression {
 
 		while (charStream.hasNext()) {
 
-			State state = expression.apply(node, charStream, trace);
+			State state = expression.apply(node, charStream, ignoreWhitespace, trace);
 
 			if (state == State.MATCH) {
 				continue;

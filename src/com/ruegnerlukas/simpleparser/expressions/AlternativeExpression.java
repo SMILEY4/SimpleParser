@@ -118,7 +118,7 @@ public class AlternativeExpression extends Expression {
 
 
 	@Override
-	public State apply(Node root, CharStream charStream, Trace trace) {
+	public State apply(Node root, CharStream charStream, boolean ignoreWhitespace, Trace trace) {
 
 		TraceElement traceElement = new TraceElement(this);
 		trace.add(traceElement);
@@ -134,7 +134,7 @@ public class AlternativeExpression extends Expression {
 			Node tmpParent = new Node().setExpression(this);
 			CharStream tmpStream = new CharStream(charStream.getIndex(), charStream.getRemaining());
 
-			State state = e.apply(tmpParent, tmpStream, trace);
+			State state = e.apply(tmpParent, tmpStream, ignoreWhitespace, trace);
 
 			nodes[i] = tmpParent;
 			states[i] = state;

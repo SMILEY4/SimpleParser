@@ -51,13 +51,13 @@ public class RuleExpression extends Expression {
 
 
 	@Override
-	public State apply(Node root, CharStream charStream, Trace trace) {
+	public State apply(Node root, CharStream charStream, boolean ignoreWhitespace, Trace trace) {
 
 		TraceElement traceElement = new TraceElement(this);
 		trace.add(traceElement);
 
 		Node node = new Node().setExpression(this);
-		State state = rule.getExpression().apply(node, charStream, trace);
+		State state = rule.getExpression().apply(node, charStream, ignoreWhitespace, trace);
 		root.children.add(node);
 
 		traceElement.setState(state);

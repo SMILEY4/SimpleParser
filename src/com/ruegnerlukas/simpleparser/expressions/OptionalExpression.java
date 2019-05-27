@@ -62,7 +62,7 @@ public class OptionalExpression extends Expression {
 
 
 	@Override
-	public State apply(Node root, CharStream charStream, Trace trace) {
+	public State apply(Node root, CharStream charStream, boolean ignoreWhitespace, Trace trace) {
 
 		TraceElement traceElement = new TraceElement(this);
 		trace.add(traceElement);
@@ -72,7 +72,7 @@ public class OptionalExpression extends Expression {
 			return State.MATCH;
 
 		} else {
-			State state = expression.apply(root, charStream, trace);
+			State state = expression.apply(root, charStream, ignoreWhitespace, trace);
 			if (state == State.ERROR) {
 				traceElement.setState(State.ERROR);
 				return State.ERROR;
