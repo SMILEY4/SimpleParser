@@ -92,7 +92,7 @@ public class TokenExpression extends Expression {
 
 	@Override
 	public String toString() {
-		return "TOKEN:" + Integer.toHexString(this.hashCode()) + ": " + token.getSymbol();
+		return "TOKEN:" + Integer.toHexString(this.hashCode()) + ": '" + token.getSymbol() + "'";
 	}
 
 }

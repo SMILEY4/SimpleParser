@@ -2,21 +2,39 @@ package com.ruegnerlukas.simpleparser.expressions;
 
 public enum ExpressionType {
 
-	/** X = E1 | E2 | ... |  */
+	/**
+	 * X = E1 | E2 | ... |
+	 */
 	ALTERNATIVE,
 
-	/** X = [E] */
+	/**
+	 * X = [E]
+	 */
 	OPTIONAL,
 
-	/** X = {E} */
+	/**
+	 * X = {E}
+	 */
 	REPETITION,
 
-	/** X = A */
+	/**
+	 * X = A
+	 */
 	RULE,
 
-	/** X = E1 E2 ... En */
+	/**
+	 * X = E1 E2 ... En
+	 */
 	SEQUENCE,
 
-	/** X = "x" */
-	TOKEN
+	/**
+	 * X = "x"
+	 */
+	TOKEN,
+
+	/**
+	 * {name:String}
+	 */
+	VARIABLE;
+
 }

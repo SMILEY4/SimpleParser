@@ -75,7 +75,7 @@ public class Node {
 		for (Node child : children) {
 			nodes.addAll(child.eliminateNonRuleNodes());
 		}
-		if (this.expression != null && (this.expression.getType() == ExpressionType.RULE || this.expression.getType() == ExpressionType.TOKEN)) {
+		if (this.expression != null && (this.expression.getType() == ExpressionType.RULE || this.expression.getType() == ExpressionType.TOKEN || this.expression.getType() == ExpressionType.VARIABLE)) {
 			this.children = nodes;
 			return new ArrayList<>(Collections.singletonList(this));
 		} else {
@@ -93,7 +93,7 @@ public class Node {
 	 */
 	public Node eliminateNonRuleLeafs() {
 		if (this.children.isEmpty()) {
-			if (this.expression.getType() == ExpressionType.TOKEN || this.expression.getType() == ExpressionType.RULE || (this instanceof ErrorNode)) {
+			if (this.expression.getType() == ExpressionType.TOKEN || this.expression.getType() == ExpressionType.RULE|| this.expression.getType() == ExpressionType.VARIABLE || (this instanceof ErrorNode)) {
 				return this;
 			} else {
 				return null;
@@ -123,7 +123,7 @@ public class Node {
 	public Node eliminateNonTerminalLeafs() {
 
 		if (this.children.isEmpty()) {
-			if (this.expression.getType() == ExpressionType.TOKEN) {
+			if (this.expression.getType() == ExpressionType.TOKEN || this.expression.getType() == ExpressionType.VARIABLE) {
 				return this;
 			} else {
 				return null;

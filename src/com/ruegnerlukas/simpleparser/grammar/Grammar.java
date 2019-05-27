@@ -1,17 +1,18 @@
 package com.ruegnerlukas.simpleparser.grammar;
 
 
-import com.ruegnerlukas.simpleparser.expressions.Expression;
 import com.ruegnerlukas.simpleparser.Token;
+import com.ruegnerlukas.simpleparser.Variable;
+import com.ruegnerlukas.simpleparser.expressions.Expression;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 public class Grammar {
 
 
 	private Map<String, Rule> rules = new HashMap<>();
 	private Map<String, Token> tokens = new HashMap<>();
+	private Map<String, Variable> variables = new HashMap<>();
 	private Rule startingRule;
 
 
@@ -43,7 +44,7 @@ public class Grammar {
 
 
 	/**
-	 * adds new token/symbol to this grammar.
+	 * adds new tokens/symbols to this grammar.
 	 * A given symbol can only exist once. If a token already exists, it does not get replaced.
 	 *
 	 * @param symbols the tokens/symbols to add
@@ -53,6 +54,39 @@ public class Grammar {
 			if (getToken(symbol) == null) {
 				Token token = new Token(symbol);
 				tokens.put(token.getSymbol(), token);
+			}
+		}
+	}
+
+
+
+
+	/**
+	 * adds a new variable with given name and type to this grammar.
+	 * The name of the variable must be unique or it will not be added to the list
+	 *
+	 * @param varname  the name of the variable
+	 * @param datatype the type of the variable
+	 */
+	protected void addVariable(String varname, Class<?> datatype) {
+		if (getVariable(varname) == null) {
+			this.variables.put(varname, new Variable(varname, datatype));
+		}
+	}
+
+
+
+
+	/**
+	 * adds new variables to this grammar.
+	 * The name of a variable must be unique or it will not be added to the list
+	 *
+	 * @param variables the variables to add
+	 */
+	protected void addVariables(Variable... variables) {
+		for (Variable variable : variables) {
+			if (getVariable(variable.varname) == null) {
+				this.variables.put(variable.varname, variable);
 			}
 		}
 	}
@@ -140,7 +174,7 @@ public class Grammar {
 
 
 	/**
-	 * @return the token with the given symbol
+	 * @return the token with the given symbol or null
 	 */
 	protected Token getToken(String symbol) {
 		return tokens.get(symbol);
@@ -153,11 +187,27 @@ public class Grammar {
 	 * @return a copy of the list of all tokens
 	 */
 	public List<Token> getTokens() {
-		List<Token> list = new ArrayList<>();
-		for (Entry<String, Token> entry : tokens.entrySet()) {
-			list.add(entry.getValue());
-		}
-		return list;
+		return new ArrayList<>(tokens.values());
+	}
+
+
+
+
+	/**
+	 * @return the variable with the given name or null
+	 */
+	public Variable getVariable(String varname) {
+		return variables.get(varname);
+	}
+
+
+
+
+	/**
+	 * @return a copy of the list of all variables
+	 */
+	public List<Variable> getVariables() {
+		return new ArrayList<>(variables.values());
 	}
 
 

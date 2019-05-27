@@ -80,7 +80,7 @@ public class CharStream {
 
 
 	/**
-	 * @return null, of the stream does not start with the given word;
+	 * @return null, if the stream does not start with the given word;
 	 * returns the word as a token otherwise
 	 */
 	public Token peek(String word) {
@@ -90,6 +90,20 @@ public class CharStream {
 			}
 		}
 		return null;
+	}
+
+
+
+
+	/**
+	 * @return the next char without consuming it
+	 */
+	public char peek() {
+		if (hasNext()) {
+			return getRemaining().charAt(0);
+		} else {
+			return 0;
+		}
 	}
 
 

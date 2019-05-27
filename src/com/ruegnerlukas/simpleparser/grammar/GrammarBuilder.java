@@ -154,6 +154,22 @@ public class GrammarBuilder {
 
 
 	/**
+	 * {name:String}
+	 *
+	 * @param varname  the name of the variable
+	 * @param datatype the type of the variable. can be String, Integer, Double, Boolean
+	 */
+	public Expression variable(String varname, Class<?> datatype) {
+		if (grammar.getVariable(varname) == null) {
+			grammar.addVariable(varname, datatype);
+		}
+		return new VariableExpression(grammar.getVariable(varname));
+	}
+
+
+
+
+	/**
 	 * @return the created grammar
 	 */
 	public Grammar get() {
