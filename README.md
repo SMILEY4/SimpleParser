@@ -1,6 +1,19 @@
 # SimpleParser
 
 
+### Features
+- fast to setup and easy to use
+- can parse ebnf-grammar
+   - terminal strings
+   - groupings
+   - optionals
+   - alternations
+   - repetitions
+   - rules
+   - variables (not ebnf, can be any string,number of boolean)
+- result as detailed or minimized tree (unnecessary nodes can be removed)
+
+
 
 ### Creating a grammar
 
@@ -8,7 +21,7 @@
 // OR_EXPRESSION 	-> AND_EXPRESSION {"or" AND_EXPRESSION}
 // AND_EXPRESSION 	-> COMPONENT {"and" COMPONENT}
 // COMPONENT 		-> STATEMENT | ( "(" EXPRESSION ")"
-// STATEMENT		-> "expr"
+// STATEMENT		-> "e"
 
 GrammarBuilder gb = new GrammarBuilder();
 
@@ -50,7 +63,7 @@ gb.defineNonTerminal("COMPONENT",
  )
 );
 
-// STATEMENT	-> "expr"
+// STATEMENT	-> "e"
 gb.defineNonTerminal("STATEMENT", gb.terminal("e"));
 ```
 
