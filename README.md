@@ -65,6 +65,9 @@ gb.defineNonTerminal("COMPONENT",
 
 // STATEMENT	-> "e"
 gb.defineNonTerminal("STATEMENT", gb.terminal("e"));
+
+// GRAMMAR
+Grammar grammar = gb.get();
 ```
 
 
@@ -100,11 +103,11 @@ resuling tree of the input "e and (e or e)"
 If the input does not match the grammar, an error is returned with a partial tree that also contains error-nodes specifying what went wrong.
 
 ![alt text](https://i.imgur.com/jkrygwC.png)
-resuling tree of the input "e and (e or e)"
+resuling tree of the input "e and (
 
 While parsing an input, the parser generates a "trace". A trace records every step and its state (match,no-match,error).
 The output trace can be output together with the final tree as a .dot-graph.
 
 ![alt text](https://i.imgur.com/lWg9Ic8.png)
-resuling tree of the input "e and (e or e)"
+resuling tree of the input "e and (
 
