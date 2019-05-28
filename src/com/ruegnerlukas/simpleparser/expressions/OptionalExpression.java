@@ -72,11 +72,19 @@ public class OptionalExpression extends Expression {
 			return State.MATCH;
 
 		} else {
-			State state = expression.apply(root, charStream, ignoreWhitespace, trace);
+
+			Node tmpParent = new Node().setExpression(this);
+			State state = expression.apply(tmpParent, charStream, ignoreWhitespace, trace);
+
 			if (state == State.ERROR) {
+				root.children.addAll(tmpParent.children);
 				traceElement.setState(State.ERROR);
 				return State.ERROR;
+
 			} else {
+				if(state == State.MATCH) {
+					root.children.addAll(tmpParent.children);
+				}
 				traceElement.setState(State.MATCH);
 				return State.MATCH;
 			}
