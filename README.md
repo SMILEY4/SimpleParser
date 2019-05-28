@@ -65,6 +65,9 @@ gb.defineNonTerminal("COMPONENT",
 
 // STATEMENT	-> "e"
 gb.defineNonTerminal("STATEMENT", gb.terminal("e"));
+
+// GRAMMAR
+Grammar grammar = gb.get();
 ```
 
 
