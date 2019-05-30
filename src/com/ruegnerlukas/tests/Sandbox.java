@@ -23,21 +23,21 @@ public class Sandbox {
 		System.out.println(dotGrammar);
 
 		// e and (e or e)
-		List<Token> tokens = new ArrayList<>(Arrays.asList(
-				new Token("e"),
-				new Token("and"),
-				new Token("("),
-				new Token("e"),
-				new Token("or"),
-				new Token("e"),
-				new Token(")")
-		));
-
 //		List<Token> tokens = new ArrayList<>(Arrays.asList(
 //				new Token("e"),
 //				new Token("and"),
-//				new Token("(")
+//				new Token("("),
+//				new Token("e"),
+//				new Token("or"),
+//				new Token("e"),
+//				new Token(")")
 //		));
+
+		List<Token> tokens = new ArrayList<>(Arrays.asList(
+				new Token("e"),
+				new Token("and"),
+				new Token("(")
+		));
 
 
 		TokenParser parser = new TokenParser(grammar);

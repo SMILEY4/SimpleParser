@@ -18,7 +18,7 @@ public class CommandParserTest {
 
 	public static void main(String[] args) {
 
-		Grammar grammar = build();
+		Grammar grammar = TestGrammarBuilder.buildBoolGrammar();
 
 		System.out.println("GRAMMAR:");
 		System.out.println(DotGrammarBuilder.build(grammar, null));
@@ -75,11 +75,11 @@ public class CommandParserTest {
 			if (result.failed()) {
 				System.out.println("Unknown command '" + in + "'");
 				ParserResultError resultError = (ParserResultError) result;
-				for (List<Node> nodes : resultError.getResultList()) {
-					for (Node node : nodes) {
-						System.out.print(node.toString() + " ");
+				for (List<Node> bucket : resultError.getResultList()) {
+					System.out.println("bucket");
+					for (Node node : bucket) {
+						System.out.println("  " + node.toString());
 					}
-					System.out.println();
 				}
 				System.out.println();
 

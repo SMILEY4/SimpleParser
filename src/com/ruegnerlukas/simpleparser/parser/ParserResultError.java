@@ -7,20 +7,21 @@ import com.ruegnerlukas.simpleparser.grammar.State;
 import com.ruegnerlukas.simpleparser.trace.Trace;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class ParserResultError extends ParserResult {
 
 
-	private List<Node>[] resultList;
+	private List<List<Node>> resultList;
 
 
 
 
 	public ParserResultError(Node root, String inputString, Trace trace) {
 		super(State.ERROR, inputString, root, trace);
-		buildResultList();
+		this.resultList = buildResultList();
 	}
 
 
@@ -28,69 +29,53 @@ public class ParserResultError extends ParserResult {
 
 	public ParserResultError(Node root, List<Token> inputTokens, Trace trace) {
 		super(State.ERROR, inputTokens, root, trace);
-		buildResultList();
+		this.resultList = buildResultList();
 	}
 
 
 
 
-	private void buildResultList() {
+	private List<List<Node>> buildResultList() {
 
 		Node root = getRoot().eliminateNonTerminalLeafs();
 		root = new Node(root.eliminateNonRuleNodes());
 
 		List<Node> leafs = root.collectLeafNodes();
 
-		if (this.inputWasTokenList()) {
+		List<List<Node>> buckets = new ArrayList<>();
 
-			int nBuckets = 0;
-			for (Node node : leafs) {
-				if (!(node instanceof ErrorNode)) {
-					nBuckets++;
+		for (Node node : leafs) {
+
+			if (node instanceof ErrorNode) {
+				ErrorNode errorNode = (ErrorNode) node;
+
+				if (buckets.isEmpty()) {
+					buckets.add(new ArrayList<>(Collections.singletonList(errorNode)));
 				} else {
-					ErrorNode error = (ErrorNode) node;
-					if (error.index > nBuckets) {
-						nBuckets++;
+
+					List<Node> lastBucket = buckets.get(buckets.size() - 1);
+					Node lastNode = lastBucket.get(lastBucket.size() - 1);
+
+					if (lastNode instanceof ErrorNode) {
+						ErrorNode lastError = (ErrorNode) lastNode;
+
+						if (lastError.index == errorNode.index) {
+							lastBucket.add(errorNode);
+						}
+
+					} else {
+						buckets.add(new ArrayList<>(Collections.singletonList(errorNode)));
 					}
+
 				}
+
+			} else {
+				buckets.add(new ArrayList<>(Arrays.asList(node)));
 			}
-
-			List[] buckets = new List[nBuckets + 1];
-
-			int index = -1;
-			for (Node node : leafs) {
-
-				if (!(node instanceof ErrorNode)) {
-					index++;
-				} else {
-					ErrorNode error = (ErrorNode) node;
-					if (error.index > index) {
-						index++;
-					}
-				}
-
-				int bucket = index;
-				if (node instanceof ErrorNode) {
-					bucket = ((ErrorNode) node).index;
-				}
-
-				if (buckets[bucket] == null) {
-					buckets[bucket] = new ArrayList<Node>(Collections.singleton(node));
-
-				} else {
-					List list = buckets[bucket];
-					list.add(node);
-				}
-
-			}
-
-			this.resultList = (List<Node>[]) buckets;
-
-		} else {
-
-			this.resultList = new List[]{leafs};
 
 		}
+
+		return buckets;
 	}
 
 
@@ -98,8 +83,8 @@ public class ParserResultError extends ParserResult {
 
 	/**
 	 * @return an array of lists containing the tokens/errors at their index of the array
-	 * */
-	public List<Node>[] getResultList() {
+	 */
+	public List<List<Node>> getResultList() {
 		return this.resultList;
 	}
 
