@@ -117,6 +117,7 @@ public class AlternativeExpression extends Expression {
 
 
 
+	@SuppressWarnings ("Duplicates")
 	@Override
 	public State apply(Node root, CharStream charStream, boolean ignoreWhitespace, Trace trace) {
 

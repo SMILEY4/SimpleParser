@@ -78,8 +78,8 @@ public class OptionalExpression extends Expression {
 
 			if (state == State.ERROR) {
 				root.children.addAll(tmpParent.children);
-				traceElement.setState(State.ERROR);
-				return State.ERROR;
+				traceElement.setState(State.MATCH);
+				return State.MATCH;
 
 			} else {
 				if(state == State.MATCH) {

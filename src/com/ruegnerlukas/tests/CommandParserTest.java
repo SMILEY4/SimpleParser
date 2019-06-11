@@ -18,13 +18,12 @@ public class CommandParserTest {
 
 	public static void main(String[] args) {
 
-		Grammar grammar = TestGrammarBuilder.buildBoolGrammar();
+		Grammar grammar = build();
 
 		System.out.println("GRAMMAR:");
 		System.out.println(DotGrammarBuilder.build(grammar, null));
 		System.out.println();
 		System.out.println();
-
 
 //		TokenParser parser = new TokenParser(grammar);
 //
@@ -109,16 +108,17 @@ public class CommandParserTest {
 		HELP = "help"
 		EXIT = "exit"
 		PROJECT_RENAME = "project rename" <name> ["-l" | "--logic"]
+		PROJECT_LOCK = "project lock" <locked> ["-l" | "--logic"]
 		 */
 
 		GrammarBuilder builder = new GrammarBuilder();
-
 
 		builder.defineRootNonTerminal("COMMANDS",
 				builder.alternative(
 						builder.nonTerminal("HELP"),
 						builder.nonTerminal("EXIT"),
-						builder.nonTerminal("PROJECT_RENAME")));
+						builder.nonTerminal("PROJECT_RENAME"),
+						builder.nonTerminal("PROJECT_LOCK")));
 
 
 		builder.defineNonTerminal("HELP",
@@ -131,13 +131,24 @@ public class CommandParserTest {
 
 		builder.defineNonTerminal("PROJECT_RENAME",
 				builder.sequence(
-						builder.terminal("project rename"),
+						builder.terminal("project"),
+						builder.terminal("rename"),
 						builder.variable("name", String.class),
 						builder.optional(
 								builder.alternative("-l", "--use-logic")
 						)
 				)
 		);
+
+		builder.defineNonTerminal("PROJECT_LOCK",
+				builder.sequence(
+						builder.terminal("project"),
+						builder.terminal("lock-attributes"),
+						builder.variable("locked", Boolean.class),
+						builder.optional(
+								builder.alternative("-l", "--use-logic")
+						)
+				));
 
 
 		return builder.get();

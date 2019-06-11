@@ -3,12 +3,21 @@ package com.ruegnerlukas.simpleparser;
 public class Token {
 
 
+	private String name;
 	private String symbol;
 
 
 
 
 	public Token(String symbol) {
+		this(null, symbol);
+	}
+
+
+
+
+	public Token(String tokenname, String symbol) {
+		this.name = tokenname;
 		this.symbol = symbol;
 	}
 
@@ -17,6 +26,13 @@ public class Token {
 
 	public String getSymbol() {
 		return this.symbol;
+	}
+
+
+
+
+	public String getName() {
+		return name;
 	}
 
 

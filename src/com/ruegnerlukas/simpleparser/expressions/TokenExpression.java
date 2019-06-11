@@ -70,8 +70,8 @@ public class TokenExpression extends Expression {
 
 		} else {
 
-			if(ignoreWhitespace) {
-				while(charStream.peek(token.getSymbol()) == null && charStream.peek() == ' ') {
+			if (ignoreWhitespace) {
+				while (charStream.peek(token.getSymbol()) == null && charStream.peek() == ' ') {
 					charStream.consume(1);
 				}
 			}

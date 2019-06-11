@@ -41,7 +41,6 @@ public class CharStream {
 
 	/**
 	 * consumes n-characters and returns them as a single token
-	 *
 	 * @return the consumed characters as a token
 	 */
 	public Token consume(int n) {
@@ -63,7 +62,6 @@ public class CharStream {
 
 	/**
 	 * consumes the given word (if possible) and returns it as a token
-	 *
 	 * @return the consumed characters as a token, or null
 	 */
 	public Token consume(String word) {
