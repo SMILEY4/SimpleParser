@@ -14,6 +14,8 @@
 - result as detailed or minimized tree (unnecessary nodes can be removed)
 
 
+<br/><br/>
+
 
 ### Creating a grammar
 
@@ -71,6 +73,8 @@ Grammar grammar = gb.get();
 ```
 
 
+<br/><br/>
+
 
 ### Parsing a String
 
@@ -80,6 +84,7 @@ ParserResult result = parser.parse(strInput, false, false);
 ```
 
 
+<br/><br/>
 
 
 ### Visualizing Grammar or ParserResult as a tree/graph
@@ -96,6 +101,8 @@ String graph = DotGrammarBuilder.build(grammar, result.getTrace());
 ![alt text](https://i.imgur.com/JdJHDs9.png)
 *resuling tree of the input "e and (e or e)"*
 
+
+<br/><br/>
 
 
 ### Debugging
