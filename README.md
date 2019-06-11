@@ -91,10 +91,10 @@ String graph = DotGrammarBuilder.build(grammar, result.getTrace());
 "tree" and "graph" can be visualized for example with "Graphviz" or in the browser with http://viz-js.com/
 
 ![alt text](https://i.imgur.com/HB8rLNe.png)
-the grammar as a graph
+*the grammar as a graph*
 
 ![alt text](https://i.imgur.com/JdJHDs9.png)
-resuling tree of the input "e and (e or e)"
+*resuling tree of the input "e and (e or e)"*
 
 
 
@@ -103,11 +103,11 @@ resuling tree of the input "e and (e or e)"
 If the input does not match the grammar, an error is returned with a partial tree that also contains error-nodes specifying what went wrong.
 
 ![alt text](https://i.imgur.com/jkrygwC.png)
-resuling tree of the input "e and (
+*resuling tree of the input "e and (*
 
 While parsing an input, the parser generates a "trace". A trace records every step and its state (match,no-match,error).
 The output trace can be output together with the final tree as a .dot-graph.
 
 ![alt text](https://i.imgur.com/lWg9Ic8.png)
-resuling tree of the input "e and (
+*resuling tree of the input "e and (*
 
