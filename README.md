@@ -10,9 +10,11 @@
    - alternations
    - repetitions
    - rules
-   - variables (not ebnf, can be any string,number of boolean)
+   - variables (not ebnf, can be any string,number or boolean)
 - result as detailed or minimized tree (unnecessary nodes can be removed)
 
+
+<br/><br/>
 
 
 ### Creating a grammar
@@ -71,6 +73,8 @@ Grammar grammar = gb.get();
 ```
 
 
+<br/><br/>
+
 
 ### Parsing a String
 
@@ -80,6 +84,7 @@ ParserResult result = parser.parse(strInput, false, false);
 ```
 
 
+<br/><br/>
 
 
 ### Visualizing Grammar or ParserResult as a tree/graph
@@ -91,11 +96,13 @@ String graph = DotGrammarBuilder.build(grammar, result.getTrace());
 "tree" and "graph" can be visualized for example with "Graphviz" or in the browser with http://viz-js.com/
 
 ![alt text](https://i.imgur.com/HB8rLNe.png)
-the grammar as a graph
+*the grammar as a graph*
 
 ![alt text](https://i.imgur.com/JdJHDs9.png)
-resuling tree of the input "e and (e or e)"
+*resuling tree of the input "e and (e or e)"*
 
+
+<br/><br/>
 
 
 ### Debugging
@@ -103,11 +110,11 @@ resuling tree of the input "e and (e or e)"
 If the input does not match the grammar, an error is returned with a partial tree that also contains error-nodes specifying what went wrong.
 
 ![alt text](https://i.imgur.com/jkrygwC.png)
-resuling tree of the input "e and (
+*resuling tree of the input "e and (*
 
 While parsing an input, the parser generates a "trace". A trace records every step and its state (match,no-match,error).
 The output trace can be output together with the final tree as a .dot-graph.
 
 ![alt text](https://i.imgur.com/lWg9Ic8.png)
-resuling tree of the input "e and (
+*resuling tree of the input "e and (*
 
