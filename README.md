@@ -10,7 +10,7 @@
    - alternations
    - repetitions
    - rules
-   - variables (not ebnf, can be any string,number of boolean)
+   - variables (not ebnf, can be any string,number or boolean)
 - result as detailed or minimized tree (unnecessary nodes can be removed)
 
 
